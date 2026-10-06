@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name="Review")
 public class Review implements Serializable{
     @Id
-    @Column(name="variantId")
+    @Column(name="reviewId")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int reviewId;
     @ManyToOne(fetch = FetchType.LAZY)

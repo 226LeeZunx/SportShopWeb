@@ -4,14 +4,14 @@
   <persistence-unit name="my_persistence_unit">
         
     </persistence-unit>
-  <persistence-unit name="com.mycompany_SportShopWeb_war_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="SportShopWebPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://ep-proud-lake-b35m7sxw-pooler.c-4.ap-southeast-1.aws.neon.tech:5432/neondb"/>
-      <property name="javax.persistence.jdbc.user" value="neondb_owner"/>
-      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="npg_cVeUm0CTY9Dt"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://ep-proud-lake-b35m7sxw-pooler.c-4.ap-southeast-1.aws.neon.tech:5432/neondb"/>
+      <property name="jakarta.persistence.jdbc.user" value="neondb_owner"/>
+      <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="jakarta.persistence.jdbc.password" value="npg_cVeUm0CTY9Dt"/>
       <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
     </properties>
   </persistence-unit>

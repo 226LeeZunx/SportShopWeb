@@ -15,22 +15,17 @@
             <tr>
                 <th>Mã SP</th>
                 <th>Tên Sản Phẩm</th>
-                <th>Giá</th>
-                <th>Hành động</th>
+                <th>Mô Tả</th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="product" items="${productList}">
                 <tr>
-                    <td>${product.product_id}</td>
-                    <td>${product.variant_name}</td>
-                    <td>${product.price} VNĐ</td>
+                    <td>${product.productId}</td>
+                    <td>${product.productName}</td>
+                    <td>${product.description}</td>
                     <td>
-                        <form action="CartServlet" method="POST">
-                            <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="productId" value="${product.product_id}">
-                            <button type="submit" class="btn-add">Thêm vào giỏ</button>
-                        </form>
+                        
                     </td>
                 </tr>
             </c:forEach>

@@ -7,7 +7,7 @@ package com.mycompany.sportshopweb.util;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 public class DBUtil {
-    private static final EntityManagerFactory emf=Persistence.createEntityManagerFactory("emailListPU");
+    private static final EntityManagerFactory emf=Persistence.createEntityManagerFactory("SportShopWebPU");
     public static EntityManagerFactory getEmFactory(){
         return emf;
     }
