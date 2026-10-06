@@ -37,7 +37,6 @@ public class User implements Serializable {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
-    // Constructor 0 tham số
     public User() {
         userId = 0;
         phone = "";

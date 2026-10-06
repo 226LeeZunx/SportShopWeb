@@ -4,35 +4,51 @@
  */
 package com.mycompany.sportshopweb.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.io.Serializable;
-
+@Entity
+@Table(name="ProductVariants")
 public class ProductVariant implements Serializable{
+    @Id
+    @Column(name="variantId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int variantId;
-    private int productId;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    private Product product;
     private String variantName;
     private String size;
     private String color;
     private long price;
-    private boolean status;
+    @Column(name = "isActive")
+    private boolean isActive = true;
 
     public ProductVariant() {
     }
 
-    public ProductVariant(int variantId, int productId, String variantName, String size, String color, long price, boolean status) {
+    public ProductVariant(int variantId, Product product, String variantName, String size, String color, long price) {
         this.variantId = variantId;
-        this.productId = productId;
+        this.product = product;
         this.variantName = variantName;
         this.size = size;
         this.color = color;
         this.price = price;
-        this.status = status;
     }
 
     public int getVariantId() { return variantId; }
     public void setVariantId(int variantId) { this.variantId = variantId; }
     
-    public int getProductId() { return productId; }
-    public void setProductId(int productId) { this.productId = productId; }
+    public Product getProduct() { return product; }
+    public void setProductId(Product product) { this.product = product; }
     
     public String getVariantName() { return variantName; }
     public void setVariantName(String variantName) { this.variantName = variantName; }
@@ -46,6 +62,6 @@ public class ProductVariant implements Serializable{
     public long getPrice() { return price; }
     public void setPrice(long price) { this.price = price; }
     
-    public boolean isStatus() { return status; }
-    public void setStatus(boolean status) { this.status = status; }
+    public boolean isActive() { return isActive; }
+    public void setisActive(boolean status) { this.isActive = status; }
 }

@@ -4,16 +4,33 @@
  */
 package com.mycompany.sportshopweb.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
-
+@Entity
+@Table(name="Review")
 public class Review implements Serializable{
-    private int reviewId; // Tương ứng với review_id: int PK[cite: 2]
-    private Customer customer; // Tương ứng với customer: Customer[cite: 2]
-    private ProductVariant productVariant; // Tương ứng với productvariant: ProductVariant[cite: 2]
-    private int rating; // Tương ứng với rating: int[cite: 2]
-    private String comment; // Tương ứng với comment: string[cite: 2]
-    private List<String> images; // Tương ứng với images: List<string>[cite: 2]
+    @Id
+    @Column(name="variantId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int reviewId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId")
+    private Customer customer; 
+    
+    @JoinColumn(name = "variantId", referencedColumnName = "variantId")
+    private ProductVariant productVariant;
+    private int rating; 
+    private String comment;
+    private List<String> images; 
 
     public Review() {
     }

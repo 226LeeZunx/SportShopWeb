@@ -1,17 +1,33 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.sportshopweb.model;
+
 import java.io.Serializable;
 import java.util.List;
-public class Product {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="Products")
+public class Product implements Serializable {
+    
+    @Id
+    @Column(name="productId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int productId;
+    
+    @Column(name="productName")
     private String productName;
+    
+    @Column(name="description")
     private String description;
     
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> images; 
-    private Brand brand;               
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brandId", referencedColumnName = "brandId")
+    private Brand brand;      
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
     private Category category;         
 
     public Product() {
@@ -26,7 +42,6 @@ public class Product {
         this.category = category;
     }
 
-    // Getters and Setters
     public int getProductId() { return productId; }
     public void setProductId(int productId) { this.productId = productId; }
     

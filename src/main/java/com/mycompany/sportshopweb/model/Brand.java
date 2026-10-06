@@ -4,11 +4,19 @@
  */
 package com.mycompany.sportshopweb.model;
 
-/**
- *
- * @author dung2
- */
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="Categories")
 public class Brand {
+    @Id
+    @Column(name="brandId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int brandId;
     private String name;
     private String logoUrl;
