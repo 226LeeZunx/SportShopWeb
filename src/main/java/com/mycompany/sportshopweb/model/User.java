@@ -18,7 +18,6 @@ public class User implements Serializable{
     private AccountStatus status;
     private LocalDateTime createdAt;
     
-    // Constructor 0 tham số
     public User() {
         userId = 0;
         phone = "";
