@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java 
  */
-package com.mycompany.sportshop.controller;
+package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.model.Product;
 import com.mycompany.sportshopweb.util.ProductDB;
