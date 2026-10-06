@@ -5,9 +5,12 @@
 package com.mycompany.sportshopweb.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,7 +19,7 @@ import java.time.LocalDateTime;
 @Table(name="ProductImages")
 public class ProductImage implements Serializable{
     @Id
-    @Column(name="productId")
+    @Column(name="productImageId")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int productImageId;
     @Column(name="imageUrl")
@@ -25,6 +28,9 @@ public class ProductImage implements Serializable{
     private boolean isPrimary;
     @Column(name="sortOrder")
     private int sortOrder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productId") 
+    private Product product;
     @Column(name="LocalDateTime")
     private LocalDateTime createdAt;
 
@@ -44,7 +50,8 @@ public class ProductImage implements Serializable{
     
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
     public boolean isPrimary() { return isPrimary; }
     public void setPrimary(boolean primary) { isPrimary = primary; }
     
