@@ -3,17 +3,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.sportshopweb.model;
+
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
  *
  * @author Anh Tuan
  */
-public class Role implements Serializable{
+@Entity
+@Table(name = "Roles")
+public class Role implements Serializable {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
     private int roleId;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "role_permission")
     private String rolePermission;
     
     public Role (){
@@ -62,3 +75,4 @@ public class Role implements Serializable{
         this.rolePermission = rolePermission;
     }
 }
+

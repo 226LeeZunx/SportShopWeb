@@ -3,22 +3,42 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.sportshopweb.model;
+
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
  *
  * @author Anh Tuan
  */
-public class Adress implements Serializable{
+@Entity
+@Table(name = "Addresses")
+public class Adress implements Serializable {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id")
     private int addressId;
+    
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @Column(name = "province")
     private String province;
+
+    @Column(name = "ward")
     private String ward;
+
+    @Column(name = "detail_address")
     private String detailAddress;
+
+    @Column(name = "is_default")
     private boolean isDefault;
 
     public Adress() {
         this.addressId = 0;
+        this.customer = new Customer();
         this.province = "";
         this.ward = "";
         this.detailAddress = "";
@@ -27,6 +47,16 @@ public class Adress implements Serializable{
 
     public Adress(int addressId, String province, String ward, String detailAddress, boolean isDefault) {
         this.addressId = addressId;
+        this.customer = new Customer();
+        this.province = province;
+        this.ward = ward;
+        this.detailAddress = detailAddress;
+        this.isDefault = isDefault;
+    }
+
+    public Adress(int addressId, Customer customer, String province, String ward, String detailAddress, boolean isDefault) {
+        this.addressId = addressId;
+        this.customer = customer;
         this.province = province;
         this.ward = ward;
         this.detailAddress = detailAddress;
@@ -39,6 +69,14 @@ public class Adress implements Serializable{
 
     public void setAddressId(int addressId) {
         this.addressId = addressId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getProvince() {
@@ -73,3 +111,5 @@ public class Adress implements Serializable{
         this.isDefault = isDefault;
     }
 }
+
+

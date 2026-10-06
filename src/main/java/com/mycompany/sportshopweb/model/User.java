@@ -3,19 +3,38 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.sportshopweb.model;
+
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 /**
  *
  * @author Anh Tuan
  */
-public class User implements Serializable{
+@Entity
+@Table(name = "Users")
+public class User implements Serializable {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private int userId;
+
+    @Column(name = "phone", unique = true)
     private String phone;
+
+    @Column(name = "email", unique = true)
     private String email;
+
+    @Column(name = "password_hash")
     private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private AccountStatus status;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
     
     // Constructor 0 tham số
@@ -85,4 +104,5 @@ public class User implements Serializable{
         this.createdAt = createdAt;
     }
 }
+
 
