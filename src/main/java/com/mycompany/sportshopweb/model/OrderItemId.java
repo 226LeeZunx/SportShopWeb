@@ -7,23 +7,23 @@ import java.util.Objects;
 @Embeddable
 public class OrderItemId implements Serializable {
 
-    private int customerId;
+    private int orderId;
     private int variantId;
 
     public OrderItemId() {
     }
 
-    public OrderItemId(int customerId, int variantId) {
-        this.customerId = customerId;
+    public OrderItemId(int orderId, int variantId) {
+        this.orderId = orderId;
         this.variantId = variantId;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public int getVariantId() {
@@ -37,16 +37,16 @@ public class OrderItemId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CartItemId)) return false;
+        if (!(o instanceof OrderItemId)) return false;
 
         OrderItemId that = (OrderItemId) o;
 
-        return customerId == that.customerId
+        return orderId == that.orderId
                 && variantId == that.variantId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerId, variantId);
+        return Objects.hash(orderId, variantId);
     }
 }
