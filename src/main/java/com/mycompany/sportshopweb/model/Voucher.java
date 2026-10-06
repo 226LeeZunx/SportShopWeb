@@ -8,6 +8,7 @@ public class Voucher {
     private boolean active;
 
     public Voucher() {
+        
     }
 
     public Voucher(int voucherId, String code, double discount, boolean active) {
