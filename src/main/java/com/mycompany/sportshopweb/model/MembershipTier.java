@@ -3,18 +3,33 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.sportshopweb.model;
+
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
  *
  * @author Anh Tuan
  */
-public class MembershipTier implements Serializable{
+@Entity
+@Table(name = "MembershipTiers")
+public class MembershipTier implements Serializable {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tier_id")
     private int tierId;
+
+    @Column(name = "tier_name")
     private String tierName;
+
+    @Column(name = "min_spending")
     private long minSpending;
+
+    @Column(name = "discount_rate")
     private float discountRate;
+
+    @Column(name = "point_multiplier")
     private float pointMultiplier;
 
     public MembershipTier() {
@@ -73,3 +88,4 @@ public class MembershipTier implements Serializable{
         this.pointMultiplier = pointMultiplier;
     }
 }
+

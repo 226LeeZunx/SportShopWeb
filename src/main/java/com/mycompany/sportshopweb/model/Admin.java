@@ -3,16 +3,29 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.sportshopweb.model;
+
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
  *
  * @author Anh Tuan
  */
-public class Admin implements Serializable{
+@Entity
+@Table(name = "Admins")
+public class Admin implements Serializable {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "admin_id")
     private int adminId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 
     public Admin() {
@@ -51,3 +64,4 @@ public class Admin implements Serializable{
         this.role = role;
     }
 }
+
