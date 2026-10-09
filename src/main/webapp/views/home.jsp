@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>SPORTSHOP - Authentic Football Gear & Kits</title>
+    <title>SPORTSHOP - Premium Athletic Footwear & Sportswear</title>
     <!-- Nhúng file CSS dùng chung -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
 </head>
@@ -14,28 +14,28 @@
     <jsp:include page="/views/common/header.jsp" />
 
     <!-- 2. Phần nội dung chính: Bảng danh sách sản phẩm -->
-    <main style="max-width: 1300px; margin: 40px auto; padding: 0 24px; min-height: 50vh;">
-        <h2 style="margin-bottom: 20px; font-size: 1.5rem; color: var(--text-primary);">Product Catalog</h2>
+    <main class="home-main-container">
+        <h2 class="home-section-title">Product Catalog</h2>
         
-        <table style="width: 100%; border-collapse: collapse; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+        <table class="data-table">
             <thead>
-                <tr style="border-bottom: 1px solid var(--border-color); text-align: left; background-color: #1a1a1a;">
-                    <th style="padding: 14px 16px; color: var(--text-primary);">Product ID</th>
-                    <th style="padding: 14px 16px; color: var(--text-primary);">Product Name</th>
-                    <th style="padding: 14px 16px; color: var(--text-primary);">Description</th>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody>
                 <c:forEach var="product" items="${productList}">
-                    <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td style="padding: 12px 16px;">${product.productId}</td>
-                        <td style="padding: 12px 16px; font-weight: 600; color: var(--accent-lime);">${product.productName}</td>
-                        <td style="padding: 12px 16px; color: var(--text-muted);">${product.description}</td>
+                    <tr>
+                        <td>${product.productId}</td>
+                        <td class="cell-highlight">${product.productName}</td>
+                        <td class="cell-muted">${product.description}</td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty productList}">
                     <tr>
-                        <td colspan="3" style="padding: 32px; text-align: center; color: var(--text-muted);">
+                        <td colspan="3" class="empty-cell">
                             No products found in the database.
                         </td>
                     </tr>

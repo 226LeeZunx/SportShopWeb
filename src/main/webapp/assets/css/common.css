@@ -6,8 +6,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Created on : 9 Oct 2026, 11:43:58 AM
     Author     : Anh Tuan
 */
+/* Nhúng thư viện Font Awesome CDN để nhúng icon từ bên ngoài */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+
 /* ==========================================================================
-   1. BẢNG MÀU & BIẾN DÙNG CHUNG (DARK THEME BÓNG ĐÁ)
+   1. BẢNG MÀU & BIẾN DÙNG CHUNG (DARK THEME THỂ THAO ĐA NĂNG)
    ========================================================================== */
 :root {
     --bg-main: #0a0a0a;          /* Nền đen chủ đạo */
@@ -77,26 +80,20 @@ ul {
     text-transform: uppercase;
 }
 
-.logo-icon {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 3px;
+.header-logo i {
+    color: var(--accent-lime);
+    font-size: 1.15rem;
 }
-
-.logo-bar {
-    display: block;
-    height: 2px;
-    background-color: var(--text-primary);
-}
-.logo-bar:nth-child(1) { width: 18px; }
-.logo-bar:nth-child(2) { width: 14px; }
-.logo-bar:nth-child(3) { width: 10px; }
 
 /* Menu điều hướng ở giữa */
 .header-nav ul {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 28px;
+}
+
+.nav-item {
+    position: relative;
 }
 
 .header-nav a {
@@ -106,6 +103,9 @@ ul {
     transition: color 0.2s ease;
     padding-bottom: 6px;
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .header-nav a:hover,
@@ -114,7 +114,7 @@ ul {
 }
 
 /* Gạch chân trắng dưới mục đang active */
-.header-nav a.active::after {
+.header-nav > ul > li > a.active::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -124,11 +124,75 @@ ul {
     background-color: var(--text-primary);
 }
 
+/* Icon mũi tên xổ xuống từ thư viện ngoài */
+.nav-arrow {
+    font-size: 0.72rem;
+    margin-left: 2px;
+    transition: transform 0.25s ease;
+}
+
+.nav-item:hover .nav-arrow {
+    transform: rotate(180deg);
+}
+
+/* Menu con xổ xuống (Dropdown Menu) khi di chuột */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background-color: #141414;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 0;
+    margin-top: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    z-index: 1001;
+}
+
+/* Cầu đệm chuột (để không bị mất hover khi rê chuột từ menu xuống dropdown) */
+.nav-item::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 12px;
+}
+
+.nav-item:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li {
+    width: 100%;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 18px;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-menu a:hover {
+    background-color: #1f1f1f;
+    color: var(--accent-lime);
+}
+
 /* Khối icon chức năng bên phải (Search, User, Cart) */
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
 }
 
 .action-btn {
@@ -137,12 +201,14 @@ ul {
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: 4px;
-    transition: opacity 0.2s ease;
+    padding: 6px;
+    font-size: 1.15rem; /* Kích thước chuẩn cho icon ngoài (Font Awesome / img) */
+    transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .action-btn:hover {
-    opacity: 0.75;
+    color: var(--accent-lime);
+    opacity: 0.9;
 }
 
 /* Huy hiệu giỏ hàng dạ quang */
@@ -261,4 +327,67 @@ ul {
     align-items: center;
     color: var(--text-muted);
     font-size: 0.82rem;
+}
+
+/* Điểm nhấn chữ nổi bật trong Footer */
+.footer-highlight {
+    color: var(--accent-lime);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. BẢNG DỮ LIỆU DÙNG CHUNG (CHO CÁC TRANG JSP)
+   ========================================================================== */
+.home-main-container {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 24px;
+    min-height: 50vh;
+}
+
+.home-section-title {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+    background-color: #1a1a1a;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.data-table td {
+    font-size: 0.9rem;
+}
+
+.data-table .cell-highlight {
+    font-weight: 600;
+    color: var(--accent-lime);
+}
+
+.data-table .cell-muted {
+    color: var(--text-muted);
+}
+
+.data-table .empty-cell {
+    padding: 32px;
+    text-align: center;
+    color: var(--text-muted);
 }

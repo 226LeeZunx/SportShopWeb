@@ -14,49 +14,69 @@
         <!-- 1. Logo thương hiệu bên trái -->
         <div class="header-logo">
             <a href="${pageContext.request.contextPath}/HomeServlet">
-                <span class="logo-icon">
-                    <span class="logo-bar"></span>
-                    <span class="logo-bar"></span>
-                    <span class="logo-bar"></span>
-                </span>
+                <i class="fa-solid fa-bolt"></i>
                 <span>SPORTSHOP</span>
             </a>
         </div>
 
-        <!-- 2. Menu điều hướng (Tự động gạch chân active theo tham số URL) -->
+        <!-- 2. Menu điều hướng chính: Home, Categories, Brands, Hot Products, Sale -->
         <nav class="header-nav">
             <ul>
-                <li>
+                <li class="nav-item">
                     <a href="${pageContext.request.contextPath}/HomeServlet" 
-                       class="${empty param.cat ? 'active' : ''}">Home</a>
+                       class="${empty param.cat && empty param.brand && empty param.tag ? 'active' : ''}">Home</a>
                 </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=jerseys" 
-                       class="${param.cat == 'jerseys' ? 'active' : ''}">Jerseys</a>
+
+                <!-- Danh mục sản phẩm (Rê chuột xổ ra các môn thể thao) -->
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/HomeServlet?view=categories" 
+                       class="${not empty param.cat ? 'active' : ''}">
+                        Categories <i class="fa-solid fa-chevron-down nav-arrow"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=running">Running & Training</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=football">Football</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=basketball">Basketball</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=gym">Gym & Fitness</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=tennis">Tennis & Badminton</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=accessories">Sports Accessories</a></li>
+                    </ul>
                 </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=boots" 
-                       class="${param.cat == 'boots' ? 'active' : ''}">Boots</a>
+
+                <!-- Thương hiệu (Rê chuột xổ ra các hãng nổi tiếng) -->
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/HomeServlet?view=brands" 
+                       class="${not empty param.brand ? 'active' : ''}">
+                        Brands <i class="fa-solid fa-chevron-down nav-arrow"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=nike">Nike</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=adidas">Adidas</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=puma">Puma</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=under-armour">Under Armour</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=mizuno">Mizuno</a></li>
+                    </ul>
                 </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=accessories" 
-                       class="${param.cat == 'accessories' ? 'active' : ''}">Accessories</a>
+
+                <!-- Sản phẩm Hot -->
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/HomeServlet?tag=hot" 
+                       class="${param.tag == 'hot' ? 'active' : ''}">Hot Products</a>
                 </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=sale" 
-                       class="${param.cat == 'sale' ? 'active' : ''}">Sale</a>
+
+                <!-- Khuyến mãi -->
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/HomeServlet?tag=sale" 
+                       class="${param.tag == 'sale' ? 'active' : ''}">Sale</a>
                 </li>
             </ul>
         </nav>
 
-        <!-- 3. Các nút tiện ích bên phải (Tìm kiếm, Tài khoản, Giỏ hàng) -->
+        <!-- 3. Các nút tiện ích bên phải (Dùng icon nhúng từ ngoài) -->
         <div class="header-actions">
             <!-- Nút Tìm kiếm -->
             <a href="${pageContext.request.contextPath}/HomeServlet?action=search" class="action-btn" title="Search products">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
+                <i class="fa-solid fa-magnifying-glass"></i>
             </a>
 
             <!-- Nút Tài khoản: Kiểm tra trạng thái đăng nhập từ Session -->
@@ -64,30 +84,20 @@
                 <c:when test="${not empty sessionScope.customer || not empty sessionScope.user}">
                     <!-- Đã đăng nhập: chuyển tới trang hồ sơ cá nhân -->
                     <a href="${pageContext.request.contextPath}/views/profile.jsp" class="action-btn" title="My Profile">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                        <i class="fa-regular fa-user"></i>
                     </a>
                 </c:when>
                 <c:otherwise>
                     <!-- Chưa đăng nhập: chuyển tới trang đăng nhập / đăng ký -->
                     <a href="${pageContext.request.contextPath}/views/login.jsp" class="action-btn" title="Sign In / Register">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                        <i class="fa-regular fa-user"></i>
                     </a>
                 </c:otherwise>
             </c:choose>
 
             <!-- Nút Giỏ hàng -->
             <a href="${pageContext.request.contextPath}/views/cart.jsp" class="action-btn" title="Shopping Cart">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-2z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
+                <i class="fa-solid fa-bag-shopping"></i>
                 <!-- Huy hiệu hiển thị số lượng sản phẩm thực tế trong giỏ -->
                 <span class="cart-badge">${not empty sessionScope.cartCount ? sessionScope.cartCount : '0'}</span>
             </a>
