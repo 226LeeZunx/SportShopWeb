@@ -15,18 +15,18 @@
             <!-- Cột 1: Thông tin thương hiệu & Slogan -->
             <div class="footer-col">
                 <h4>SPORTSHOP</h4>
-                <p>Wear the game. Authentic football jerseys and premium sportswear from the world's biggest clubs and national teams.</p>
-                <p style="color: var(--accent-lime); font-weight: 600;">Authentic. Premium. Always.</p>
+                <p>Elevate your performance. Authentic athletic footwear, premium sportswear, and training gear from the world's leading sports brands.</p>
+                <p class="footer-highlight">Authentic. Premium. Performance.</p>
             </div>
 
             <!-- Cột 2: Danh mục sản phẩm nhanh -->
             <div class="footer-col">
                 <h4>Categories</h4>
                 <ul>
-                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=jerseys">Club Jerseys</a></li>
-                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=national">National Teams</a></li>
-                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=boots">Football Boots</a></li>
-                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=accessories">Training & Accessories</a></li>
+                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=running">Running & Training</a></li>
+                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=football">Football Gear</a></li>
+                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=basketball">Basketball</a></li>
+                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=gym">Gym & Fitness</a></li>
                     <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=sale">Special Offers</a></li>
                 </ul>
             </div>
