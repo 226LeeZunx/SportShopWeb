@@ -44,7 +44,6 @@ public class MembershipPointTransaction implements Serializable {
     public int getTransactionId() {
         return transactionId;
     }
-
     public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
     }
@@ -52,7 +51,6 @@ public class MembershipPointTransaction implements Serializable {
     public int getPoints() {
         return points;
     }
-
     public void setPoints(int points) {
         this.points = points;
     }
@@ -60,7 +58,6 @@ public class MembershipPointTransaction implements Serializable {
     public LocalDateTime getCreateAt() {
         return createAt;
     }
-
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
@@ -68,7 +65,6 @@ public class MembershipPointTransaction implements Serializable {
     public Payment getPayment() {
         return payment;
     }
-
     public void setPayment(Payment payment) {
         this.payment = payment;
     }
