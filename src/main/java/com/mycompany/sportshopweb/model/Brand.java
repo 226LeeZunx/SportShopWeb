@@ -12,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="Categories")
+@Table(name="Brands")
 public class Brand {
     @Id
     @Column(name="brandId")
