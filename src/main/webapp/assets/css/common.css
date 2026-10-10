@@ -1,42 +1,88 @@
+
 /*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : 9 Oct 2026, 11:43:58 AM
-    Author     : Anh Tuan
-*/
-/* Nhúng thư viện Font Awesome CDN để nhúng icon từ bên ngoài */
+ * SportShopWeb - Global Stylesheet
+ * Theme: Light Sport Luxury
+ * Header/Footer: Black
+ * Main content: Soft gray + White
+ */
+
+/* =========================================
+   1. FONT & COLOR VARIABLES
+   ========================================= */
+
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
-/* ==========================================================================
-   1. BẢNG MÀU & BIẾN DÙNG CHUNG (DARK THEME THỂ THAO ĐA NĂNG)
-   ========================================================================== */
 :root {
-    --bg-main: #0a0a0a;          /* Nền đen chủ đạo */
-    --bg-card: #141414;          /* Nền khối nội dung, card sản phẩm */
-    --bg-header: #0a0a0a;        /* Nền header */
-    --text-primary: #ffffff;     /* Chữ trắng chính */
-    --text-muted: #8e8e93;       /* Chữ xám phụ */
-    --accent-lime: #ccff00;      /* Xanh dạ quang / vàng chanh thể thao */
-    --border-color: #262626;     /* Đường viền mờ */
-    --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Main content */
+    --bg-main: #f4f6f8;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fafc;
+
+    /* Header & footer */
+    --bg-header: #0a0a0a;
+    --bg-footer: #050505;
+    --bg-dropdown: #141414;
+
+    /* Text for dark areas */
+    --text-primary: #ffffff;
+    --text-muted: #a1a1aa;
+
+    /* Text for light areas */
+    --content-text: #20252b;
+    --content-muted: #687385;
+
+    /* Sport accent */
+    --accent-lime: #ccff00;
+    --accent-lime-dark: #536b00;
+
+    /* Borders & shadows */
+    --border-color: #e3e7ed;
+    --border-dark: #292929;
+    --shadow-sm: 0 3px 12px rgba(16, 24, 40, 0.04);
+    --shadow-md: 0 8px 28px rgba(16, 24, 40, 0.08);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.16);
+
+    /* Layout */
+    --container-width: 1300px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+
+    --font-main: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, Arial, sans-serif;
+
+    --transition: 0.25s ease;
 }
 
-/* ==========================================================================
-   2. RESET CSS CƠ BẢN
-   ========================================================================== */
+
+/* =========================================
+   2. RESET & BASE
+   ========================================= */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
+    min-height: 100vh;
     background-color: var(--bg-main);
-    color: var(--text-primary);
+    color: var(--content-text);
     font-family: var(--font-main);
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
 a {
@@ -48,44 +94,80 @@ ul {
     list-style: none;
 }
 
-/* ==========================================================================
-   3. GIAO DIỆN HEADER (THEO MẪU ẢNH FOOTVAULT)
-   ========================================================================== */
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+::selection {
+    background-color: var(--accent-lime);
+    color: #111111;
+}
+
+
+/* =========================================
+   3. HEADER - BLACK SPORT STYLE
+   ========================================= */
+
 .site-header {
-    background-color: var(--bg-header);
-    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 1000;
+    background-color: var(--bg-header);
+    border-bottom: 1px solid var(--border-dark);
 }
 
 .header-container {
-    max-width: 1300px;
+    width: 100%;
+    max-width: var(--container-width);
     margin: 0 auto;
     padding: 16px 24px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 24px;
 }
 
-/* Khối Logo bên trái */
+/* Logo */
+
 .header-logo a {
     display: flex;
     align-items: center;
     gap: 10px;
+
+    color: var(--text-primary);
     font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: 1.5px;
-    color: var(--text-primary);
     text-transform: uppercase;
+    white-space: nowrap;
+
+    transition: color var(--transition);
+}
+
+.header-logo a:hover {
+    color: var(--accent-lime);
 }
 
 .header-logo i {
     color: var(--accent-lime);
-    font-size: 1.15rem;
+    font-size: 1.2rem;
 }
 
-/* Menu điều hướng ở giữa */
+/* Navigation */
+
 .header-nav ul {
     display: flex;
     align-items: center;
@@ -97,15 +179,17 @@ ul {
 }
 
 .header-nav a {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    transition: color 0.2s ease;
-    padding-bottom: 6px;
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+
+    padding: 8px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    transition: color var(--transition);
 }
 
 .header-nav a:hover,
@@ -113,58 +197,74 @@ ul {
     color: var(--text-primary);
 }
 
-/* Gạch chân trắng dưới mục đang active */
+/* Active underline */
+
 .header-nav > ul > li > a.active::after {
-    content: '';
+    content: "";
     position: absolute;
-    bottom: 0;
     left: 0;
+    bottom: 2px;
+
     width: 100%;
     height: 2px;
-    background-color: var(--text-primary);
+
+    background-color: var(--accent-lime);
+    border-radius: 2px;
 }
 
-/* Icon mũi tên xổ xuống từ thư viện ngoài */
+/* Dropdown arrow */
+
 .nav-arrow {
-    font-size: 0.72rem;
     margin-left: 2px;
-    transition: transform 0.25s ease;
+    font-size: 0.72rem;
+    transition: transform var(--transition);
 }
 
 .nav-item:hover .nav-arrow {
     transform: rotate(180deg);
 }
 
-/* Menu con xổ xuống (Dropdown Menu) khi di chuột */
+/* Dropdown menu */
+
 .dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
-    min-width: 200px;
-    background-color: #141414;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 8px 0;
+    z-index: 1001;
+
+    min-width: 210px;
     margin-top: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    padding: 8px 0;
+
+    background-color: var(--bg-dropdown);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+
     opacity: 0;
     visibility: hidden;
-    transform: translateY(10px);
-    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-    z-index: 1001;
+    transform: translateY(8px);
+
+    transition:
+        opacity var(--transition),
+        transform var(--transition),
+        visibility var(--transition);
 }
 
-/* Cầu đệm chuột (để không bị mất hover khi rê chuột từ menu xuống dropdown) */
+/* Keep hover when moving the mouse to dropdown */
+
 .nav-item::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 100%;
     left: 0;
+
     width: 100%;
     height: 12px;
 }
 
-.nav-item:hover .dropdown-menu {
+.nav-item:hover .dropdown-menu,
+.nav-item:focus-within .dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -175,20 +275,26 @@ ul {
 }
 
 .dropdown-menu a {
-    display: block;
-    padding: 10px 18px;
+    display: flex;
+    width: 100%;
+    padding: 11px 18px;
+
     color: var(--text-muted);
     font-size: 0.88rem;
     font-weight: 500;
-    transition: background-color 0.2s, color 0.2s;
+
+    transition:
+        background-color var(--transition),
+        color var(--transition);
 }
 
 .dropdown-menu a:hover {
-    background-color: #1f1f1f;
+    background-color: #222222;
     color: var(--accent-lime);
 }
 
-/* Khối icon chức năng bên phải (Search, User, Cart) */
+/* Header actions */
+
 .header-actions {
     display: flex;
     align-items: center;
@@ -196,50 +302,66 @@ ul {
 }
 
 .action-btn {
-    color: var(--text-primary);
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+
     padding: 6px;
-    font-size: 1.15rem; /* Kích thước chuẩn cho icon ngoài (Font Awesome / img) */
-    transition: color 0.2s ease, opacity 0.2s ease;
+    color: var(--text-primary);
+    font-size: 1.15rem;
+
+    transition:
+        color var(--transition),
+        transform var(--transition);
 }
 
 .action-btn:hover {
     color: var(--accent-lime);
-    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
-/* Huy hiệu giỏ hàng dạ quang */
+/* Cart count */
+
 .cart-badge {
     position: absolute;
-    top: -4px;
-    right: -8px;
-    background-color: var(--accent-lime);
-    color: #000000;
-    font-size: 0.7rem;
-    font-weight: 700;
-    width: 17px;
-    height: 17px;
-    border-radius: 50%;
+    top: -3px;
+    right: -7px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: 18px;
+    height: 18px;
+    padding: 0 4px;
+
+    background-color: var(--accent-lime);
+    color: #000000;
+    border-radius: 50%;
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
 }
 
-/* ==========================================================================
-   4. GIAO DIỆN FOOTER (DARK LUXURY SPORTS)
-   ========================================================================== */
+
+/* =========================================
+   4. FOOTER - BLACK LUXURY SPORTS
+   ========================================= */
+
 .site-footer {
-    background-color: #050505;
-    border-top: 1px solid var(--border-color);
-    margin-top: 60px;
-    padding: 60px 0 30px;
+    margin-top: 64px;
+    padding: 60px 0 28px;
+
+    background-color: var(--bg-footer);
+    border-top: 1px solid var(--border-dark);
+    color: var(--text-primary);
 }
 
 .footer-container {
-    max-width: 1300px;
+    width: 100%;
+    max-width: var(--container-width);
     margin: 0 auto;
     padding: 0 24px;
 }
@@ -248,22 +370,24 @@ ul {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1.5fr;
     gap: 40px;
-    margin-bottom: 50px;
+    margin-bottom: 48px;
 }
 
 .footer-col h4 {
+    margin-bottom: 18px;
+
     color: var(--text-primary);
     font-size: 0.95rem;
-    font-weight: 700;
-    text-transform: uppercase;
+    font-weight: 750;
     letter-spacing: 1px;
-    margin-bottom: 18px;
+    text-transform: uppercase;
 }
 
 .footer-col p {
+    margin-bottom: 12px;
     color: var(--text-muted);
     font-size: 0.88rem;
-    margin-bottom: 12px;
+    line-height: 1.8;
 }
 
 .footer-col ul li {
@@ -273,121 +397,557 @@ ul {
 .footer-col ul a {
     color: var(--text-muted);
     font-size: 0.88rem;
-    transition: color 0.2s ease;
+
+    transition: color var(--transition);
 }
 
 .footer-col ul a:hover {
-    color: var(--text-primary);
+    color: var(--accent-lime);
 }
 
-/* Form nhận tin khuyến mãi */
+/* Newsletter form */
+
 .newsletter-form {
     display: flex;
+    align-items: stretch;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 12px;
 }
 
 .newsletter-input {
     flex: 1;
-    background-color: #1a1a1a;
-    border: 1px solid var(--border-color);
-    padding: 10px 14px;
-    color: var(--text-primary);
-    border-radius: 4px;
-    font-size: 0.85rem;
+    min-width: 0;
+    padding: 11px 14px;
+
+    background-color: #181818;
+    color: #ffffff;
+    border: 1px solid #353535;
+    border-radius: var(--radius-sm);
     outline: none;
+
+    font-size: 0.85rem;
+    transition: border-color var(--transition);
+}
+
+.newsletter-input::placeholder {
+    color: #858585;
 }
 
 .newsletter-input:focus {
-    border-color: var(--text-muted);
+    border-color: var(--accent-lime);
+    box-shadow: 0 0 0 3px rgba(204, 255, 0, 0.12);
 }
 
 .newsletter-btn {
+    padding: 11px 16px;
+
     background-color: var(--accent-lime);
-    color: #000000;
+    color: #111111;
     border: none;
-    padding: 10px 16px;
-    font-weight: 700;
+    border-radius: var(--radius-sm);
+
     font-size: 0.85rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
+    font-weight: 800;
+    white-space: nowrap;
+
+    transition:
+        background-color var(--transition),
+        transform var(--transition);
 }
 
 .newsletter-btn:hover {
-    opacity: 0.85;
+    background-color: #b8e600;
+    transform: translateY(-1px);
 }
 
-/* Dòng bản quyền dưới cùng */
+/* Footer bottom */
+
 .footer-bottom {
-    border-top: 1px solid var(--border-color);
-    padding-top: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
+
+    padding-top: 24px;
+    border-top: 1px solid var(--border-dark);
+
     color: var(--text-muted);
     font-size: 0.82rem;
 }
 
-/* Điểm nhấn chữ nổi bật trong Footer */
 .footer-highlight {
     color: var(--accent-lime);
-    font-weight: 600;
+    font-weight: 700;
 }
 
-/* ==========================================================================
-   5. BẢNG DỮ LIỆU DÙNG CHUNG (CHO CÁC TRANG JSP)
-   ========================================================================== */
+
+/* =========================================
+   5. MAIN CONTENT LAYOUT
+   ========================================= */
+
 .home-main-container {
-    max-width: 1300px;
+    width: 100%;
+    max-width: var(--container-width);
+    min-height: 50vh;
+
     margin: 40px auto;
     padding: 0 24px;
-    min-height: 50vh;
+}
+
+.page-container {
+    width: 100%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 40px 24px;
 }
 
 .home-section-title {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: var(--text-primary);
+    margin-bottom: 24px;
+
+    color: var(--content-text);
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.4px;
 }
+
+.page-heading {
+    margin-bottom: 28px;
+    color: var(--content-text);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.page-description {
+    margin-top: 8px;
+    color: var(--content-muted);
+    font-size: 0.95rem;
+}
+
+/* White content panel */
+
+.content-panel,
+.panel,
+.summary-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Generic card */
+
+.card {
+    overflow: hidden;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        box-shadow var(--transition),
+        transform var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   6. DATA TABLE
+   ========================================= */
 
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+
     background-color: var(--bg-card);
+    color: var(--content-text);
+
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--radius-md);
     overflow: hidden;
+
+    box-shadow: var(--shadow-sm);
 }
 
 .data-table th,
 .data-table td {
-    padding: 12px 16px;
+    padding: 15px 18px;
     text-align: left;
+    vertical-align: middle;
     border-bottom: 1px solid var(--border-color);
 }
 
 .data-table th {
-    background-color: #1a1a1a;
-    color: var(--text-primary);
-    font-size: 0.9rem;
+    background-color: #f0f3f6;
+    color: #303844;
+
+    font-size: 0.88rem;
+    font-weight: 750;
+    white-space: nowrap;
 }
 
 .data-table td {
-    font-size: 0.9rem;
+    background-color: #ffffff;
+    color: var(--content-text);
+    font-size: 0.92rem;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tbody tr:hover td {
+    background-color: #f8fafc;
 }
 
 .data-table .cell-highlight {
-    font-weight: 600;
-    color: var(--accent-lime);
+    color: var(--accent-lime-dark);
+    font-weight: 800;
 }
 
 .data-table .cell-muted {
-    color: var(--text-muted);
+    color: var(--content-muted);
 }
 
 .data-table .empty-cell {
-    padding: 32px;
+    padding: 36px;
     text-align: center;
-    color: var(--text-muted);
+    color: var(--content-muted);
+}
+
+
+/* =========================================
+   7. FORM ELEMENTS - LIGHT CONTENT
+   ========================================= */
+
+/* Apply light styles to regular form controls.
+   Newsletter has its own dark styles above. */
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+select,
+textarea {
+    max-width: 100%;
+    color: var(--content-text);
+    background-color: #ffffff;
+    border: 1px solid #d7dde5;
+    border-radius: var(--radius-sm);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #929baa;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #91b300;
+    box-shadow: 0 0 0 3px rgba(204, 255, 0, 0.18);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: #718d00;
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* =========================================
+   8. BUTTONS
+   ========================================= */
+
+.btn,
+.button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    padding: 11px 20px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+
+    font-size: 0.9rem;
+    font-weight: 750;
+    text-align: center;
+
+    transition:
+        background-color var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.btn-primary,
+.button-primary {
+    background-color: var(--accent-lime);
+    color: #111111;
+}
+
+.btn-primary:hover,
+.button-primary:hover {
+    background-color: #b8e600;
+    box-shadow: 0 4px 14px rgba(153, 190, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-secondary,
+.button-secondary {
+    background-color: #ffffff;
+    color: var(--content-text);
+    border-color: #d7dde5;
+}
+
+.btn-secondary:hover,
+.button-secondary:hover {
+    background-color: #f0f3f6;
+    border-color: #c4ccd6;
+}
+
+.btn-danger,
+.button-danger {
+    background-color: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3;
+}
+
+.btn-danger:hover,
+.button-danger:hover {
+    background-color: #ffe4e6;
+}
+
+
+/* =========================================
+   9. STATUS LABELS
+   ========================================= */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.status-success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-cancelled {
+    background-color: #ffe4e6;
+    color: #be123c;
+}
+
+
+/* =========================================
+   10. LINKS & ACCESSIBILITY
+   ========================================= */
+
+.main-content a:not(.btn):not(.button) {
+    transition: color var(--transition);
+}
+
+:focus-visible {
+    outline: 2px solid #91b300;
+    outline-offset: 3px;
+}
+
+
+/* =========================================
+   11. RESPONSIVE - TABLET
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .header-container {
+        gap: 18px;
+        padding: 15px 20px;
+    }
+
+    .header-nav ul {
+        gap: 18px;
+    }
+
+    .footer-top {
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 30px;
+    }
+
+    .footer-col:last-child {
+        grid-column: 1 / -1;
+        max-width: 500px;
+    }
+}
+
+
+/* =========================================
+   12. RESPONSIVE - MOBILE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-wrap: wrap;
+        padding: 14px 16px;
+        gap: 14px;
+    }
+
+    .header-logo a {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .header-nav {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .header-nav ul {
+        justify-content: flex-start;
+        gap: 22px;
+        min-width: max-content;
+        padding: 4px 0;
+    }
+
+    .header-nav a {
+        font-size: 0.85rem;
+    }
+
+    .header-actions {
+        gap: 14px;
+        margin-left: auto;
+    }
+
+    .home-main-container {
+        margin: 28px auto;
+        padding: 0 16px;
+    }
+
+    .page-container {
+        padding: 28px 16px;
+    }
+
+    .home-section-title {
+        font-size: 1.4rem;
+    }
+
+    .page-heading {
+        font-size: 1.65rem;
+    }
+
+    .footer-top {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px 22px;
+        margin-bottom: 36px;
+    }
+
+    .footer-col:last-child {
+        grid-column: auto;
+    }
+
+    .footer-container {
+        padding: 0 16px;
+    }
+
+    .site-footer {
+        margin-top: 44px;
+        padding: 42px 0 24px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px;
+    }
+}
+
+
+/* =========================================
+   13. RESPONSIVE - SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+    .header-container {
+        padding: 12px;
+    }
+
+    .header-logo a {
+        font-size: 0.88rem;
+    }
+
+    .header-actions {
+        gap: 10px;
+    }
+
+    .action-btn {
+        font-size: 1rem;
+    }
+
+    .home-main-container,
+    .page-container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .footer-top {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .footer-col:last-child {
+        grid-column: auto;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-btn {
+        width: 100%;
+    }
+
+    .data-table {
+        font-size: 0.85rem;
+    }
+}
+
+
+/* =========================================
+   14. REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

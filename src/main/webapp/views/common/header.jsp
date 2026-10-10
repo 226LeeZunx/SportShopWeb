@@ -94,7 +94,10 @@
                     </a>
                 </c:otherwise>
             </c:choose>
-
+            <!-- Nút Đơn hàng -->
+            <a href="${pageContext.request.contextPath}/views/orders.jsp" class="action-btn" title="Shopping Order">
+                <i class="fa-solid fa-box-open"></i>
+            </a>
             <!-- Nút Giỏ hàng -->
             <a href="${pageContext.request.contextPath}/views/cart.jsp" class="action-btn" title="Shopping Cart">
                 <i class="fa-solid fa-bag-shopping"></i>
