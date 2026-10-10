@@ -38,10 +38,10 @@
 #### File cần tạo:
 
 **Giao diện (View):**
-- [ ] `src/main/webapp/views/login.jsp`
-- [ ] `src/main/webapp/views/register.jsp`
-- [ ] `src/main/webapp/views/profile.jsp`
-- [ ] `src/main/webapp/assets/css/account.css`
+- [x] `src/main/webapp/views/login.jsp`
+- [x] `src/main/webapp/views/register.jsp`
+- [x] `src/main/webapp/views/profile.jsp`
+- [x] `src/main/webapp/assets/css/account.css`
 
 **Backend (Java):**
 - [ ] `src/main/java/.../dao/UserDAO.java`
@@ -325,18 +325,18 @@ PostgreSQL Database
 - [x] Tạo `common.css`, `header.jsp`, `footer.jsp`
 - [x] Menu Header đa năng có hiệu ứng rê chuột xổ xuống (Dropdown)
 - [x] Giao diện 100% tiếng Anh, chú thích code tiếng Việt
-- [ ] Tạo file `data_seed.sql` và nạp data mẫu vào Cloud NeonDB
-- [ ] **Tuấn:** Push layout chung, tạo PR gộp vào `develop`
-- [ ] **Dũng / Duy / Vũ:** `git pull origin develop` để lấy layout về
+- [x] Tạo file `data_seed.sql` và nạp data mẫu vào Cloud NeonDB
+- [x] **Tuấn:** Push layout chung, tạo PR gộp vào `develop`
+- [x] **Dũng / Duy / Vũ:** `git pull origin develop` để lấy layout về
 
 ---
 
 ### Giai đoạn 2 — Xây dựng UI & Servlet (Song song 4 người)
 
 #### Tuấn — feature/account
-- [ ] Dựng `login.jsp` (Dark theme, form đăng nhập)
-- [ ] Dựng `register.jsp` (Form đăng ký tài khoản)
-- [ ] Dựng `profile.jsp` (Hồ sơ cá nhân, địa chỉ giao hàng)
+- [x] Dựng `login.jsp` (Dark theme, form đăng nhập)
+- [x] Dựng `register.jsp` (Form đăng ký tài khoản)
+- [x] Dựng `profile.jsp` (Hồ sơ cá nhân, địa chỉ giao hàng)
 - [ ] Viết `UserDAO`, `CustomerDAO`, `AddressDAO`
 - [ ] Viết `UserService`, `CustomerService`
 - [ ] Viết `LoginServlet` — Xác thực và quản lý Session
