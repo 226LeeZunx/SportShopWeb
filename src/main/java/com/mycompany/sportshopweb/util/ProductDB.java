@@ -4,8 +4,11 @@
  */
 package com.mycompany.sportshopweb.util;
 
+import com.mycompany.sportshopweb.model.Brand;
+import com.mycompany.sportshopweb.model.Category;
 import com.mycompany.sportshopweb.model.Product;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -18,6 +21,20 @@ public class ProductDB {
             return query.getResultList();
         } finally {
             em.close();
+        }
+    }
+      public void insert(Product product , int brandId,int categoryId){
+        EntityManager em=DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try{
+            tx.begin();
+            product.setBrand(em.getReference(Brand.class,brandId));
+            product.setCategory(em.getReference(Category.class, categoryId));
+            em.persist(product);
+            tx.commit();
+        }catch (RuntimeException e){
+            if (tx.isActive()) tx.rollback();
+            throw e;
         }
     }
 }
