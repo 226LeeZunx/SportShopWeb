@@ -14,7 +14,6 @@ public class MembershipPointTransaction implements Serializable {
     @Column(name = "transaction_id")
     private int transactionId;
 
-    @Column(name = "points")
     private int points;
 
     @Column(name = "create_at")
