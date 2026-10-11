@@ -30,34 +30,8 @@ public class Cart implements Serializable {
     public Cart() {
     }
 
-    public Cart(Customer customer) {
-        this.customer = customer;
-        if (customer != null) {
-            this.customerId = customer.getCustomerId();
-        }
-    }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
     public List<CartItem> getCartItems() {
         return cartItems;
     }
 
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
 }
