@@ -1,5 +1,6 @@
 package com.mycompany.sportshopweb.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -7,7 +8,10 @@ import java.util.Objects;
 @Embeddable
 public class OrderItemId implements Serializable {
 
+    @Column(name = "order_id")
     private int orderId;
+
+    @Column(name = "variant_id")
     private int variantId;
 
     public OrderItemId() {

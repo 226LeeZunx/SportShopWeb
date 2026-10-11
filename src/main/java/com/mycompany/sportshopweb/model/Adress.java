@@ -24,10 +24,7 @@ public class Adress implements Serializable {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(name = "province")
     private String province;
-
-    @Column(name = "ward")
     private String ward;
 
     @Column(name = "detail_address")

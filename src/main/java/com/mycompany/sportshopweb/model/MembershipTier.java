@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "MembershipTiers")
 public class MembershipTier implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tier_id")
@@ -88,4 +88,3 @@ public class MembershipTier implements Serializable {
         this.pointMultiplier = pointMultiplier;
     }
 }
-
