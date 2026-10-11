@@ -1,31 +1,29 @@
 package com.mycompany.sportshopweb.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.Column;
+import com.mycompany.sportshopweb.model.Customer;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Orders")
-public class Order implements Serializable {
+@Table(name="Orders")
+public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int orderId;
     
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name="customerId")
     private Customer customer;
     
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy="order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public Order() {

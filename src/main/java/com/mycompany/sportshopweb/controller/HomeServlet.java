@@ -29,7 +29,7 @@ public class HomeServlet extends HttpServlet {
         
         request.setAttribute("productList", products);
         
-        request.getRequestDispatcher("/views/home.jsp").forward(request, response);
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
     @Override

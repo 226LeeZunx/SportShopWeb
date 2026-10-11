@@ -18,21 +18,18 @@ import java.io.Serializable;
 @Table(name="ProductVariants")
 public class ProductVariant implements Serializable{
     @Id
-    @Column(name = "variant_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="variantId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int variantId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    @JoinColumn(name = "productId", referencedColumnName = "productId")
     private Product product;
-    @Column(name = "variant_name")
     private String variantName;
-
     private String size;
     private String color;
     private long price;
-
-    @Column(name = "is_active")
+    @Column(name = "isActive")
     private boolean isActive = true;
 
     public ProductVariant() {

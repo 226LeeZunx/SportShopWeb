@@ -12,18 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Brands")
+@Table(name="Categories")
 public class Brand {
     @Id
-    @Column(name = "brand_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="brandId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int brandId;
-
     private String name;
-
-    @Column(name = "logo_url")
     private String logoUrl;
-
     private String description;
 
     public Brand() {
@@ -36,35 +32,15 @@ public class Brand {
         this.description = description;
     }
 
-    public int getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(int brandId) {
-        this.brandId = brandId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLogoUrl() {
-        return logoUrl;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public int getBrandId() { return brandId; }
+    public void setBrandId(int brandId) { this.brandId = brandId; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getLogoUrl() { return logoUrl; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }

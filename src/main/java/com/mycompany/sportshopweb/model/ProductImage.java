@@ -19,19 +19,19 @@ import java.time.LocalDateTime;
 @Table(name="ProductImages")
 public class ProductImage implements Serializable{
     @Id
-    @Column(name = "product_image_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="productImageId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int productImageId;
-    @Column(name = "image_url")
+    @Column(name="imageUrl")
     private String imageUrl;
-    @Column(name = "is_primary")
+    @Column(name="isPrimary")
     private boolean isPrimary;
-    @Column(name = "sort_order")
+    @Column(name="sortOrder")
     private int sortOrder;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id") 
+    @JoinColumn(name = "productId") 
     private Product product;
-    @Column(name = "created_at")
+    @Column(name="LocalDateTime")
     private LocalDateTime createdAt;
 
     public ProductImage() {

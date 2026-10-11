@@ -1,6 +1,5 @@
 package com.mycompany.sportshopweb.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -8,56 +7,28 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Cart")
-public class Cart implements Serializable {
+@Table(name="Cart")
+public class Cart {
     @Id
-    @Column(name = "customer_id")
     private int customerId;
     
     @OneToOne
     @MapsId
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name="customerId")
     private Customer customer;
     
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy="cart")
     private List<CartItem> cartItems = new ArrayList<>();
 
     public Cart() {
-    }
-
-    public Cart(Customer customer) {
-        this.customer = customer;
-        if (customer != null) {
-            this.customerId = customer.getCustomerId();
-        }
-    }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public List<CartItem> getCartItems() {
         return cartItems;
     }
 
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
 }

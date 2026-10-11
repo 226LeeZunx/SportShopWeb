@@ -19,22 +19,17 @@ import java.util.List;
 @Table(name="Review")
 public class Review implements Serializable{
     @Id
-    @Column(name = "review_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="reviewId")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int reviewId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId")
     private Customer customer; 
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "variant_id", referencedColumnName = "variant_id")
+    @JoinColumn(name = "variantId", referencedColumnName = "variantId")
     private ProductVariant productVariant;
-
     private int rating; 
-    private String comment; 
-
-    @jakarta.persistence.Transient
+    private String comment;
     private List<String> images; 
 
     public Review() {

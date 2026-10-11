@@ -21,16 +21,17 @@ public class User implements Serializable {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(unique = true)
+    @Column(name = "phone", unique = true)
     private String phone;
 
-    @Column(unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password_hash")
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private AccountStatus status;
 
     @Column(name = "created_at")
