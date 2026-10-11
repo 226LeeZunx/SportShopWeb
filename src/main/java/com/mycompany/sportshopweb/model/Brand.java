@@ -19,7 +19,7 @@ public class Brand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int brandId;
 
-    private String name1;
+    private String name;
 
     @Column(name = "logo_url")
     private String logoUrl;
