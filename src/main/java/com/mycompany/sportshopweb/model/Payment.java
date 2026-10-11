@@ -23,7 +23,6 @@ public class Payment implements Serializable {
     @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
 
-    @Column(name = "amount")
     private long amount;
 
     @Column(name = "transaction_code")
