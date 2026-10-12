@@ -47,7 +47,7 @@
                 </p>
 
                 <a class="btn btn-primary"
-                   href="${pageContext.request.contextPath}/products">
+                   href="${pageContext.request.contextPath}/views/home.jsp">
                    <i class="fa-solid fa-bag-shopping"></i>
                     Explore Products
                 </a>
@@ -73,6 +73,11 @@
                         <table class="cart-table">
                             <thead>
                                 <tr>
+                                    <th>
+                                        <input type="checkbox"
+                                               id="selectAll"
+                                               aria-label="Select all products">
+                                    </th>
                                     <th class="product-column">Product</th>
                                     <th>Unit Price</th>
                                     <th>Quantity</th>
@@ -84,6 +89,13 @@
                             <tbody>
                                 <c:forEach var="item" items="${cartItems}">
                                     <tr>
+                                        <td>
+                                            <input type="checkbox"
+                                                   class="item-checkbox"
+                                                   name="selectedVariantIds"
+                                                   value="${item.productVariant.variantId}"
+                                                   aria-label="Select product">
+                                        </td>
                                         <td>
                                             <div class="product-info">
                                                 <div class="product-image">
@@ -105,13 +117,13 @@
                                             </div>
                                         </td>
 
-                                        <td class="price-cell">
+                                        <td class="price-cell"
+                                            data-price="${item.productVariant.product.price}">
                                             <fmt:formatNumber
                                                 value="${item.productVariant.product.price}"
                                                 type="number"
                                                 groupingUsed="true"
-                                                maxFractionDigits="0"/>
-                                            ₫
+                                                maxFractionDigits="0"/> ₫
                                         </td>
 
                                         <td>
@@ -149,11 +161,14 @@
                                         </td>
 
                                         <td class="subtotal-cell">
-                                            <fmt:formatNumber
-                                                value="${item.productVariant.product.price * item.quantity}"
-                                                type="number"
-                                                groupingUsed="true"
-                                                maxFractionDigits="0"/>
+                                            <span class="item-subtotal"
+                                                  data-price="${item.productVariant.product.price}">
+                                                <fmt:formatNumber
+                                                    value="${item.productVariant.product.price * item.quantity}"
+                                                    type="number"
+                                                    groupingUsed="true"
+                                                    maxFractionDigits="0"/>
+                                            </span>
                                             ₫
                                         </td>
 
@@ -162,7 +177,7 @@
                                                   method="post">
                                                 <input type="hidden"
                                                        name="action"
-                                                       value="remove"/>
+                                                       value="delete"/>
 
                                                 <input type="hidden"
                                                        name="variantId"
@@ -227,11 +242,16 @@
                             </strong>
                         </div>
 
-                        <a class="btn btn-primary checkout-btn"
-                           href="${pageContext.request.contextPath}/checkout">
-                            Proceed to Checkout
-                            <span aria-hidden="true">&rarr;</span>
-                        </a>
+                        
+                        <form action="${pageContext.request.contextPath}/checkout"
+                              method="post"
+                              id="checkoutForm">
+
+                            <button type="submit" class="btn btn-primary checkout-btn">
+                                Proceed to Checkout
+                            </button>
+                        </form>
+
 
                         <p class="secure-note">
                             <span aria-hidden="true">&#128274;</span>

@@ -4,8 +4,10 @@
  */
 package com.mycompany.sportshopweb.controller;
 
+import com.mycompany.sportshopweb.dao.CartDAO;
 import com.mycompany.sportshopweb.dao.CustomerDAO;
 import com.mycompany.sportshopweb.dao.UserDAO;
+import com.mycompany.sportshopweb.model.Cart;
 import com.mycompany.sportshopweb.model.Customer;
 import com.mycompany.sportshopweb.model.MembershipTier;
 import com.mycompany.sportshopweb.model.User;
@@ -125,6 +127,11 @@ public class RegisterServlet extends HttpServlet {
         customer.setGender(gender != null ? gender : "Other");
 
         customerDAO.insert(customer);
+        Cart cart = new Cart();
+        cart.setCustomer(customer);
+
+        CartDAO cartDAO = new CartDAO();
+        cartDAO.insert(cart);
 
         // 9. Đăng ký thành công -> Chuyển về trang đăng nhập với thông báo thành công
         request.setAttribute("message", "Registration successful! Please sign in with your credentials.");

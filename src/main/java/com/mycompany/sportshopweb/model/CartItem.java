@@ -32,7 +32,8 @@ public class CartItem implements Serializable {
         this.quantity = 1;
     }
 
-    public CartItem(ProductVariant productVariant, int quantity) {
+    public CartItem(CartItemId id, ProductVariant productVariant, int quantity) {
+        this.id = id;
         this.productVariant = productVariant;
         this.quantity = quantity;
     }
