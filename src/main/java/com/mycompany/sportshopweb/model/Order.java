@@ -39,7 +39,7 @@ public class Order implements Serializable {
     private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucherId")
+    @JoinColumn(name = "voucher_id")
     private Voucher voucher;
 
     @Column(name = "discount", nullable = false)
