@@ -184,7 +184,7 @@
                         <!-- Chuyển hướng sang trang đăng ký -->
                         <div class="auth-footer">
                             Don't have an account? 
-                            <a href="${pageContext.request.contextPath}/views/register.jsp" class="form-link">Sign up</a>
+                            <a href="${pageContext.request.contextPath}/RegisterServlet" class="form-link">Sign up</a>
                         </div>
 
                     </form>
