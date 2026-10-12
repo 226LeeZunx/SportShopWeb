@@ -1,9 +1,229 @@
+/* =========================================
+   1. HERO BANNER SECTION (ARSENAL STORE STYLE)
+   ========================================= */
+
+.hero-banner-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: #0b0f19;
+}
+
+/* Ẩn các nút radio ẩn điều khiển slide */
+.hero-radio {
+    display: none;
+}
+
+/* Dải trượt chứa 2 ảnh Banner (Chiều rộng 200%) */
+.hero-slider-track {
+    display: flex;
+    width: 200%;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Mỗi Slide chiếm đúng 50% dải trượt (tương đương 100% màn hình) */
+.hero-slide {
+    position: relative;
+    width: 50%;
+    max-height: 640px;
+    height: 56vw;
+    min-height: 420px;
+    overflow: hidden;
+    background-color: #0a0a0a;
+}
+
+/* Ảnh Banner: Căn chỉnh center top để KHÔNG BAO GIỜ BỊ CẮT PHẦN ĐẦU CỦA NGƯỜI */
+.hero-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top; /* Đảm bảo thấy trọn vẹn đầu và thân trên */
+    display: block;
+}
+
+/* Lớp phủ chuyển màu gradient tối dần ở góc dưới bên trái để chữ nổi bật */
+.hero-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.25) 40%,
+        transparent 70%
+    ),
+    linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.8) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+}
+
+/* Khối nội dung Tiêu đề & Nút bấm */
+.hero-banner-content {
+    position: absolute;
+    left: 6%;
+    bottom: 12%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.hero-banner-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+    line-height: 1;
+}
+
+.hero-banner-btn {
+    display: inline-block;
+    padding: 12px 36px;
+    background-color: #991b1b; /* Màu đỏ đô sang trọng như Arsenal */
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 9999px; /* Nút bo tròn oval */
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(153, 27, 27, 0.5);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.hero-banner-btn:hover {
+    background-color: #b91c1c;
+    transform: translateY(-2px);
+}
+
+/* Nút mũi tên chuyển ảnh (Dùng thẻ label thuần HTML/CSS) */
+.hero-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.hero-nav-arrow:hover {
+    background-color: #ffffff;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.hero-nav-prev {
+    left: 20px;
+}
+
+.hero-nav-next {
+    right: 20px;
+}
+
+/* LOGIC CHUYỂN SLIDE THUẦN CSS BẰNG RADIO CHECKED */
+#slide-1:checked ~ .hero-slider-track {
+    transform: translateX(0%);
+}
+
+#slide-2:checked ~ .hero-slider-track {
+    transform: translateX(-50%);
+}
+
+/* Hai chấm chỉ báo ở góc phải */
+.hero-indicators {
+    position: absolute;
+    right: 32px;
+    bottom: 24px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.45);
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#slide-1:checked ~ .hero-indicators .dot-1,
+#slide-2:checked ~ .hero-indicators .dot-2 {
+    background-color: #ffffff;
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* 2. THANH CAM KẾT / ƯU ĐÃI DƯỚI BANNER (Trust Badge Bar) */
+.hero-trust-bar {
+    background-color: #e5e7eb;
+    border-bottom: 1px solid #d1d5db;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 36px;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1f2937;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.trust-item i {
+    font-size: 1rem;
+    color: #111827;
+}
+
+/* =========================================
+   3. DANH SÁCH SẢN PHẨM TRANG CHỦ
+   ========================================= */
+
+.home-main-container {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.home-section-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #111827;
+    letter-spacing: -0.5px;
+}
+
 .product-grid {
-    list-style: none;          /* bỏ dấu chấm đầu dòng */
+    list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);   /* 5 sản phẩm mỗi hàng */
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
 }
 @media (max-width: 1200px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
