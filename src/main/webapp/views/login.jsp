@@ -146,9 +146,6 @@
                                        class="form-input has-icon" 
                                        placeholder="Enter your password" 
                                        required>
-                                <button type="button" class="toggle-password" id="togglePasswordBtn" title="Toggle password visibility">
-                                    <i class="fa-regular fa-eye" id="eyeIcon"></i>
-                                </button>
                             </div>
                         </div>
 
@@ -199,20 +196,6 @@
 
         <!-- 3. Nhúng Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
-
-        <!-- Script xử lý ẩn/hiện mật khẩu -->
-        <script>
-            var toggleBtn = document.getElementById('togglePasswordBtn');
-            var passwordInput = document.getElementById('password');
-            var eyeIcon = document.getElementById('eyeIcon');
-            if (toggleBtn && passwordInput && eyeIcon) {
-                toggleBtn.addEventListener('click', function () {
-                    var isPassword = passwordInput.getAttribute('type') === 'password';
-                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-                    eyeIcon.className = isPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
-                });
-            }
-        </script>
 
     </body>
 </html>
