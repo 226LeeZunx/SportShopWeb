@@ -32,8 +32,20 @@ public class ProductVariant implements Serializable{
     private String color;
     private long price;
 
-    @Column(name = "is_active")
-    private boolean isActive = true;
+    @Column(name = "quantity")
+    private int quantity;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
     public ProductVariant() {
     }
@@ -65,6 +77,4 @@ public class ProductVariant implements Serializable{
     public long getPrice() { return price; }
     public void setPrice(long price) { this.price = price; }
     
-    public boolean isActive() { return isActive; }
-    public void setisActive(boolean status) { this.isActive = status; }
-}
+  }
