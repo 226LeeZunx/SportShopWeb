@@ -9,7 +9,7 @@ public class Voucher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "voucherId")
+    @Column(name = "voucher_id")
     private int voucherId;
 
     @Column(name = "code", nullable = false, unique = true)
