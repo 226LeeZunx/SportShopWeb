@@ -68,7 +68,12 @@ public class CartItemDAO {
         trans.commit();
         }
         catch (Exception e){
+            if (trans.isActive()) {
             trans.rollback();
+        }
+
+        // Không nuốt lỗi nữa: báo lỗi cho Servlet.
+        throw e;
         }
         finally{
             em.close();

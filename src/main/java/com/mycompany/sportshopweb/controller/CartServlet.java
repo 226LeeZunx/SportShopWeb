@@ -7,6 +7,7 @@ package com.mycompany.sportshopweb.controller;
 import com.mycompany.sportshopweb.dao.CartDAO;
 import com.mycompany.sportshopweb.dao.CartItemDAO;
 import com.mycompany.sportshopweb.model.Cart;
+import com.mycompany.sportshopweb.model.Customer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,15 +29,17 @@ protected void doPost(HttpServletRequest request,
     try {
         String action = request.getParameter("action");
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("customerId") == null) {
-            response.sendRedirect( request.getContextPath() + "/login"
-            );
-            return;
-        }
+    if (session == null || session.getAttribute("customer") == null) {
+        response.sendRedirect(
+            request.getContextPath() + "/LoginServlet"
+        );
+        return;
+    }
 
-        int customerId = (Integer) session.getAttribute("customerId");
+    Customer customer = (Customer) session.getAttribute("customer");
+    int customerId = customer.getCustomerId();
 
         int variantId = Integer.parseInt(request.getParameter("variantId"));
 
@@ -91,9 +94,7 @@ protected void doPost(HttpServletRequest request,
             );
         }
 
-        response.sendRedirect(
-                request.getContextPath() + "/cart"
-        );
+        response.sendRedirect(request.getContextPath() + "/cart");
 
     } catch (NumberFormatException e) {
         response.sendError(
@@ -106,8 +107,7 @@ protected void doPost(HttpServletRequest request,
                 "cartError", e.getMessage()
         );
 
-        response.sendRedirect(
-                request.getContextPath() + "/cart"
+        response.sendRedirect(request.getContextPath() + "/cart"
         );
 
     } catch (Exception e) {
@@ -124,13 +124,17 @@ protected void doGet(HttpServletRequest request,
 
     HttpSession session = request.getSession(false);
 
-    if (session == null || session.getAttribute("customerId") == null) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
+    if (session == null || session.getAttribute("customer") == null) {
+           response.sendRedirect(
+               request.getContextPath() + "/LoginServlet"
+           );
+           return;
+       }
+
 
     try {
-        int customerId = (Integer) session.getAttribute("customerId");
+        Customer customer = (Customer) session.getAttribute("customer");
+        int customerId = customer.getCustomerId();
 
         Cart cart = cartDAO.findByCustomerId(customerId);
 
@@ -149,7 +153,7 @@ protected void doGet(HttpServletRequest request,
 
         request.setAttribute("total", total);
 
-        request.getRequestDispatcher("/cart.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/cart.jsp").forward(request, response);
 
     } catch (Exception e) {
         throw new ServletException("Lỗi khi tải giỏ hàng.", e);

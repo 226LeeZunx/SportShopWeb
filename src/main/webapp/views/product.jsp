@@ -73,7 +73,7 @@
 
                 <c:otherwise>
                     <form action="${pageContext.request.contextPath}/cart" method="post">
-
+                    <input type="hidden" name="action" value="add">
                         <fieldset class="pd-field">
                             <legend>Chọn size / màu</legend>
                             <ul class="pd-options">

@@ -82,14 +82,14 @@
             <!-- Nút Tài khoản: Kiểm tra trạng thái đăng nhập từ Session -->
             <c:choose>
                 <c:when test="${not empty sessionScope.customer || not empty sessionScope.user}">
-                    <!-- Đã đăng nhập: chuyển tới trang hồ sơ cá nhân -->
-                    <a href="${pageContext.request.contextPath}/views/profile.jsp" class="action-btn" title="My Profile">
+                    <!-- Đã đăng nhập: chuyển tới trang hồ sơ cá nhân qua ProfileServlet -->
+                    <a href="${pageContext.request.contextPath}/ProfileServlet" class="action-btn" title="My Profile">
                         <i class="fa-regular fa-user"></i>
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <!-- Chưa đăng nhập: chuyển tới trang đăng nhập / đăng ký -->
-                    <a href="${pageContext.request.contextPath}/views/login.jsp" class="action-btn" title="Sign In / Register">
+                    <!-- Chưa đăng nhập: chuyển tới trang đăng nhập qua LoginServlet -->
+                    <a href="${pageContext.request.contextPath}/LoginServlet" class="action-btn" title="Sign In / Register">
                         <i class="fa-regular fa-user"></i>
                     </a>
                 </c:otherwise>

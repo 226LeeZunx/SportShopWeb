@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
 @Table(name = "Cart")
 public class Cart implements Serializable {
@@ -52,5 +53,4 @@ public class Cart implements Serializable {
     public List<CartItem> getCartItems() {
         return cartItems;
     }
-
 }
