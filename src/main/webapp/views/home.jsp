@@ -23,20 +23,22 @@
         <ul class="product-grid">
             <c:forEach var="product" items="${productList}">
                 <li>
-                    <c:choose>
-                        <c:when test="${empty product.images}">
-                            <img src="${pageContext.request.contextPath}/assets/images/no-image.png"
-                                 alt="Chưa có ảnh">
-                        </c:when>
-                        <c:otherwise>
-                            <c:forEach var="img" items="${product.images}">
-                                <c:if test="${img.primary}">
-                                    <img src="${img.imageUrl}" alt="${product.productName}">
-                                </c:if>
-                            </c:forEach>
-                        </c:otherwise>
-                    </c:choose>
-                    <h3>${product.productName}</h3>
+                    <a href="${pageContext.request.contextPath}/ProductDetailServlet?id=${product.productId}">
+                        <c:choose>
+                            <c:when test="${empty product.images}">
+                                <img src="${pageContext.request.contextPath}/assets/images/no-image.png"
+                                     alt="Chưa có ảnh">
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach var="img" items="${product.images}">
+                                    <c:if test="${img.primary}">
+                                        <img src="${img.imageUrl}" alt="${product.productName}">
+                                    </c:if>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                        <h3>${product.productName}</h3>
+                    </a>
                 </li>
             </c:forEach>
         </ul>
