@@ -255,7 +255,7 @@
                         <!-- Chuyển hướng sang trang đăng nhập -->
                         <div class="auth-footer">
                             Already have an account? 
-                            <a href="${pageContext.request.contextPath}/views/login.jsp" class="form-link">Sign In</a>
+                            <a href="${pageContext.request.contextPath}/LoginServlet" class="form-link">Sign In</a>
                         </div>
 
                     </form>
