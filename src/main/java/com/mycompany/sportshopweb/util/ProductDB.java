@@ -10,20 +10,41 @@ import com.mycompany.sportshopweb.model.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDB {
-    
-    public static List<Product> getAllProducts() {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        try {
-            TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p", Product.class);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
+    public static final int PAGE_SIZE = 20;
+    public static long countProducts() {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        return em.createQuery("SELECT COUNT(p) FROM Product p", Long.class)
+                 .getSingleResult();
+    } finally {
+        em.close();
     }
-      public void insert(Product product , int brandId,int categoryId){
+}
+    public static List<Product> getProductsByPage(int page, int pageSize) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        List<Integer> ids = em.createQuery(
+                "SELECT p.productId FROM Product p ORDER BY p.productId DESC", Integer.class)
+                .setFirstResult((page - 1) * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+
+        if (ids.isEmpty()) return new ArrayList<>();
+
+        return em.createQuery(
+                "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images " +
+                "WHERE p.productId IN :ids ORDER BY p.productId DESC", Product.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    } finally {
+        em.close();
+      }
+    }
+    public void insert(Product product , int brandId,int categoryId){
         EntityManager em=DBUtil.getEmFactory().createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try{
@@ -37,4 +58,14 @@ public class ProductDB {
             throw e;
         }
     }
+    public List<Product> getAllProducts() {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        return em.createQuery(
+            "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images",
+            Product.class).getResultList();
+    } finally {
+        em.close();
+    }
+}
 }
