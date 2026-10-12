@@ -9,41 +9,6 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <title>Dashboard | SportShop Admin</title>
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
-                <style>
-                    .page-heading-row,
-                    .panel-heading {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        gap: 14px;
-                        flex-wrap: wrap
-                    }
-
-                    .page-heading-row {
-                        margin-bottom: 24px
-                    }
-
-                    .page-heading-row h2,
-                    .panel-heading h2 {
-                        margin: 0
-                    }
-
-                    .admin-panel-link {
-                        color: #ccff00 !important;
-                        font-size: .85rem
-                    }
-
-                    .empty-message {
-                        padding: 24px;
-                        text-align: center;
-                        color: #929292
-                    }
-
-                    .metric-unavailable {
-                        font-size: 1.5rem;
-                        color: #929292
-                    }
-                </style>
             </head>
 
             <body class="admin-body">

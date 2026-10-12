@@ -589,4 +589,518 @@ body.admin-body {
     .admin-table td {
         padding: 13px 16px;
     }
+
+}
+
+.page-heading-row,
+.panel-heading,
+.toolbar,
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap
+}
+
+.page-heading-row {
+    margin-bottom: 24px
+}
+
+.page-heading-row h2,
+.panel-heading h2 {
+    margin: 0
+}
+
+.muted {
+    color: #929292
+}
+
+.admin-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    border: 1px solid #292929;
+    background: #1b1b1b;
+    color: #f5f5f5 !important;
+    cursor: pointer;
+    font: inherit;
+    font-size: .85rem
+}
+
+.admin-button.primary {
+    background: #ccff00;
+    border-color: #ccff00;
+    color: #080808 !important;
+    font-weight: 700
+}
+
+.toolbar {
+    justify-content: flex-start;
+    margin-bottom: 18px
+}
+
+.toolbar input,
+.toolbar select,
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+    padding: 10px 12px;
+    background: #101010;
+    color: #f5f5f5;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    min-height: 40px
+}
+
+.toolbar input {
+    min-width: 230px
+}
+
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.product-thumbnail {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #1b1b1b
+}
+
+.product-name {
+    font-weight: 700
+}
+
+.empty-message {
+    padding: 28px;
+    text-align: center;
+    color: #929292
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap
+}
+
+@media(max-width:600px) {
+    .toolbar input {
+        width: 100%;
+        min-width: 0
+    }
+
+    .page-heading-row {
+        align-items: flex-start
+    }
+}
+
+.page-heading-row,
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap
+}
+
+.page-heading-row {
+    margin-bottom: 24px
+}
+
+.admin-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border: 1px solid #292929;
+    border-radius: 9px;
+    background: #1b1b1b;
+    color: #f5f5f5 !important;
+    cursor: pointer;
+    font: inherit;
+    font-size: .85rem
+}
+
+.admin-button.primary {
+    background: #ccff00;
+    color: #080808 !important;
+    border-color: #ccff00;
+    font-weight: 700
+}
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px
+}
+
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0
+}
+
+.admin-form-group.full {
+    grid-column: 1/-1
+}
+
+.admin-form-group label {
+    font-size: .88rem;
+    font-weight: 650
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    background: #101010;
+    color: #f5f5f5;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    font: inherit
+}
+
+.admin-form textarea {
+    min-height: 120px;
+    resize: vertical
+}
+
+.help-text {
+    color: #929292;
+    font-size: .8rem
+}
+
+.form-error {
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    background: #321b1b;
+    color: #ffb6b6
+}
+
+.form-actions {
+    justify-content: flex-end;
+    margin-top: 24px
+}
+
+@media(max-width:650px) {
+    .admin-form-grid {
+        grid-template-columns: 1fr
+    }
+
+    .admin-form-group.full {
+        grid-column: auto
+    }
+}
+
+.page-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px
+}
+
+.page-heading-row h2 {
+    margin: 0
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px
+}
+
+.toolbar input {
+    min-width: 230px;
+    padding: 10px 12px;
+    background: #101010;
+    color: #f5f5f5;
+    border: 1px solid #292929;
+    border-radius: 8px
+}
+
+.admin-button {
+    padding: 10px 14px;
+    border: 1px solid #292929;
+    border-radius: 9px;
+    background: #1b1b1b;
+    color: #f5f5f5 !important;
+    cursor: pointer
+}
+
+.admin-button.primary {
+    background: #ccff00;
+    border-color: #ccff00;
+    color: #080808 !important;
+    font-weight: 700
+}
+
+.empty-message {
+    padding: 24px;
+    text-align: center;
+    color: #929292
+}
+
+.page-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px
+}
+
+.admin-button {
+    display: inline-flex;
+    padding: 10px 14px;
+    border: 1px solid #292929;
+    border-radius: 9px;
+    background: #1b1b1b;
+    color: #f5f5f5 !important
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 20px
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #292929
+}
+
+.detail-label {
+    color: #929292
+}
+
+.detail-value {
+    text-align: right;
+    overflow-wrap: anywhere
+}
+
+.empty-message {
+    padding: 24px;
+    text-align: center;
+    color: #929292
+}
+
+@media(max-width:700px) {
+    .detail-grid {
+        grid-template-columns: 1fr
+    }
+
+    .detail-row {
+        flex-direction: column;
+        gap: 5px
+    }
+
+    .detail-value {
+        text-align: left
+    }
+}
+
+.page-heading-row,
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap
+}
+
+.page-heading-row {
+    margin-bottom: 24px
+}
+
+.page-heading-row h2,
+.panel-heading h2 {
+    margin: 0
+}
+
+.admin-panel-link {
+    color: #ccff00 !important;
+    font-size: .85rem
+}
+
+.empty-message {
+    padding: 24px;
+    text-align: center;
+    color: #929292
+}
+
+.metric-unavailable {
+    font-size: 1.5rem;
+    color: #929292
+}
+
+.page-heading-row,
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap
+}
+
+.page-heading-row {
+    margin-bottom: 24px
+}
+
+.page-heading-row h2,
+.panel-heading h2 {
+    margin: 0
+}
+
+.admin-panel-link {
+    color: #ccff00 !important;
+    font-size: .85rem
+}
+
+.empty-message {
+    padding: 24px;
+    text-align: center;
+    color: #929292
+}
+
+.metric-unavailable {
+    font-size: 1.5rem;
+    color: #929292
+}
+
+.page-heading-row,
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap
+}
+
+.page-heading-row {
+    margin-bottom: 24px
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px
+}
+
+.toolbar input {
+    min-width: 230px;
+    padding: 10px 12px;
+    background: #101010;
+    color: #f5f5f5;
+    border: 1px solid #292929;
+    border-radius: 8px
+}
+
+.admin-button {
+    display: inline-flex;
+    padding: 10px 14px;
+    border: 1px solid #292929;
+    border-radius: 9px;
+    background: #1b1b1b;
+    color: #f5f5f5 !important
+}
+
+.admin-button.primary {
+    background: #ccff00;
+    border-color: #ccff00;
+    color: #080808 !important;
+    font-weight: 700
+}
+
+.customer-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.customer-avatar {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #292929;
+    color: #ccff00;
+    font-weight: 800
+}
+
+.customer-name {
+    font-weight: 700
+}
+
+.customer-subtitle {
+    font-size: .8rem;
+    color: #929292
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #292929
+}
+
+.detail-label {
+    color: #929292
+}
+
+.detail-value {
+    text-align: right;
+    overflow-wrap: anywhere
+}
+
+.empty-message {
+    padding: 24px;
+    text-align: center;
+    color: #929292
+}
+
+@media(max-width:700px) {
+    .detail-grid {
+        grid-template-columns: 1fr
+    }
+
+    .detail-row {
+        flex-direction: column;
+        gap: 5px
+    }
+
+    .detail-value {
+        text-align: left
+    }
+
+    .toolbar input {
+        min-width: 0;
+        width: 100%
+    }
 }

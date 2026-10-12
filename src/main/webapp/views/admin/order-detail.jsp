@@ -9,70 +9,7 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <title>Order Details | SportShop Admin</title>
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
-                <style>
-                    .page-heading-row {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        gap: 14px;
-                        flex-wrap: wrap;
-                        margin-bottom: 24px
-                    }
 
-                    .admin-button {
-                        display: inline-flex;
-                        padding: 10px 14px;
-                        border: 1px solid #292929;
-                        border-radius: 9px;
-                        background: #1b1b1b;
-                        color: #f5f5f5 !important
-                    }
-
-                    .detail-grid {
-                        display: grid;
-                        grid-template-columns: repeat(2, minmax(0, 1fr));
-                        gap: 18px;
-                        margin-bottom: 20px
-                    }
-
-                    .detail-row {
-                        display: flex;
-                        justify-content: space-between;
-                        gap: 16px;
-                        padding: 12px 0;
-                        border-bottom: 1px solid #292929
-                    }
-
-                    .detail-label {
-                        color: #929292
-                    }
-
-                    .detail-value {
-                        text-align: right;
-                        overflow-wrap: anywhere
-                    }
-
-                    .empty-message {
-                        padding: 24px;
-                        text-align: center;
-                        color: #929292
-                    }
-
-                    @media(max-width:700px) {
-                        .detail-grid {
-                            grid-template-columns: 1fr
-                        }
-
-                        .detail-row {
-                            flex-direction: column;
-                            gap: 5px
-                        }
-
-                        .detail-value {
-                            text-align: left
-                        }
-                    }
-                </style>
             </head>
 
             <body class="admin-body">

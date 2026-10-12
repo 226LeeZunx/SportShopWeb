@@ -8,58 +8,6 @@
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>Orders | SportShop Admin</title>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
-            <style>
-                .page-heading-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 14px;
-                    flex-wrap: wrap;
-                    margin-bottom: 24px
-                }
-
-                .page-heading-row h2 {
-                    margin: 0
-                }
-
-                .toolbar {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 10px;
-                    margin-bottom: 18px
-                }
-
-                .toolbar input {
-                    min-width: 230px;
-                    padding: 10px 12px;
-                    background: #101010;
-                    color: #f5f5f5;
-                    border: 1px solid #292929;
-                    border-radius: 8px
-                }
-
-                .admin-button {
-                    padding: 10px 14px;
-                    border: 1px solid #292929;
-                    border-radius: 9px;
-                    background: #1b1b1b;
-                    color: #f5f5f5 !important;
-                    cursor: pointer
-                }
-
-                .admin-button.primary {
-                    background: #ccff00;
-                    border-color: #ccff00;
-                    color: #080808 !important;
-                    font-weight: 700
-                }
-
-                .empty-message {
-                    padding: 24px;
-                    text-align: center;
-                    color: #929292
-                }
-            </style>
         </head>
 
         <body class="admin-body">
