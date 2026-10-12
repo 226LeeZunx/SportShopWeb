@@ -25,10 +25,9 @@ public class HomeServlet extends HttpServlet {
     public void init(){
         ProductDB productDAO=new ProductDB();
         getServletContext().setAttribute("ProductDAO", productDAO);
-        
     }
-@Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
     int page = 1;

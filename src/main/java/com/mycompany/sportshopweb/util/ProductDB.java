@@ -7,6 +7,7 @@ package com.mycompany.sportshopweb.util;
 import com.mycompany.sportshopweb.model.Brand;
 import com.mycompany.sportshopweb.model.Category;
 import com.mycompany.sportshopweb.model.Product;
+import com.mycompany.sportshopweb.model.ProductVariant;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
@@ -64,6 +65,49 @@ public class ProductDB {
         return em.createQuery(
             "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images",
             Product.class).getResultList();
+    } finally {
+        em.close();
+    }
+}
+    public static Product getProductById(int id){
+        EntityManager em=DBUtil.getEmFactory().createEntityManager();
+        try{
+            List<Product> list=em.createQuery(
+                "Select DISTINCT p From Product p "+
+                "Left Join Fetch p.images "+
+                "Left Join Fetch p.brand "+
+                "Left Join Fetch p.category "+
+                "Where p.productId = :id",Product.class
+            ).setParameter("id",id)
+            .getResultList();
+        return list.isEmpty() ? null : list.get(0);
+        }finally{
+            em.close();
+        }
+    }
+    public static List<ProductVariant> getVariantsByProductId(int productId) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        return em.createQuery(
+            "SELECT v FROM ProductVariant v " +
+            "WHERE v.product.productId = :id " +
+            "ORDER BY v.price, v.size", ProductVariant.class)
+            .setParameter("id", productId)
+            .getResultList();
+    } finally {
+        em.close();
+    }
+}
+
+    public static ProductVariant getVariantById(int variantId) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        List<ProductVariant> list = em.createQuery(
+            "SELECT v FROM ProductVariant v JOIN FETCH v.product " +
+            "WHERE v.variantId = :id", ProductVariant.class)
+            .setParameter("id", variantId)
+            .getResultList();
+        return list.isEmpty() ? null : list.get(0);
     } finally {
         em.close();
     }

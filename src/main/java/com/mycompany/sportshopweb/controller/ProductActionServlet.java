@@ -68,7 +68,6 @@ public class ProductActionServlet extends HttpServlet {
             product.setProductName(name.trim());
             List<ProductImage> images=new ArrayList<>();
             int order = 0;
-
             for(Part part:request.getParts()){
                 if (!"images".equals(part.getName()) || part.getSize() == 0) continue;
                 String  type =part.getContentType();
