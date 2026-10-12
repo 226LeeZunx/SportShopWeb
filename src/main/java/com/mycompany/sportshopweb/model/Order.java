@@ -24,7 +24,7 @@ public class Order implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderId")
+    @Column(name = "order_id")
     private int orderId;
 
     @ManyToOne
