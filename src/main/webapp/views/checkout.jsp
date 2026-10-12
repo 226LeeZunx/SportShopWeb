@@ -238,7 +238,7 @@
 
                                         <strong class="checkout-product-price">
                                             <fmt:formatNumber
-                                                value="${item.productVariant.product.price * item.quantity}"
+                                                value="$${item.productVariant.price * item.quantity}"
                                                 type="number"
                                                 groupingUsed="true"
                                                 maxFractionDigits="0"/> ₫

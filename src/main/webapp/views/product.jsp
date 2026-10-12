@@ -72,7 +72,7 @@
                 </c:when>
 
                 <c:otherwise>
-                    <form action="${pageContext.request.contextPath}/CartServlet" method="post">
+                    <form action="${pageContext.request.contextPath}/cart" method="post">
 
                         <fieldset class="pd-field">
                             <legend>Chọn size / màu</legend>

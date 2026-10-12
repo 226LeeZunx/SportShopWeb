@@ -1,24 +1,35 @@
+
 package com.mycompany.sportshopweb.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "Voucher")
 public class Voucher {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "voucherId")
     private int voucherId;
+
+    @Column(name = "code", nullable = false, unique = true)
     private String code;
+
     private double discount;
+
     private boolean active;
 
     public Voucher() {
-        
     }
 
-    public Voucher(int voucherId, String code, double discount, boolean active) {
+    public Voucher(int voucherId, String code,
+                   double discount, boolean active) {
         this.voucherId = voucherId;
         this.code = code;
         this.discount = discount;
         this.active = active;
     }
 
-    // Getter & Setter cho voucherId
     public int getVoucherId() {
         return voucherId;
     }
@@ -27,7 +38,6 @@ public class Voucher {
         this.voucherId = voucherId;
     }
 
-    // Getter & Setter cho code
     public String getCode() {
         return code;
     }
@@ -36,7 +46,6 @@ public class Voucher {
         this.code = code;
     }
 
-    // Getter & Setter cho discount
     public double getDiscount() {
         return discount;
     }
@@ -45,7 +54,6 @@ public class Voucher {
         this.discount = discount;
     }
 
-    // Getter & Setter cho active
     public boolean isActive() {
         return active;
     }
