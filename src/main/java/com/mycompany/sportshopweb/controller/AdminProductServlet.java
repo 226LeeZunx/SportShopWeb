@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,13 +22,14 @@ public class AdminProductServlet extends HttpServlet {
     private final ProductDB productDB = new ProductDB();
 
     // GET: Hiển thị danh sách sản phẩm trong trang quản trị.
+
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Đọc số trang từ URL, ví dụ: /admin/products?page=2.
+        // 1. Đọc số trang từ URL.
         int page = 1;
 
         try {
@@ -44,39 +46,66 @@ public class AdminProductServlet extends HttpServlet {
             page = 1;
         }
 
+        // 2. Đọc bộ lọc từ form GET.
+        String keyword = request.getParameter("keyword");
+
+        if (keyword == null) {
+            keyword = "";
+        } else {
+            keyword = keyword.trim();
+        }
+
+        int categoryId = 0;
+        String categoryParam = request.getParameter("category");
+
+        try {
+            if (categoryParam != null && !categoryParam.isBlank()) {
+                categoryId = Integer.parseInt(categoryParam);
+
+                if (categoryId < 0) {
+                    categoryId = 0;
+                }
+            }
+        } catch (NumberFormatException e) {
+            categoryId = 0;
+        }
+
+        // 3. Xác định kích thước trang.
         int pageSize = ProductDB.PAGE_SIZE;
 
-        // Đếm tổng số sản phẩm trong database.
-        long totalProducts = ProductDB.countProducts();
+        // 4. Đếm sản phẩm theo bộ lọc hiện tại.
+        long totalProducts = ProductDB.countProducts(keyword, categoryId);
 
-        // Tính tổng số trang.
+        // 5. Tính tổng số trang sau khi lọc.
         int totalPages = (int) Math.ceil(
                 (double) totalProducts / pageSize);
 
-        // Nếu số trang yêu cầu vượt quá số trang hiện có,
-        // đưa người dùng về trang cuối cùng.
-        if (totalPages > 0 && page > totalPages) {
+        // 6. Điều chỉnh page nếu vượt phạm vi.
+        if (totalPages == 0) {
+            page = 1;
+        } else if (page > totalPages) {
             page = totalPages;
         }
 
-        // Lấy danh sách sản phẩm của trang hiện tại.
-        List<Product> products = ProductDB.getProductsByPage(page, pageSize);
+        // 7. Lấy sản phẩm theo trang và bộ lọc.
+        List<Product> products = ProductDB.getProductsByPage(
+                page, pageSize, keyword, categoryId);
 
-        // Lấy danh sách category để hiển thị trong bộ lọc.
-        // Tạm thời truy vấn tại servlet vì chưa có CategoryDAO
-        // hoặc phương thức lấy tất cả category được cung cấp.
+        // 8. Lấy danh sách category để hiển thị dropdown.
+        // Giữ nguyên cách truy vấn hiện tại, không sửa CategoryDB.
         List<Category> categories;
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
 
         try {
             categories = em.createQuery(
                     "SELECT c FROM Category c ORDER BY c.name",
-                    Category.class).getResultList();
+                    Category.class)
+                    .getResultList();
         } finally {
             em.close();
         }
 
-        // Đưa dữ liệu sang JSP thông qua request attributes.
+        // 9. Chuyển dữ liệu sang JSP.
         request.setAttribute("products", products);
         request.setAttribute("totalProducts", totalProducts);
         request.setAttribute("categories", categories);
@@ -84,8 +113,64 @@ public class AdminProductServlet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
 
-        // Forward: chuyển request sang JSP để render HTML.
+        // Giữ bộ lọc trên form và khi chuyển trang.
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("selectedCategory", categoryId);
+
+        // 10. Forward sang trang quản lý sản phẩm.
         request.getRequestDispatcher(
-                "/views/admin/products.jsp").forward(request, response);
+                "/views/admin/products.jsp")
+                .forward(request, response);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Đảm bảo dữ liệu gửi từ form được đọc đúng encoding.
+        request.setCharacterEncoding("UTF-8");
+
+        // Chỉ xử lý action Delete ở bước này.
+        String action = request.getParameter("action");
+
+        if (!"delete".equals(action)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+            return;
+        }
+
+        // Đọc ID sản phẩm từ hidden input trong products.jsp.
+        int productId;
+
+        try {
+            productId = Integer.parseInt(request.getParameter("productId"));
+
+            if (productId <= 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid product ID");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid product ID");
+            return;
+        }
+
+        try {
+            // Đặt quantity = 0 cho tất cả biến thể của sản phẩm.
+            boolean success = productDB.softDeleteProduct(productId);
+
+            // Chuyển về danh sách sản phẩm và hiển thị kết quả.
+            String contextPath = request.getContextPath();
+
+            if (success) {
+                response.sendRedirect(contextPath + "/admin/products?deleteSuccess=1");
+            } else {
+                response.sendRedirect(contextPath + "/admin/products?deleteError=notFound");
+            }
+
+        } catch (RuntimeException e) {
+            log("Unable to update product inventory for product ID: " + productId, e);
+            response.sendRedirect(
+                    request.getContextPath() + "/admin/products?deleteError=server");
+        }
+    }
+
 }

@@ -10,6 +10,8 @@ import com.mycompany.sportshopweb.model.AccountStatus;
 import com.mycompany.sportshopweb.model.Customer;
 import com.mycompany.sportshopweb.model.User;
 import com.mycompany.sportshopweb.util.PasswordUtil;
+import com.mycompany.sportshopweb.dao.AdminDAO;
+import com.mycompany.sportshopweb.model.Admin;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -23,7 +25,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Anh Tuan
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+@WebServlet(name = "LoginServlet", urlPatterns = { "/LoginServlet" })
 public class LoginServlet extends HttpServlet {
 
     // Khi người dùng bấm vào link hoặc truy cập URL trang đăng nhập
@@ -83,17 +85,31 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
             return;
         }
+        // 7. Mật khẩu đúng -> Kiểm tra tài khoản có phải Admin không
+        AdminDAO adminDAO = new AdminDAO();
+        Admin admin = adminDAO.findByUserId(user.getUserId());
 
-        // 7. Mật khẩu đúng -> Lấy thông tin khách hàng đi kèm
+        // 8. Lưu thông tin đăng nhập vào Session
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
+
+        // 9. Nếu là Admin -> Chuyển đến Admin Dashboard
+        if (admin != null) {
+            session.setAttribute("admin", admin);
+
+            response.sendRedirect(
+                    request.getContextPath() + "/admin/dashboard");
+            return;
+        }
+
+        // 10. Nếu không phải Admin -> Xử lý như User thông thường
         CustomerDAO customerDAO = new CustomerDAO();
         Customer customer = customerDAO.findByUserId(user.getUserId());
 
-        // 8. Lưu thông tin vào Session để toàn bộ website nhận diện đã đăng nhập
-        HttpSession session = request.getSession();
-        session.setAttribute("user", user);
         session.setAttribute("customer", customer);
 
-        // 9. Đăng nhập thành công -> Chuyển hướng về trang chủ
-        response.sendRedirect(request.getContextPath() + "/HomeServlet");
+        response.sendRedirect(
+                request.getContextPath() + "/HomeServlet");
+
     }
 }
