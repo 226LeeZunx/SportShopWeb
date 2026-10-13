@@ -31,7 +31,7 @@
                      class="hero-banner-image">
 
                 <div class="hero-banner-content">
-                    <h1 class="hero-banner-title">Đái tháo đường</h1>
+                    <h1 class="hero-banner-title">Push Your Limits</h1>
                     <a href="${pageContext.request.contextPath}/HomeServlet?cat=football" class="hero-banner-btn">
                         SHOP NOW
                     </a>
@@ -51,7 +51,7 @@
                      class="hero-banner-image">
 
                 <div class="hero-banner-content">
-                    <h1 class="hero-banner-title">Vợ người ta</h1>
+                    <h1 class="hero-banner-title">Elevate Your Game</h1>
                     <a href="${pageContext.request.contextPath}/HomeServlet?tag=hot" class="hero-banner-btn">
                         EXPLORE NOW
                     </a>
@@ -82,8 +82,8 @@
                 <span>Buy direct and support your club</span>
             </div>
             <div class="trust-item">
-                <i class="fa-solid fa-star"></i>
-                <span>Duy bi gay</span>
+                <i class="fa-solid fa-award"></i>
+                <span>100% Authentic Guarantee</span>
             </div>
         </div>
     </section>
@@ -93,27 +93,41 @@
         <h2 class="home-section-title">Product Catalog</h2>
 
         <c:if test="${empty productList}">
-            <p>No products found in the database.</p>
+            <div class="empty-catalog">
+                <i class="fa-solid fa-box-open"></i>
+                <p>No products found in the catalog.</p>
+            </div>
         </c:if>
 
         <ul class="product-grid">
             <c:forEach var="product" items="${productList}">
-                <li>
-                    <a href="${pageContext.request.contextPath}/ProductDetailServlet?id=${product.productId}">
-                        <c:choose>
-                            <c:when test="${empty product.images}">
-                                <img src="${pageContext.request.contextPath}/assets/images/no-image.png"
-                                     alt="Chưa có ảnh">
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="img" items="${product.images}">
-                                    <c:if test="${img.primary}">
-                                        <img src="${img.imageUrl}" alt="${product.productName}">
+                <li class="product-card">
+                    <a href="${pageContext.request.contextPath}/ProductDetailServlet?id=${product.productId}" class="product-card-link">
+                        <div class="product-thumb">
+                            <c:choose>
+                                <c:when test="${empty product.images}">
+                                    <div class="no-thumb-placeholder">
+                                        <i class="fa-regular fa-image"></i>
+                                        <span>No image</span>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="foundPrimary" value="false" />
+                                    <c:forEach var="img" items="${product.images}">
+                                        <c:if test="${img.primary && !foundPrimary}">
+                                            <img src="${img.imageUrl}" alt="${product.productName}" loading="lazy">
+                                            <c:set var="foundPrimary" value="true" />
+                                        </c:if>
+                                    </c:forEach>
+                                    <c:if test="${!foundPrimary}">
+                                        <img src="${product.images[0].imageUrl}" alt="${product.productName}" loading="lazy">
                                     </c:if>
-                                </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
-                        <h3>${product.productName}</h3>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name" title="${product.productName}">${product.productName}</h3>
+                        </div>
                     </a>
                 </li>
             </c:forEach>

@@ -337,22 +337,22 @@ PostgreSQL Database
 - [x] Dựng `login.jsp` (Dark theme, form đăng nhập)
 - [x] Dựng `register.jsp` (Form đăng ký tài khoản)
 - [x] Dựng `profile.jsp` (Hồ sơ cá nhân, địa chỉ giao hàng)
-- [ ] Viết `UserDAO`, `CustomerDAO`, `AddressDAO`
-- [ ] Viết `UserService`, `CustomerService`
-- [ ] Viết `LoginServlet` — Xác thực và quản lý Session
-- [ ] Viết `RegisterServlet` — Tạo tài khoản mới
-- [ ] Viết `LogoutServlet` — Huỷ Session
-- [ ] Viết `ProfileServlet` — Xem và cập nhật hồ sơ
+- [x] Viết `UserDAO`, `CustomerDAO`, `AddressDAO`
+- [x] Viết `UserService`, `CustomerService`
+- [x] Viết `LoginServlet` — Xác thực và quản lý Session
+- [x] Viết `RegisterServlet` — Tạo tài khoản mới
+- [x] Viết `LogoutServlet` — Huỷ Session
+- [x] Viết `ProfileServlet` — Xem và cập nhật hồ sơ
 
 #### Dũng — feature/catalog
-- [ ] Hoàn thiện `home.jsp` (Hero banner thể thao + danh mục + sản phẩm hot)
-- [ ] Dựng `products.jsp` (Grid sản phẩm + bộ lọc + tìm kiếm)
-- [ ] Dựng `product-detail.jsp` (Chi tiết + chọn size/màu + Add to Cart)
+- [x] Hoàn thiện `home.jsp` (Hero banner thể thao + danh mục + sản phẩm hot)
+- [x] Dựng `products.jsp` (Grid sản phẩm + bộ lọc + tìm kiếm)
+- [x] Dựng `product-detail.jsp` (Chi tiết + chọn size/màu + Add to Cart)
 - [ ] Viết `ProductDAO`, `CategoryDAO`, `BrandDAO`, `ReviewDAO`
 - [ ] Viết `ProductService`
-- [ ] Mở rộng `HomeServlet` (Đổ dữ liệu thật lên trang chủ)
-- [ ] Viết `ProductListServlet` (Tìm kiếm, lọc, phân trang)
-- [ ] Viết `ProductDetailServlet`
+- [x] Mở rộng `HomeServlet` (Đổ dữ liệu thật lên trang chủ)
+- [x] Viết `ProductListServlet` (Tìm kiếm, lọc, phân trang)
+- [x] Viết `ProductDetailServlet`
 
 #### Duy — feature/order-cart
 - [ ] Dựng `cart.jsp` (Bảng giỏ hàng, tăng/giảm, xóa, tổng tiền)
