@@ -46,7 +46,17 @@ public class CartItemDAO {
         trans.commit();
         }
         catch (Exception e){
-            trans.rollback();
+            if (trans.isActive()) {
+                trans.rollback();
+            }
+
+            // In lỗi thật ra Output của NetBeans
+            e.printStackTrace();
+
+            // Báo lỗi cho Servlet, không âm thầm bỏ qua
+            throw new RuntimeException(
+                    "Không thể thêm sản phẩm vào giỏ hàng.", e
+            );
         }
         finally{
             em.close();
@@ -95,7 +105,17 @@ public class CartItemDAO {
             trans.commit();
         }
         catch (Exception e){
-            trans.rollback();
+            if (trans.isActive()) {
+                trans.rollback();
+            }
+
+            // In lỗi thật ra Output của NetBeans
+            e.printStackTrace();
+
+            // Báo lỗi cho Servlet, không âm thầm bỏ qua
+            throw new RuntimeException(
+                    "Không thể thêm sản phẩm vào giỏ hàng.", e
+            );
         }
         finally{
             em.close();

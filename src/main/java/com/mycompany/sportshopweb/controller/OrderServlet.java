@@ -2,6 +2,7 @@
 package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.dao.OrderDAO;
+import com.mycompany.sportshopweb.model.Customer;
 import com.mycompany.sportshopweb.model.Order;
 
 import jakarta.servlet.ServletException;
@@ -31,12 +32,12 @@ public class OrderServlet extends HttpServlet {
 
         // 1. Kiểm tra đăng nhập
         if (session == null
-                || !(session.getAttribute("customerId") instanceof Integer)) {
-            response.sendRedirect(request.getContextPath() + "/login");
+                || (session.getAttribute("customer") == null)) {
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
-
-        int customerId = (Integer) session.getAttribute("customerId");
+        Customer customer = (Customer) session.getAttribute("customer");
+        int customerId = customer.getCustomerId();
 
         try {
             // 2. Lấy lịch sử đơn hàng của khách hàng
@@ -57,9 +58,10 @@ public class OrderServlet extends HttpServlet {
                 request.setAttribute("error", error);
                 session.removeAttribute("orderError");
             }
+            
 
             // 4. Hiển thị orders.jsp
-            request.getRequestDispatcher("/orders.jsp")
+            request.getRequestDispatcher("/views/orders.jsp")
                     .forward(request, response);
 
         } catch (Exception e) {
