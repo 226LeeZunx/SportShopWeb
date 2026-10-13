@@ -48,7 +48,7 @@
             </c:choose>
 
             <!-- Nút Đơn hàng -->
-            <a href="${pageContext.request.contextPath}/views/orders.jsp" class="action-btn" title="Shopping Order">
+            <a href="${pageContext.request.contextPath}/orders" class="action-btn" title="Shopping Order">
                 <i class="fa-solid fa-box-open"></i>
             </a>
 

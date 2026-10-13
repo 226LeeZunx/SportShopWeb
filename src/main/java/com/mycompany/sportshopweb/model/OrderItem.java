@@ -32,27 +32,26 @@ public class OrderItem implements Serializable {
         this.quantity = 1;
     }
 
-    public OrderItem(ProductVariant productVariant, int quantity) {
+    public OrderItem( ProductVariant productVariant, int quantity) {
+        
         this.productVariant= productVariant;
         this.quantity = quantity;
     }
-
-    public OrderItemId getOrderItemId() {
+    
+    public OrderItemId getOrderItemId(){
         return orderItemId;
     }
-
-    public void setOrderItemId(OrderItemId orderItemId) {
+    
+    public void setOrderItemId(OrderItemId orderItemId){
         this.orderItemId = orderItemId;
     }
-
-    public Order getOrder() {
+    
+    public Order getOrder(){
         return order;
     }
-
-    public void setOrder(Order order) {
+    public void setOrder(Order order){
         this.order = order;
     }
-
     // Getter & Setter cho item
     public ProductVariant getProductVariant() {
         return productVariant;
