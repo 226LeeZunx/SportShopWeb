@@ -4,6 +4,13 @@
  */
 package com.mycompany.sportshopweb.controller;
 
+import com.mycompany.sportshopweb.dao.AlbumDAO;
+import com.mycompany.sportshopweb.model.Album;
+import com.mycompany.sportshopweb.model.Brand;
+import com.mycompany.sportshopweb.model.Category;
+import com.mycompany.sportshopweb.model.Product;
+import com.mycompany.sportshopweb.util.BrandDB;
+import com.mycompany.sportshopweb.util.CategoryDB;
 import com.mycompany.sportshopweb.util.ProductDB;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +20,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import com.mycompany.sportshopweb.model.Product;
+
 /**
  *
  * @author dung2
@@ -23,12 +30,41 @@ public class HomeServlet extends HttpServlet {
     
     @Override
     public void init(){
-        ProductDB productDAO=new ProductDB();
+        ProductDB productDAO = new ProductDB();
         getServletContext().setAttribute("ProductDAO", productDAO);
+        try {
+            getServletContext().setAttribute("globalAlbumList", AlbumDAO.getAllAlbums());
+            getServletContext().setAttribute("globalCategoryList", CategoryDB.getAllCategory());
+            getServletContext().setAttribute("globalBrandList", BrandDB.getAllBrand());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
+
+        List<Category> categoryList = CategoryDB.getAllCategory();
+        request.setAttribute("categoryList", categoryList);
+        getServletContext().setAttribute("globalCategoryList", categoryList);
+
+        try {
+            List<Brand> brandList = BrandDB.getAllBrand();
+            request.setAttribute("brandList", brandList);
+            getServletContext().setAttribute("globalBrandList", brandList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Nạp danh sách Album (Lookbook) để hiển thị lên Side Panel
+        try {
+            List<Album> albumList = AlbumDAO.getAllAlbums();
+            request.setAttribute("albumList", albumList);
+            getServletContext().setAttribute("globalAlbumList", albumList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     int page = 1;
     try {

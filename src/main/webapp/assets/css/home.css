@@ -1,177 +1,205 @@
 /* =========================================
-   1. HERO BANNER SECTION (ARSENAL STORE STYLE)
+   1. ALBUM HERO IMAGE PANEL (BỘ SƯU TẬP BANNER)
    ========================================= */
-
-.hero-banner-section {
+.album-hero-section {
     position: relative;
     width: 100%;
     overflow: hidden;
     background-color: #0b0f19;
 }
 
-/* Ẩn các nút radio ẩn điều khiển slide */
-.hero-radio {
+.album-hero-slide {
     display: none;
-}
-
-/* Dải trượt chứa 2 ảnh Banner (Chiều rộng 200%) */
-.hero-slider-track {
-    display: flex;
-    width: 200%;
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* Mỗi Slide chiếm đúng 50% dải trượt (tương đương 100% màn hình) */
-.hero-slide {
     position: relative;
-    width: 50%;
+    width: 100%;
     max-height: 640px;
     height: 56vw;
-    min-height: 420px;
-    overflow: hidden;
-    background-color: #0a0a0a;
+    min-height: 440px;
+    background-color: #0f172a;
 }
 
-/* Ảnh Banner: Căn chỉnh center top để KHÔNG BAO GIỜ BỊ CẮT PHẦN ĐẦU CỦA NGƯỜI */
-.hero-banner-image {
+.album-hero-slide.active {
+    display: block;
+    animation: fadeInSlide 0.4s ease-in-out;
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+}
+
+.album-hero-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* Khung ảnh của Album */
+.album-hero-thumb {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+}
+
+.album-hero-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center top; /* Đảm bảo thấy trọn vẹn đầu và thân trên */
+    object-position: center center;
     display: block;
 }
 
-/* Lớp phủ chuyển màu gradient tối dần ở góc dưới bên trái để chữ nổi bật */
-.hero-slide::after {
+/* Khung ảnh trống (Hiện tại chưa có hình nên để khung trống) */
+.album-hero-empty-thumb {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 75% 45%, #1e293b 0%, #0b0f19 80%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid #1e293b;
+}
+
+.album-hero-empty-thumb i {
+    font-size: 5rem;
+}
+
+.album-hero-empty-thumb span {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Gradient phủ tối để chữ nổi bật và tương phản */
+.album-hero-link::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(
         to right,
-        rgba(0, 0, 0, 0.72) 0%,
-        rgba(0, 0, 0, 0.25) 40%,
-        transparent 70%
+        rgba(0, 0, 0, 0.88) 0%,
+        rgba(0, 0, 0, 0.5) 45%,
+        transparent 80%
     ),
     linear-gradient(
         to top,
-        rgba(0, 0, 0, 0.8) 0%,
-        transparent 50%
+        rgba(0, 0, 0, 0.75) 0%,
+        transparent 45%
     );
     pointer-events: none;
 }
 
 /* Khối nội dung Tiêu đề & Nút bấm */
-.hero-banner-content {
+.album-hero-content {
     position: absolute;
-    left: 6%;
-    bottom: 12%;
+    left: 7%;
+    bottom: 14%;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 14px;
+    max-width: 650px;
 }
 
-.hero-banner-title {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+.album-hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(204, 255, 0, 0.15);
+    border: 1px solid rgba(204, 255, 0, 0.35);
+    color: var(--accent-lime, #ccff00);
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.album-hero-title {
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     color: #ffffff;
     margin: 0;
     text-transform: uppercase;
     text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
-    line-height: 1;
+    line-height: 1.05;
 }
 
-.hero-banner-btn {
-    display: inline-block;
-    padding: 12px 36px;
-    background-color: #991b1b; /* Màu đỏ đô sang trọng như Arsenal */
+.album-hero-desc {
+    font-size: 1.05rem;
+    color: #cbd5e1;
+    margin: 0;
+    line-height: 1.6;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.album-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 13px 32px;
+    background-color: #991b1b;
     color: #ffffff;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 700;
     text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 9999px; /* Nút bo tròn oval */
     letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(153, 27, 27, 0.5);
+    border-radius: 9999px;
+    box-shadow: 0 4px 18px rgba(153, 27, 27, 0.55);
     transition: background-color 0.2s, transform 0.2s;
 }
 
-.hero-banner-btn:hover {
+.album-hero-link:hover .album-hero-btn {
     background-color: #b91c1c;
     transform: translateY(-2px);
 }
 
-/* Nút mũi tên chuyển ảnh (Dùng thẻ label thuần HTML/CSS) */
-.hero-nav-arrow {
+/* Nút mũi tên chuyển Slide */
+.album-hero-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 3;
+    z-index: 5;
     width: 46px;
     height: 46px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.9);
+    border: none;
     color: #111827;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
     cursor: pointer;
-    user-select: none;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     transition: background-color 0.2s, transform 0.2s;
 }
 
-.hero-nav-arrow:hover {
+.album-hero-arrow:hover {
     background-color: #ffffff;
     transform: translateY(-50%) scale(1.08);
 }
 
-.hero-nav-prev {
+.album-hero-prev {
     left: 20px;
 }
 
-.hero-nav-next {
+.album-hero-next {
     right: 20px;
-}
-
-/* LOGIC CHUYỂN SLIDE THUẦN CSS BẰNG RADIO CHECKED */
-#slide-1:checked ~ .hero-slider-track {
-    transform: translateX(0%);
-}
-
-#slide-2:checked ~ .hero-slider-track {
-    transform: translateX(-50%);
-}
-
-/* Hai chấm chỉ báo ở góc phải */
-.hero-indicators {
-    position: absolute;
-    right: 32px;
-    bottom: 24px;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.indicator-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.45);
-    display: inline-block;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#slide-1:checked ~ .hero-indicators .dot-1,
-#slide-2:checked ~ .hero-indicators .dot-2 {
-    background-color: #ffffff;
-    width: 24px;
-    border-radius: 4px;
 }
 
 /* 2. THANH CAM KẾT / ƯU ĐÃI DƯỚI BANNER (Trust Badge Bar) */
@@ -201,25 +229,164 @@
 }
 
 /* =========================================
-   3. DANH SÁCH SẢN PHẨM TRANG CHỦ
+   3. DANH SÁCH DANH MỤC TRANG CHỦ (SHOP BY CATEGORY)
    ========================================= */
 
 .home-main-container {
     max-width: 1300px;
-    margin: 40px auto;
+    margin: 48px auto 60px;
     padding: 0 20px;
 }
 
 .home-section-title {
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: 24px;
+    font-size: 1.85rem;
+    font-weight: 900;
+    margin-bottom: 6px;
     color: #111827;
     letter-spacing: -0.5px;
     text-transform: uppercase;
 }
 
-/* Thông báo khi không có sản phẩm */
+.home-section-subtitle {
+    margin: 0 0 28px 0;
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Lưới danh mục 3 cột (cho 6 danh mục thể thao) */
+.category-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 992px) {
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .category-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* Thẻ Category */
+.category-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+    border-color: #cbd5e1;
+}
+
+.category-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.category-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.category-card:hover .category-thumb img {
+    transform: scale(1.08);
+}
+
+.category-badge {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(17, 24, 39, 0.85);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 9999px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.category-card:hover .category-badge {
+    background: #000000;
+    transform: translateX(-2px);
+}
+
+.category-info {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background: #ffffff;
+}
+
+.category-name {
+    margin: 0 0 8px 0;
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: #111827;
+    text-transform: uppercase;
+    letter-spacing: -0.3px;
+    transition: color 0.2s;
+}
+
+.category-card:hover .category-name {
+    color: #0284c7;
+}
+
+.category-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Thông báo khi không có sản phẩm / danh mục */
 .empty-catalog {
     text-align: center;
     padding: 60px 20px;
@@ -241,86 +408,9 @@
     font-weight: 500;
 }
 
-/* Lưới sản phẩm Responsive */
-.product-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-}
-
-@media (max-width: 1200px) { 
-    .product-grid { 
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 16px; 
-    } 
-}
-@media (max-width: 900px) { 
-    .product-grid { 
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 14px; 
-    } 
-}
-@media (max-width: 600px) { 
-    .product-grid { 
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 12px; 
-    } 
-}
-
-/* Thẻ sản phẩm */
-.product-card {
-    background: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    border-color: #cbd5e1;
-}
-
-/* Thẻ link bao bọc toàn bộ card */
-.product-card-link {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    text-decoration: none;
-    color: inherit;
-}
-
-/* Khung ảnh vuông chuẩn tỉ lệ 1:1 cho tất cả sản phẩm */
-.product-thumb {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    background-color: #f9fafb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.product-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    transition: transform 0.45s ease;
-}
-
-.product-card:hover .product-thumb img {
-    transform: scale(1.06);
-}
+/* =========================================
+   4. PLACEHOLDER & PHÂN TRANG (PAGINATION)
+   ========================================= */
 
 /* Placeholder khi sản phẩm chưa có ảnh */
 .no-thumb-placeholder {
@@ -344,35 +434,6 @@
     font-weight: 500;
 }
 
-/* Phần chữ thông tin sản phẩm */
-.product-info {
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    justify-content: space-between;
-    background: #ffffff;
-}
-
-/* Tên sản phẩm giới hạn chuẩn 2 dòng, chiều cao cố định để tất cả các card đều bằng nhau */
-.product-name {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #111827;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 2.8em;
-    transition: color 0.2s ease;
-}
-
-.product-card:hover .product-name {
-    color: #000000;
-}
 
 /* ===== Phân trang ===== */
 .pagination {

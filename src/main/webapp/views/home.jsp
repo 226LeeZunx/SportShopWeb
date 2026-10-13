@@ -1,132 +1,176 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SPORTSHOP - Premium Athletic Footwear & Sportswear</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/home.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/home.css?v=3">
 </head>
 <body>
 
     <jsp:include page="/views/common/header.jsp" />
 
-    <!-- 1. KHUNG BANNER HÌNH ẢNH HERO (Hỗ trợ 2 ảnh slide - 100% HTML & CSS thuần, không dùng script) -->
-    <section class="hero-banner-section">
-        
-        <!-- Bộ chọn Slide bằng Radio Input ẩn (Thuần CSS, chuyển ảnh khi click) -->
-        <input type="radio" name="hero-slide" id="slide-1" class="hero-radio" checked>
-        <input type="radio" name="hero-slide" id="slide-2" class="hero-radio">
+    <!-- 1. PANEL HÌNH ẢNH BỘ SƯU TẬP (ALBUM HERO PANEL THAY THẾ BANNER) -->
+    <section class="album-hero-section" id="albumHeroSection">
+        <c:choose>
+            <c:when test="${not empty albumList}">
+                <c:forEach var="album" items="${albumList}" varStatus="status">
+                    <div class="album-hero-slide ${status.first ? 'active' : ''}">
+                        <!-- Bấm vào hình ảnh sẽ dẫn đến trang chi tiết album đó -->
+                        <a href="${pageContext.request.contextPath}/AlbumServlet?id=${album.albumId}" class="album-hero-link" title="${album.name}">
+                            <div class="album-hero-thumb">
+                                <c:choose>
+                                    <c:when test="${not empty album.imageUrl}">
+                                        <img src="${album.imageUrl}" alt="${album.name}" class="album-hero-img">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <!-- Hiện tại chưa có hình nên để khung ảnh trống theo yêu cầu -->
+                                        <div class="album-hero-empty-thumb">
+                                            <i class="fa-solid fa-shirt"></i>
+                                            <span>LOOKBOOK OUTFIT</span>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
 
-        <!-- Dải trượt chứa 2 ảnh Banner -->
-        <div class="hero-slider-track">
-            
-            <!-- SLIDE 1: FC BARCELONA -->
-            <div class="hero-slide">
-                <!-- Ảnh 1 do bạn tải vào thư mục assets/images/hero-banner-1.jpg -->
-                <img src="${pageContext.request.contextPath}/assets/images/hero-banner-1.jpg" 
-                     alt="FC Barcelona Celebration" 
-                     class="hero-banner-image">
-
-                <div class="hero-banner-content">
-                    <h1 class="hero-banner-title">Push Your Limits</h1>
-                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=football" class="hero-banner-btn">
-                        SHOP NOW
+                            <div class="album-hero-content">
+                                <span class="album-hero-tag">
+                                    <i class="fa-solid fa-layer-group"></i> LOOKBOOK COLLECTION
+                                </span>
+                                <h1 class="album-hero-title">${album.name}</h1>
+                                <c:if test="${not empty album.description}">
+                                    <p class="album-hero-desc">${album.description}</p>
+                                </c:if>
+                                <span class="album-hero-btn">
+                                    SHOP THE LOOK <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                <!-- Dữ liệu hiển thị mặc định khi Database chưa có Album -->
+                <div class="album-hero-slide active">
+                    <a href="${pageContext.request.contextPath}/AlbumServlet" class="album-hero-link">
+                        <div class="album-hero-thumb">
+                            <div class="album-hero-empty-thumb">
+                                <i class="fa-solid fa-shirt"></i>
+                                <span>LOOKBOOK OUTFIT</span>
+                            </div>
+                        </div>
+                        <div class="album-hero-content">
+                            <span class="album-hero-tag">
+                                <i class="fa-solid fa-layer-group"></i> FEATURED LOOKBOOK
+                            </span>
+                            <h1 class="album-hero-title">LOOKBOOK & OUTFITS</h1>
+                            <p class="album-hero-desc">Explore curated athletic outfits and high performance sets.</p>
+                            <span class="album-hero-btn">
+                                EXPLORE LOOKBOOK <i class="fa-solid fa-arrow-right"></i>
+                            </span>
+                        </div>
                     </a>
                 </div>
+            </c:otherwise>
+        </c:choose>
 
-                <!-- Nút mũi tên chuyển sang ảnh 2 -->
-                <label for="slide-2" class="hero-nav-arrow hero-nav-next" title="Next banner">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </label>
-            </div>
-
-            <!-- SLIDE 2: MESSI THE GOAT -->
-            <div class="hero-slide">
-                <!-- Ảnh 2 do bạn tải vào thư mục assets/images/hero-banner-2.jpg -->
-                <img src="${pageContext.request.contextPath}/assets/images/hero-banner-2.jpg" 
-                     alt="Messi The GOAT" 
-                     class="hero-banner-image">
-
-                <div class="hero-banner-content">
-                    <h1 class="hero-banner-title">Elevate Your Game</h1>
-                    <a href="${pageContext.request.contextPath}/HomeServlet?tag=hot" class="hero-banner-btn">
-                        EXPLORE NOW
-                    </a>
-                </div>
-
-                <!-- Nút mũi tên quay về ảnh 1 -->
-                <label for="slide-1" class="hero-nav-arrow hero-nav-prev" title="Previous banner">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </label>
-            </div>
-
-        </div>
-
-        <!-- Hai chấm chỉ báo góc dưới bên phải (Bấm vào cũng đổi ảnh thuần CSS) -->
-        <div class="hero-indicators">
-            <label for="slide-1" class="indicator-dot dot-1" title="Banner 1"></label>
-            <label for="slide-2" class="indicator-dot dot-2" title="Banner 2"></label>
-        </div>
-
-        <!-- 2. THANH CAM KẾT / ƯU ĐÃI DƯỚI BANNER (Trust Badge Bar) -->
-        <div class="hero-trust-bar">
-            <div class="trust-item">
-                <i class="fa-solid fa-crown"></i>
-                <span>Members get 10% off</span>
-            </div>
-            <div class="trust-item">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Buy direct and support your club</span>
-            </div>
-            <div class="trust-item">
-                <i class="fa-solid fa-award"></i>
-                <span>100% Authentic Guarantee</span>
-            </div>
-        </div>
+        <!-- Nút chuyển slide nếu có từ 2 album trở lên -->
+        <c:if test="${not empty albumList && albumList.size() > 1}">
+            <button type="button" class="album-hero-arrow album-hero-prev" onclick="prevAlbumHeroSlide(event)" title="Previous album">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button type="button" class="album-hero-arrow album-hero-next" onclick="nextAlbumHeroSlide(event)" title="Next album">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </c:if>
     </section>
 
-    <!-- 3. PHẦN DANH SÁCH SẢN PHẨM BÊN DƯỚI -->
-    <main class="home-main-container">
-        <h2 class="home-section-title">Product Catalog</h2>
+    <!-- Script chuyển slide Album mượt mà -->
+    <script>
+        var currentAlbumIndex = 0;
+        function getAlbumSlides() {
+            return document.querySelectorAll('.album-hero-slide');
+        }
+        function showAlbumSlide(index) {
+            var slides = getAlbumSlides();
+            if (!slides || slides.length <= 1) return;
+            for (var i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+            slides[index].classList.add('active');
+        }
+        function nextAlbumHeroSlide(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            var slides = getAlbumSlides();
+            if (!slides || slides.length <= 1) return;
+            currentAlbumIndex = (currentAlbumIndex + 1) % slides.length;
+            showAlbumSlide(currentAlbumIndex);
+        }
+        function prevAlbumHeroSlide(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            var slides = getAlbumSlides();
+            if (!slides || slides.length <= 1) return;
+            currentAlbumIndex = (currentAlbumIndex - 1 + slides.length) % slides.length;
+            showAlbumSlide(currentAlbumIndex);
+        }
+    </script>
 
-        <c:if test="${empty productList}">
+    <!-- 2. THANH CAM KẾT / ƯU ĐÃI (Trust Badge Bar) -->
+    <div class="hero-trust-bar">
+        <div class="trust-item">
+            <i class="fa-solid fa-crown"></i>
+            <span>Members get 10% off</span>
+        </div>
+        <div class="trust-item">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Buy direct and support your club</span>
+        </div>
+        <div class="trust-item">
+            <i class="fa-solid fa-award"></i>
+            <span>100% Authentic Guarantee</span>
+        </div>
+    </div>
+
+    <!-- 3. PHẦN DANH MỤC THỂ THAO TRANG CHỦ (SHOP BY CATEGORY) -->
+    <main class="home-main-container">
+        <h2 class="home-section-title">Shop by Category</h2>
+        <p class="home-section-subtitle">Gear up for greatness with high-performance sportswear and equipment</p>
+
+        <c:if test="${empty categoryList}">
             <div class="empty-catalog">
-                <i class="fa-solid fa-box-open"></i>
-                <p>No products found in the catalog.</p>
+                <i class="fa-solid fa-layer-group"></i>
+                <p>No categories found in the database.</p>
             </div>
         </c:if>
 
-        <ul class="product-grid">
-            <c:forEach var="product" items="${productList}">
-                <li class="product-card">
-                    <a href="${pageContext.request.contextPath}/ProductDetailServlet?id=${product.productId}" class="product-card-link">
-                        <div class="product-thumb">
+        <ul class="category-grid">
+            <c:forEach var="cat" items="${categoryList}">
+                <li class="category-card">
+                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}" class="category-card-link">
+                        <div class="category-thumb">
                             <c:choose>
-                                <c:when test="${empty product.images}">
+                                <c:when test="${not empty cat.imageUrl}">
+                                    <img src="${cat.imageUrl}" alt="${cat.name}" loading="lazy">
+                                </c:when>
+                                <c:otherwise>
                                     <div class="no-thumb-placeholder">
                                         <i class="fa-regular fa-image"></i>
                                         <span>No image</span>
                                     </div>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="foundPrimary" value="false" />
-                                    <c:forEach var="img" items="${product.images}">
-                                        <c:if test="${img.primary && !foundPrimary}">
-                                            <img src="${img.imageUrl}" alt="${product.productName}" loading="lazy">
-                                            <c:set var="foundPrimary" value="true" />
-                                        </c:if>
-                                    </c:forEach>
-                                    <c:if test="${!foundPrimary}">
-                                        <img src="${product.images[0].imageUrl}" alt="${product.productName}" loading="lazy">
-                                    </c:if>
                                 </c:otherwise>
                             </c:choose>
+                            <div class="category-badge">
+                                <span>Explore</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
                         </div>
-                        <div class="product-info">
-                            <h3 class="product-name" title="${product.productName}">${product.productName}</h3>
+                        <div class="category-info">
+                            <h3 class="category-name">${cat.name}</h3>
+                            <c:if test="${not empty cat.description}">
+                                <p class="category-desc">${cat.description}</p>
+                            </c:if>
                         </div>
                     </a>
                 </li>

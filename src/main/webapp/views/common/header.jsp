@@ -5,106 +5,62 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 
-<!-- Khung Header dùng chung - Cửa hàng thể thao bóng đá -->
+<!-- Khung Header dùng chung - Phong cách FC Barcelona / Nike Store -->
 <header class="site-header">
     <div class="header-container">
         
-        <!-- 1. Logo thương hiệu bên trái -->
-        <div class="header-logo">
-            <a href="${pageContext.request.contextPath}/HomeServlet">
-                <i class="fa-solid fa-bolt"></i>
-                <span>SPORTSHOP</span>
-            </a>
-        </div>
-
-        <!-- 2. Menu điều hướng chính: Home, Categories, Brands, Hot Products, Sale -->
-        <nav class="header-nav">
-            <ul>
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/HomeServlet" 
-                       class="${empty param.cat && empty param.brand && empty param.tag ? 'active' : ''}">Home</a>
-                </li>
-
-                <!-- Danh mục sản phẩm (Rê chuột xổ ra các môn thể thao) -->
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/HomeServlet?view=categories" 
-                       class="${not empty param.cat ? 'active' : ''}">
-                        Categories <i class="fa-solid fa-chevron-down nav-arrow"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=running">Running & Training</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=football">Football</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=basketball">Basketball</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=gym">Gym & Fitness</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=tennis">Tennis & Badminton</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=accessories">Sports Accessories</a></li>
-                    </ul>
-                </li>
-
-                <!-- Thương hiệu (Rê chuột xổ ra các hãng nổi tiếng) -->
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/HomeServlet?view=brands" 
-                       class="${not empty param.brand ? 'active' : ''}">
-                        Brands <i class="fa-solid fa-chevron-down nav-arrow"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=nike">Nike</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=adidas">Adidas</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=puma">Puma</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=under-armour">Under Armour</a></li>
-                        <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=mizuno">Mizuno</a></li>
-                    </ul>
-                </li>
-
-                <!-- Sản phẩm Hot -->
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/HomeServlet?tag=hot" 
-                       class="${param.tag == 'hot' ? 'active' : ''}">Hot Products</a>
-                </li>
-
-                <!-- Khuyến mãi -->
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/HomeServlet?tag=sale" 
-                       class="${param.tag == 'sale' ? 'active' : ''}">Sale</a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- 3. Các nút tiện ích bên phải (Dùng icon nhúng từ ngoài) -->
-        <div class="header-actions">
-            <!-- Nút Tìm kiếm -->
+        <!-- 1. BÊN TRÁI: Nút 3 gạch mở danh mục & Nút tìm kiếm -->
+        <div class="header-left">
+            <button type="button" class="action-btn hamburger-btn" id="openDrawerBtn" onclick="openDrawer()" title="Open Categories Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <a href="${pageContext.request.contextPath}/HomeServlet?action=search" class="action-btn" title="Search products">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </a>
+        </div>
 
-            <!-- Nút Tài khoản: Kiểm tra trạng thái đăng nhập từ Session -->
+        <!-- 2. Ở GIỮA: Logo thương hiệu SPORTSHOP -->
+        <div class="header-center">
+            <div class="header-logo">
+                <a href="${pageContext.request.contextPath}/HomeServlet">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>SPORTSHOP</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. BÊN PHẢI: Tài khoản, Đơn hàng & Giỏ hàng -->
+        <div class="header-right header-actions">
+            <!-- Nút Tài khoản -->
             <c:choose>
                 <c:when test="${not empty sessionScope.customer || not empty sessionScope.user}">
-                    <!-- Đã đăng nhập: chuyển tới trang hồ sơ cá nhân qua ProfileServlet -->
                     <a href="${pageContext.request.contextPath}/ProfileServlet" class="action-btn" title="My Profile">
                         <i class="fa-regular fa-user"></i>
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <!-- Chưa đăng nhập: chuyển tới trang đăng nhập qua LoginServlet -->
                     <a href="${pageContext.request.contextPath}/LoginServlet" class="action-btn" title="Sign In / Register">
                         <i class="fa-regular fa-user"></i>
                     </a>
                 </c:otherwise>
             </c:choose>
+
             <!-- Nút Đơn hàng -->
             <a href="${pageContext.request.contextPath}/orders" class="action-btn" title="Shopping Order">
                 <i class="fa-solid fa-box-open"></i>
             </a>
+
             <!-- Nút Giỏ hàng -->
-            <a href="${pageContext.request.contextPath}/cart" class="action-btn" title="Shopping Cart">
+            <a href="${pageContext.request.contextPath}/views/cart.jsp" class="action-btn cart-btn" title="Shopping Cart">
                 <i class="fa-solid fa-bag-shopping"></i>
-                <!-- Huy hiệu hiển thị số lượng sản phẩm thực tế trong giỏ -->
                 <span class="cart-badge">${not empty sessionScope.cartCount ? sessionScope.cartCount : '0'}</span>
             </a>
         </div>
 
     </div>
 </header>
+
+<!-- Cửa sổ trượt Panel (Side Drawer Menu) tách riêng ra file: /views/common/side-panel.jsp -->
+<jsp:include page="/views/common/side-panel.jsp" />
