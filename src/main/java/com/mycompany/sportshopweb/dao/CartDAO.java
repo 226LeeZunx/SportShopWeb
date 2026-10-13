@@ -10,30 +10,51 @@ import jakarta.persistence.TypedQuery;
 
 public class CartDAO {
 
-    public Cart findByCustomerId(int customerId) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        try {
-            String jpql =
-                "SELECT DISTINCT c " +
-                "FROM Cart c " +
-                "LEFT JOIN FETCH c.cartItems ci " +
-                "LEFT JOIN FETCH ci.productVariant pv " +
-                "LEFT JOIN FETCH pv.product p " +
-                "WHERE c.customerId = :customerId";
+   
+public Cart findByCustomerId(int customerId) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
 
-            TypedQuery<Cart> query = em.createQuery(jpql, Cart.class);
+    try {
+        String jpql =
+            "SELECT DISTINCT c " +
+            "FROM Cart c " +
+            "LEFT JOIN FETCH c.cartItems ci " +
+            "LEFT JOIN FETCH ci.productVariant pv " +
+            "LEFT JOIN FETCH pv.product p " +
+            "WHERE c.customerId = :customerId";
 
-            query.setParameter("customerId", customerId);
+        TypedQuery<Cart> query =
+                em.createQuery(jpql, Cart.class);
 
-            return query.getSingleResult();
+        query.setParameter("customerId", customerId);
 
-        } catch (NoResultException e) {
-            return null;
+        // Yêu cầu JPA làm mới dữ liệu từ database
+        query.setHint(
+            "jakarta.persistence.cache.retrieveMode",
+            jakarta.persistence.CacheRetrieveMode.BYPASS
+        );
 
-        } finally {
-            em.close();
-        }
+        query.setHint(
+            "jakarta.persistence.cache.storeMode",
+            jakarta.persistence.CacheStoreMode.REFRESH
+        );
+
+        Cart cart = query.getSingleResult();
+
+        // Kiểm tra danh sách sau khi truy vấn
+        System.out.println(
+            "Số CartItem qua Cart: " + cart.getCartItems().size()
+        );
+
+        return cart;
+
+    } catch (NoResultException e) {
+        return null;
+    } finally {
+        em.close();
     }
+}
+
     
 public void insert(Cart cart) {
     EntityManager em = DBUtil.getEmFactory().createEntityManager();

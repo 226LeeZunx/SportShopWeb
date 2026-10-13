@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "Orders")
@@ -44,6 +45,12 @@ public class Order implements Serializable {
 
     @Column(name = "discount", nullable = false)
     private long discountAmount = 0;
+    
+    @Column(name = "total_amount")
+    private long totalAmount;
+
+    @Column(name = "order_date")
+    private java.util.Date orderDate;
 
     public Order() {
     }
@@ -94,5 +101,20 @@ public class Order implements Serializable {
 
     public void setDiscountAmount(long discountAmount) {
         this.discountAmount = discountAmount;
+    }
+    public long getTotalAmount() {
+    return totalAmount;
+    }
+
+    public void setTotalAmount(long totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
     }
 }

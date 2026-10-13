@@ -24,14 +24,19 @@ public class Category implements Serializable {
     private String name;
     private String description;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public Category() {
     }
 
-    public Category(int categoryId, String name, String description) {
+    public Category(int categoryId, String name, String description, String imageUrl) {
         this.categoryId = categoryId;
         this.name = name;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
+
 
     public int getCategoryId() {
         return categoryId;
@@ -55,5 +60,13 @@ public class Category implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
