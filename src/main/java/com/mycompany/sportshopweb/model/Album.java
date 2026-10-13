@@ -56,10 +56,6 @@ public class Album implements Serializable {
         this.items = items != null ? items : new ArrayList<>();
     }
 
-    public Album(int albumId, String name, String description, List<ProductVariant> items) {
-        this(albumId, name, description, null, items);
-    }
-
     public int getAlbumId() {
         return albumId;
     }
@@ -90,14 +86,6 @@ public class Album implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public String getUrlImage() {
-        return imageUrl;
-    }
-
-    public void setUrlImage(String urlImage) {
-        this.imageUrl = urlImage;
     }
 
     public List<ProductVariant> getItems() {
