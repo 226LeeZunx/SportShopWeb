@@ -114,6 +114,7 @@
 
                                     <c:if test="${param.deleteError == 'server'}">
                                         <div class="admin-message error" role="alert">
+
                                             An error occurred while updating product inventory.
                                             Please try again.
                                         </div>
