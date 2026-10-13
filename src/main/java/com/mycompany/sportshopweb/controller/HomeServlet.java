@@ -33,9 +33,8 @@ public class HomeServlet extends HttpServlet {
         ProductDB productDAO = new ProductDB();
         getServletContext().setAttribute("ProductDAO", productDAO);
         try {
-            getServletContext().setAttribute("globalAlbumList", AlbumDAO.getAllAlbums());
-            getServletContext().setAttribute("globalCategoryList", CategoryDB.getAllCategory());
-            getServletContext().setAttribute("globalBrandList", BrandDB.getAllBrand());
+            List<Album> albums = AlbumDAO.getAllAlbums();
+            getServletContext().setAttribute("globalAlbumList", albums);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,17 +44,7 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
-        List<Category> categoryList = CategoryDB.getAllCategory();
-        request.setAttribute("categoryList", categoryList);
-        getServletContext().setAttribute("globalCategoryList", categoryList);
-
-        try {
-            List<Brand> brandList = BrandDB.getAllBrand();
-            request.setAttribute("brandList", brandList);
-            getServletContext().setAttribute("globalBrandList", brandList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        request.setAttribute("categoryList", CategoryDB.getAllCategory());
 
         // Nạp danh sách Album (Lookbook) để hiển thị lên Side Panel
         try {

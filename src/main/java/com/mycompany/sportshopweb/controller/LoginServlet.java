@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Anh Tuan
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+@WebServlet(name = "LoginServlet", urlPatterns = { "/LoginServlet" })
 public class LoginServlet extends HttpServlet {
 
     // Khi người dùng bấm vào link hoặc truy cập URL trang đăng nhập
