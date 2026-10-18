@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.NoResultException;
+import java.util.List;
 
 public class VoucherDAO {
 
@@ -20,7 +21,7 @@ public class VoucherDAO {
             TypedQuery<Voucher> query =
                 em.createQuery(jpql, Voucher.class);
 
-            query.setParameter("code", code);
+            query.setParameter("code", code.trim());
 
             return query.getSingleResult();
 
@@ -75,6 +76,19 @@ public class VoucherDAO {
         } finally {
             em.close();
         }
+    }public List<Voucher> findActiveVouchers() {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
+    try {
+        String jpql = "SELECT v FROM Voucher v "
+                    + "WHERE v.active = true "
+                    + "ORDER BY v.discount DESC";
+
+        return em.createQuery(jpql, Voucher.class)
+                 .getResultList();
+    } finally {
+        em.close();
     }
+}
 
 }

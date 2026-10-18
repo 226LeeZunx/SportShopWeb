@@ -51,6 +51,10 @@ public class Order implements Serializable {
 
     @Column(name = "order_date")
     private java.util.Date orderDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Adress address;
 
     public Order() {
     }
@@ -116,5 +120,12 @@ public class Order implements Serializable {
 
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
+    }
+    public Adress getAddress() {
+    return address;
+}
+
+    public void setAddress(Adress address) {
+        this.address = address;
     }
 }

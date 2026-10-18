@@ -100,13 +100,13 @@ public class Adress implements Serializable {
         this.detailAddress = detailAddress;
     }
 
-    public boolean isDefault() {
-        return isDefault;
-    }
+    public boolean getDefaultAddress() {
+    return isDefault;
+}
 
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
+public void setDefault(boolean isDefault) {
+    this.isDefault = isDefault;
+}
 }
 
 

@@ -29,6 +29,114 @@
     color: #e4572e;
 }
 
+
+/* ===== Order detail: product image like Cart ===== */
+
+/* Khung ảnh sản phẩm */
+.order-detail-page .product-image {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+/* Ảnh bên trong khung */
+.order-detail-page .product-image img,
+.order-detail-page .product-image .product-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+
+    object-fit: contain;
+    padding: 6px;
+    margin: 0;
+}
+
+/* Dòng sản phẩm: ảnh trái, thông tin phải */
+.order-detail-page .order-product-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+/* Nội dung bên phải ảnh */
+.order-detail-page .order-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Tên sản phẩm */
+.order-detail-page .order-product-name {
+    margin: 0 0 10px;
+    color: #1f2937;
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Phân loại và số lượng */
+.order-detail-page .order-product-variant,
+.order-detail-page .order-product-quantity {
+    margin-top: 7px;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Số lượng nổi bật */
+.order-detail-page .order-product-quantity strong {
+    color: #111827;
+    font-weight: 700;
+}
+
+/* Điện thoại */
+@media (max-width: 480px) {
+    .order-detail-page .order-product-item {
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .order-detail-page .product-image {
+        width: 90px;
+        height: 90px;
+        min-width: 90px;
+    }
+
+    .order-detail-page .order-product-name {
+        font-size: 14px;
+    }
+
+    .order-detail-page .order-product-variant,
+    .order-detail-page .order-product-quantity {
+        font-size: 12px;
+    }
+}
+
+
 /* ===== Order Header ===== */
 .order-hero {
     padding: 30px;
