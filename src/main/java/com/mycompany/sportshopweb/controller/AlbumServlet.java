@@ -14,10 +14,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- * Controller cho tính năng Lookbook / Album phối đồ thể thao
- * @author Anh Tuan
- */
 @WebServlet(name = "AlbumServlet", urlPatterns = {"/AlbumServlet", "/albums", "/lookbook"})
 public class AlbumServlet extends HttpServlet {
 
@@ -27,7 +23,6 @@ public class AlbumServlet extends HttpServlet {
         String idParam = request.getParameter("id");
 
         if (idParam != null && !idParam.trim().isEmpty()) {
-            // Xem chi tiết một Album phối đồ cụ thể
             try {
                 int albumId = Integer.parseInt(idParam.trim());
                 Album album = AlbumDAO.getAlbumById(albumId);
@@ -40,12 +35,10 @@ public class AlbumServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
-            // Nếu không tìm thấy hoặc ID sai định dạng, quay về danh sách Album
             response.sendRedirect(request.getContextPath() + "/AlbumServlet");
             return;
         }
 
-        // Xem danh sách tất cả các Album / Bộ sưu tập phối đồ
         List<Album> albumList = AlbumDAO.getAllAlbums();
         request.setAttribute("albumList", albumList);
         request.getRequestDispatcher("/views/album-list.jsp").forward(request, response);

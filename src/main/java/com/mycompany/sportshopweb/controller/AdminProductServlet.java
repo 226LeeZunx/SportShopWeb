@@ -3,7 +3,7 @@ package com.mycompany.sportshopweb.controller;
 import com.mycompany.sportshopweb.model.Category;
 import com.mycompany.sportshopweb.model.Product;
 import com.mycompany.sportshopweb.util.DBUtil;
-import com.mycompany.sportshopweb.util.ProductDB;
+import com.mycompany.sportshopweb.dao.ProductDAO;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletException;
@@ -19,7 +19,7 @@ import java.util.List;
 @WebServlet(name = "AdminProductServlet", urlPatterns = { "/admin/products" })
 public class AdminProductServlet extends HttpServlet {
 
-    private final ProductDB productDB = new ProductDB();
+    private final ProductDAO productDB = new ProductDAO();
 
     // GET: Hiển thị danh sách sản phẩm trong trang quản trị.
 
@@ -71,10 +71,10 @@ public class AdminProductServlet extends HttpServlet {
         }
 
         // 3. Xác định kích thước trang.
-        int pageSize = ProductDB.PAGE_SIZE;
+        int pageSize = ProductDAO.PAGE_SIZE;
 
         // 4. Đếm sản phẩm theo bộ lọc hiện tại.
-        long totalProducts = ProductDB.countProducts(keyword, categoryId);
+        long totalProducts = ProductDAO.countProducts(keyword, categoryId);
 
         // 5. Tính tổng số trang sau khi lọc.
         int totalPages = (int) Math.ceil(
@@ -88,7 +88,7 @@ public class AdminProductServlet extends HttpServlet {
         }
 
         // 7. Lấy sản phẩm theo trang và bộ lọc.
-        List<Product> products = ProductDB.getProductsByPage(
+        List<Product> products = ProductDAO.getProductsByPage(
                 page, pageSize, keyword, categoryId);
 
         // 8. Lấy danh sách category để hiển thị dropdown.

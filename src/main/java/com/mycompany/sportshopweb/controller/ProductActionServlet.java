@@ -3,10 +3,10 @@ package com.mycompany.sportshopweb.controller;
 import com.cloudinary.utils.ObjectUtils;
 import com.mycompany.sportshopweb.model.Product;
 import com.mycompany.sportshopweb.model.ProductImage;
-import com.mycompany.sportshopweb.util.BrandDB;
+import com.mycompany.sportshopweb.dao.BrandDAO;
 import com.mycompany.sportshopweb.util.CategoryDB;
 import com.mycompany.sportshopweb.util.CloudinaryConfig;
-import com.mycompany.sportshopweb.util.ProductDB;
+import com.mycompany.sportshopweb.dao.ProductDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class ProductActionServlet extends HttpServlet {
     @Override
     public void init() {
-        ProductDB productDAO = new ProductDB();
+        ProductDAO productDAO = new ProductDAO();
         getServletContext().setAttribute("ProductDAO", productDAO);
 
     }
@@ -36,7 +36,7 @@ public class ProductActionServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // 1. Chuẩn bị dữ liệu cho các dropdown Brand và Category.
-        BrandDB brandDAO = new BrandDB();
+        BrandDAO brandDAO = new BrandDAO();
         CategoryDB categoryDAO = new CategoryDB();
 
         request.setAttribute("brands", brandDAO.getAllBrand());
@@ -62,7 +62,7 @@ public class ProductActionServlet extends HttpServlet {
                 }
 
                 // 3. Tìm sản phẩm trong database.
-                Product product = ProductDB.getProductById(productId);
+                Product product = ProductDAO.getProductById(productId);
 
                 if (product == null) {
                     response.sendError(
@@ -158,10 +158,10 @@ public class ProductActionServlet extends HttpServlet {
             return;
         }
 
-        ProductDB productDAO = (ProductDB) getServletContext().getAttribute("ProductDAO");
+        ProductDAO productDAO = (ProductDAO) getServletContext().getAttribute("ProductDAO");
 
         if (productDAO == null) {
-            productDAO = new ProductDB();
+            productDAO = new ProductDAO();
             getServletContext().setAttribute("ProductDAO", productDAO);
         }
 
@@ -242,7 +242,7 @@ public class ProductActionServlet extends HttpServlet {
 
             // Khôi phục chế độ Edit khi xảy ra lỗi để không mất productId.
             if (isUpdate) {
-                Product product = ProductDB.getProductById(productId);
+                Product product = ProductDAO.getProductById(productId);
 
                 if (product == null) {
                     response.sendError(
@@ -257,7 +257,7 @@ public class ProductActionServlet extends HttpServlet {
                 request.setAttribute("editMode", false);
             }
 
-            BrandDB brandDAO = new BrandDB();
+            BrandDAO brandDAO = new BrandDAO();
             CategoryDB categoryDAO = new CategoryDB();
 
             request.setAttribute("brands", brandDAO.getAllBrand());

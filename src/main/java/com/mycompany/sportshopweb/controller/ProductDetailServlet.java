@@ -2,7 +2,7 @@ package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.model.Product;
 import com.mycompany.sportshopweb.model.ProductVariant;
-import com.mycompany.sportshopweb.util.ProductDB;
+import com.mycompany.sportshopweb.dao.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,14 +28,14 @@ public class ProductDetailServlet extends HttpServlet {
         }
 
         // 2. Lấy sản phẩm
-        Product product = ProductDB.getProductById(id);
+        Product product = ProductDAO.getProductById(id);
         if (product == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy sản phẩm");
             return;
         }
 
         // 3. Lấy biến thể và tính tồn kho
-        List<ProductVariant> variants = ProductDB.getVariantsByProductId(id);
+        List<ProductVariant> variants = ProductDAO.getVariantsByProductId(id);
 
         int totalStock = 0;
         long minPrice = 0;

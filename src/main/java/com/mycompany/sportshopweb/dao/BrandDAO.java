@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.sportshopweb.util;
+package com.mycompany.sportshopweb.dao;
 
 import com.mycompany.sportshopweb.model.Brand;
 import com.mycompany.sportshopweb.model.Product;
+import com.mycompany.sportshopweb.util.DBUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author dung2
  */
-public class BrandDB {
+public class BrandDAO {
     public static List<Brand> getAllBrand() {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         try {
@@ -24,4 +25,6 @@ public class BrandDB {
             em.close();
         }
     }
+    
+    
 }
