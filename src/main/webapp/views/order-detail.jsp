@@ -326,7 +326,7 @@
                             </p>
 
                             <a class="continue-shopping-btn"
-                               href="${pageContext.request.contextPath}/products">
+                               href="${pageContext.request.contextPath}/HomeServlet">
                                 Continue Shopping
                                 <i class="fa-solid fa-arrow-right"></i>
                             </a>
