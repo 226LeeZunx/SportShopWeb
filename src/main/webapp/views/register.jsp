@@ -193,7 +193,7 @@
                             </div>
                         </div>
 
-                        <!-- Mật khẩu (Có nút bật/tắt ẩn hiện mật khẩu) -->
+                        <!-- Mật khẩu -->
                         <div class="form-group">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-with-icon">
@@ -204,13 +204,10 @@
                                        class="form-input has-icon" 
                                        placeholder="At least 6 characters" 
                                        required>
-                                <button type="button" class="toggle-password" id="togglePasswordBtn" title="Toggle password visibility">
-                                    <i class="fa-regular fa-eye" id="eyeIcon"></i>
-                                </button>
                             </div>
                         </div>
 
-                        <!-- Xác nhận mật khẩu (Có nút bật/tắt ẩn hiện mật khẩu) -->
+                        <!-- Xác nhận mật khẩu -->
                         <div class="form-group">
                             <label for="confirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-with-icon">
@@ -221,9 +218,6 @@
                                        class="form-input has-icon" 
                                        placeholder="Re-enter your password" 
                                        required>
-                                <button type="button" class="toggle-password" id="toggleConfirmPasswordBtn" title="Toggle confirm password visibility">
-                                    <i class="fa-regular fa-eye" id="confirmEyeIcon"></i>
-                                </button>
                             </div>
                         </div>
 
@@ -261,7 +255,7 @@
                         <!-- Chuyển hướng sang trang đăng nhập -->
                         <div class="auth-footer">
                             Already have an account? 
-                            <a href="${pageContext.request.contextPath}/views/login.jsp" class="form-link">Sign In</a>
+                            <a href="${pageContext.request.contextPath}/LoginServlet" class="form-link">Sign In</a>
                         </div>
 
                     </form>
@@ -273,24 +267,6 @@
 
         <!-- 3. Nhúng Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
-
-        <!-- Script xử lý ẩn/hiện mật khẩu cho cả 2 ô mật khẩu -->
-        <script>
-            function setupPasswordToggle(btnId, inputId, iconId) {
-                var btn = document.getElementById(btnId);
-                var input = document.getElementById(inputId);
-                var icon = document.getElementById(iconId);
-                if (btn && input && icon) {
-                    btn.addEventListener('click', function () {
-                        var isPassword = input.getAttribute('type') === 'password';
-                        input.setAttribute('type', isPassword ? 'text' : 'password');
-                        icon.className = isPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
-                    });
-                }
-            }
-            setupPasswordToggle('togglePasswordBtn', 'password', 'eyeIcon');
-            setupPasswordToggle('toggleConfirmPasswordBtn', 'confirmPassword', 'confirmEyeIcon');
-        </script>
 
     </body>
 </html>

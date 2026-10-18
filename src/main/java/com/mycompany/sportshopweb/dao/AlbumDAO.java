@@ -1,0 +1,143 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.sportshopweb.dao;
+
+import com.mycompany.sportshopweb.model.Album;
+import com.mycompany.sportshopweb.model.ProductVariant;
+import com.mycompany.sportshopweb.util.DBUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Data Access Object cho Album (Lookbook / Bộ sưu tập phối đồ)
+ * @author Anh Tuan
+ */
+public class AlbumDAO {
+
+    /**
+     * Lấy danh sách tất cả các Album Lookbook
+     */
+    public static List<Album> getAllAlbums() {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        try {
+            TypedQuery<Album> query = em.createQuery(
+                "SELECT a FROM Album a ORDER BY a.albumId ASC",
+                Album.class
+            );
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Lấy chi tiết 1 Album theo ID kèm danh sách ProductVariant, Product và hình ảnh
+     */
+    public static Album getAlbumById(int albumId) {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        try {
+            TypedQuery<Album> query = em.createQuery(
+                "SELECT DISTINCT a FROM Album a LEFT JOIN FETCH a.items WHERE a.albumId = :id",
+                Album.class
+            );
+            query.setParameter("id", albumId);
+            List<Album> list = query.getResultList();
+            if (list.isEmpty()) {
+                return null;
+            }
+            Album album = list.get(0);
+            if (album.getItems() != null) {
+                for (ProductVariant v : album.getItems()) {
+                    if (v.getProduct() != null && v.getProduct().getImages() != null) {
+                        v.getProduct().getImages().size();
+                    }
+                }
+            }
+            return album;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Thêm mới Album
+     */
+    public static boolean insert(Album album) {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.persist(album);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Cập nhật Album
+     */
+    public static boolean update(Album album) {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.merge(album);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Xóa Album theo ID
+     */
+    public static boolean delete(int albumId) {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Album album = em.find(Album.class, albumId);
+            if (album != null) {
+                em.remove(album);
+                tx.commit();
+                return true;
+            }
+            tx.rollback();
+            return false;
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+}
