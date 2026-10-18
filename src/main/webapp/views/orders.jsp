@@ -96,7 +96,7 @@
 
                 <button type="button"
                         class="order-tab"
-                        data-filter="COMPLETE">
+                        data-filter="COMPLETED">
                     Đã thanh toán
                 </button>
 
@@ -163,7 +163,7 @@
                                     </span>
                                 </c:when>
 
-                                <c:when test="${status eq 'COMPLETE'}">
+                                <c:when test="${status eq 'COMPLETED'}">
                                     <span class="order-status status-delivered">
                                         <i class="fa-solid fa-circle-check"></i>
                                         Đã thanh toán
