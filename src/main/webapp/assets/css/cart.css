@@ -976,3 +976,33 @@ input:focus-visible {
     flex-direction: column;
     width: 100%;
 }
+
+.cart-heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cart-heading-actions .btn-select-all {
+    padding: 9px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cart-heading-actions .btn-select-all:hover {
+    background-color: #ccff00;
+    border-color: #ccff00;
+    color: #172033;
+}
+
+.cart-heading-actions .btn-select-all.selected {
+    background-color: #172033;
+    border-color: #172033;
+    color: #ffffff;
+}

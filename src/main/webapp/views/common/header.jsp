@@ -53,7 +53,7 @@
             </a>
 
             <!-- Nút Giỏ hàng -->
-            <a href="${pageContext.request.contextPath}/views/cart.jsp" class="action-btn cart-btn" title="Shopping Cart">
+            <a href="${pageContext.request.contextPath}/cart" class="action-btn cart-btn" title="Shopping Cart">
                 <i class="fa-solid fa-bag-shopping"></i>
                 <span class="cart-badge">${not empty sessionScope.cartCount ? sessionScope.cartCount : '0'}</span>
             </a>

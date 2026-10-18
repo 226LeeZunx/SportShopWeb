@@ -175,7 +175,16 @@
 
                 <c:forEach var="item" items="${order.orderItems}">
                     <div class="order-product-item">
-
+                        
+                        <div class="product-image">
+                            <c:if test="${not empty item.productVariant.product.images}">
+                                <img
+                                    src="<c:out value='${item.productVariant.product.images[0].imageUrl}'/>"
+                                    alt="<c:out value='${item.productVariant.variantName}'/>"
+                                    class="product-img"
+                                    onerror="this.style.display='none';">
+                            </c:if>
+                        </div>
                         <div class="order-product-info">
                             <div class="order-product-name">
                                 <c:choose>
@@ -317,7 +326,7 @@
                             </p>
 
                             <a class="continue-shopping-btn"
-                               href="${pageContext.request.contextPath}/products">
+                               href="${pageContext.request.contextPath}/HomeServlet">
                                 Continue Shopping
                                 <i class="fa-solid fa-arrow-right"></i>
                             </a>

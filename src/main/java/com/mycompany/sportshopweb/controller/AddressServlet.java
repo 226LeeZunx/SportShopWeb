@@ -1,0 +1,207 @@
+
+package com.mycompany.sportshopweb.servlet;
+
+import com.mycompany.sportshopweb.dao.AdressDAO;
+import com.mycompany.sportshopweb.dao.CustomerDAO;
+import com.mycompany.sportshopweb.model.Adress;
+import com.mycompany.sportshopweb.model.Customer;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/addresses")
+public class AddressServlet extends HttpServlet {
+
+    private final AdressDAO adressDAO = new AdressDAO();
+    private final CustomerDAO customerDAO = new CustomerDAO();
+
+    // Tìm customerId của tài khoản đang đăng nhập
+    // Hiển thị danh sách địa chỉ
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("customer") == null) {
+            response.sendRedirect(
+                    request.getContextPath() + "/LoginServlet"
+            );
+            return;
+        }
+        
+        Customer customer = (Customer) session.getAttribute("customer");
+
+        int customerId = customer.getCustomerId();
+
+        List<Adress> addresses =
+                adressDAO.findByCustomerId(customerId);
+
+        request.setAttribute("addresses", addresses);
+
+        request.getRequestDispatcher(
+                "/views/address.jsp")
+                .forward(request, response);
+    }
+
+    // Xử lý thêm, sửa và đặt địa chỉ mặc định
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("customer") == null) {
+            response.sendRedirect(
+                    request.getContextPath() + "/LoginServlet"
+            );
+            return;
+        }
+        
+        Customer customer = (Customer) session.getAttribute("customer");
+
+        int customerId = customer.getCustomerId();
+
+        String action = request.getParameter("action");
+
+        boolean success = false;
+
+        if ("insert".equals(action)) {
+            success = insertAddress(request, customerId);
+        } else if ("update".equals(action)) {
+            success = updateAddress(request, customerId);
+        } else if ("setDefault".equals(action)) {
+            success = setDefaultAddress(request, customerId);
+        } else {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (success) {
+            response.sendRedirect(
+                    request.getContextPath() + "/addresses");
+        } else {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Không thể thực hiện thao tác địa chỉ.");
+        }
+    }
+
+    // Thêm địa chỉ mới
+    private boolean insertAddress(HttpServletRequest request,
+                                  int customerId) {
+
+        String province = request.getParameter("province");
+        String ward = request.getParameter("ward");
+        String detailAddress =
+                request.getParameter("detailAddress");
+
+        if (isBlank(province)
+                || isBlank(ward)
+                || isBlank(detailAddress)) {
+            return false;
+        }
+
+        Customer customer =
+                customerDAO.findById(customerId);
+
+        if (customer == null) {
+            return false;
+        }
+
+        Adress address = new Adress();
+
+        address.setCustomer(customer);
+        address.setProvince(province.trim());
+        address.setWard(ward.trim());
+        address.setDetailAddress(detailAddress.trim());
+
+        String defaultValue =
+                request.getParameter("isDefault");
+
+        boolean isDefault = "true".equals(defaultValue);
+
+        address.setDefault(isDefault);
+
+        return adressDAO.insert(address);
+    }
+
+    // Cập nhật địa chỉ đã lưu
+    private boolean updateAddress(HttpServletRequest request,
+                                  int customerId) {
+
+        int addressId;
+
+        try {
+            addressId = Integer.parseInt(
+                    request.getParameter("addressId"));
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        // Chỉ lấy địa chỉ thuộc khách hàng đang đăng nhập
+        Adress address =
+                adressDAO.findByIdAndCustomerId(
+                        addressId, customerId);
+
+        if (address == null) {
+            return false;
+        }
+
+        String province = request.getParameter("province");
+        String ward = request.getParameter("ward");
+        String detailAddress =
+                request.getParameter("detailAddress");
+
+        if (isBlank(province)
+                || isBlank(ward)
+                || isBlank(detailAddress)) {
+            return false;
+        }
+
+        address.setProvince(province.trim());
+        address.setWard(ward.trim());
+        address.setDetailAddress(detailAddress.trim());
+
+        String defaultValue =
+                request.getParameter("isDefault");
+
+        boolean isDefault = "true".equals(defaultValue);
+
+        address.setDefault(isDefault);
+
+        return adressDAO.update(address, customerId);
+    }
+
+    // Đặt địa chỉ làm mặc định
+    private boolean setDefaultAddress(
+            HttpServletRequest request,
+            int customerId) {
+
+        int addressId;
+
+        try {
+            addressId = Integer.parseInt(
+                    request.getParameter("addressId"));
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        return adressDAO.setDefault(addressId, customerId);
+    }
+
+    // Kiểm tra chuỗi rỗng hoặc chỉ chứa khoảng trắng
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+}

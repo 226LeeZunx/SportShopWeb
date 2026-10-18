@@ -64,21 +64,69 @@ public class OrderDAO {
         
     }
     public void cancelOrder(int orderId) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        EntityTransaction trans = em.getTransaction();
-        try {
-            trans.begin();
-            Order order = em.find(Order.class, orderId);
-            if (order == null) {
-            throw new IllegalArgumentException("Order not found!");
-            }
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    EntityTransaction trans = em.getTransaction();
+
+    try {
+        trans.begin();
+
+        Order order = em.find(Order.class, orderId);
+
+        if (order != null
+                && order.getOrderStatus() == OrderStatus.CONFIRMED) {
             order.setOrderStatus(OrderStatus.CANCELLED);
-            trans.commit();
         }
-        catch (Exception e) {
+
+        trans.commit();
+
+    } catch (Exception e) {
+        if (trans.isActive()) {
             trans.rollback();
-        } finally {
-            em.close();
         }
+        throw e;
+    } finally {
+        em.close();
+    }
+}
+    
+    
+    public boolean isPaymentExpired(Order order) {
+    if (order == null
+            || order.getOrderStatus() != OrderStatus.CONFIRMED
+            || order.getOrderDate() == null) {
+        return false;
+    }
+
+    long elapsed = System.currentTimeMillis()
+            - order.getOrderDate().getTime();
+
+    long fifteenMinutes = 15 * 60 * 1000L;
+
+    return elapsed >= fifteenMinutes;
+}
+
+public void cancelExpiredOrder(int orderId) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    EntityTransaction trans = em.getTransaction();
+
+    try {
+        trans.begin();
+
+        Order order = em.find(Order.class, orderId);
+
+        if (isPaymentExpired(order)) {
+            order.setOrderStatus(OrderStatus.CANCELLED);
+        }
+
+        trans.commit();
+
+    } catch (Exception e) {
+        if (trans.isActive()) {
+            trans.rollback();
+        }
+        throw e;
+    } finally {
+        em.close();
+    }
 }
 }

@@ -1,0 +1,72 @@
+ body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px #ddd;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .address {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .address:last-child {
+            border-bottom: none;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 4px 4px 4px 0;
+        }
+
+        .primary {
+            background: #ee4d2d;
+            color: white;
+        }
+
+        .secondary {
+            background: #e5e7eb;
+        }
+
+        .default-label {
+            color: #ee4d2d;
+            font-weight: bold;
+        }
+
+        .edit-form {
+            display: none;
+            background: #fafafa;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
