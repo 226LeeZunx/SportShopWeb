@@ -1,5 +1,5 @@
 
-package com.mycompany.sportshopweb.servlet;
+package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.dao.AdressDAO;
 import com.mycompany.sportshopweb.dao.CustomerDAO;
@@ -15,8 +15,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebServlet(name = "SelectAddressServlet",
-            urlPatterns = {"/select-address"})
+@WebServlet(name = "SelectAddressServlet", urlPatterns = { "/select-address" })
 public class SelectAddressServlet extends HttpServlet {
 
     private final AdressDAO adressDAO = new AdressDAO();
@@ -24,7 +23,7 @@ public class SelectAddressServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
+            HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
@@ -37,8 +36,7 @@ public class SelectAddressServlet extends HttpServlet {
 
         Customer customer = (Customer) session.getAttribute("customer");
 
-        String addressIdValue =
-                request.getParameter("addressId");
+        String addressIdValue = request.getParameter("addressId");
 
         int addressId;
 
@@ -50,9 +48,8 @@ public class SelectAddressServlet extends HttpServlet {
             return;
         }
 
-        Adress address =
-                adressDAO.findByIdAndCustomerId(
-                        addressId, customer.getCustomerId());
+        Adress address = adressDAO.findByIdAndCustomerId(
+                addressId, customer.getCustomerId());
 
         if (address == null) {
             response.sendError(
@@ -62,7 +59,7 @@ public class SelectAddressServlet extends HttpServlet {
         }
 
         session.setAttribute("selectedAddressId",
-                             address.getAddressId());
+                address.getAddressId());
 
         response.sendRedirect(
                 request.getContextPath() + "/checkout");

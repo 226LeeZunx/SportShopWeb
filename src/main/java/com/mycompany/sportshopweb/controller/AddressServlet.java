@@ -1,5 +1,5 @@
 
-package com.mycompany.sportshopweb.servlet;
+package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.dao.AdressDAO;
 import com.mycompany.sportshopweb.dao.CustomerDAO;
@@ -26,23 +26,21 @@ public class AddressServlet extends HttpServlet {
     // Hiển thị danh sách địa chỉ
     @Override
     protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response)
+            HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("customer") == null) {
             response.sendRedirect(
-                    request.getContextPath() + "/LoginServlet"
-            );
+                    request.getContextPath() + "/LoginServlet");
             return;
         }
-        
+
         Customer customer = (Customer) session.getAttribute("customer");
 
         int customerId = customer.getCustomerId();
 
-        List<Adress> addresses =
-                adressDAO.findByCustomerId(customerId);
+        List<Adress> addresses = adressDAO.findByCustomerId(customerId);
 
         request.setAttribute("addresses", addresses);
 
@@ -54,7 +52,7 @@ public class AddressServlet extends HttpServlet {
     // Xử lý thêm, sửa và đặt địa chỉ mặc định
     @Override
     protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
+            HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
@@ -62,11 +60,10 @@ public class AddressServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("customer") == null) {
             response.sendRedirect(
-                    request.getContextPath() + "/LoginServlet"
-            );
+                    request.getContextPath() + "/LoginServlet");
             return;
         }
-        
+
         Customer customer = (Customer) session.getAttribute("customer");
 
         int customerId = customer.getCustomerId();
@@ -99,12 +96,11 @@ public class AddressServlet extends HttpServlet {
 
     // Thêm địa chỉ mới
     private boolean insertAddress(HttpServletRequest request,
-                                  int customerId) {
+            int customerId) {
 
         String province = request.getParameter("province");
         String ward = request.getParameter("ward");
-        String detailAddress =
-                request.getParameter("detailAddress");
+        String detailAddress = request.getParameter("detailAddress");
 
         if (isBlank(province)
                 || isBlank(ward)
@@ -112,8 +108,7 @@ public class AddressServlet extends HttpServlet {
             return false;
         }
 
-        Customer customer =
-                customerDAO.findById(customerId);
+        Customer customer = customerDAO.findById(customerId);
 
         if (customer == null) {
             return false;
@@ -126,8 +121,7 @@ public class AddressServlet extends HttpServlet {
         address.setWard(ward.trim());
         address.setDetailAddress(detailAddress.trim());
 
-        String defaultValue =
-                request.getParameter("isDefault");
+        String defaultValue = request.getParameter("isDefault");
 
         boolean isDefault = "true".equals(defaultValue);
 
@@ -138,7 +132,7 @@ public class AddressServlet extends HttpServlet {
 
     // Cập nhật địa chỉ đã lưu
     private boolean updateAddress(HttpServletRequest request,
-                                  int customerId) {
+            int customerId) {
 
         int addressId;
 
@@ -150,9 +144,8 @@ public class AddressServlet extends HttpServlet {
         }
 
         // Chỉ lấy địa chỉ thuộc khách hàng đang đăng nhập
-        Adress address =
-                adressDAO.findByIdAndCustomerId(
-                        addressId, customerId);
+        Adress address = adressDAO.findByIdAndCustomerId(
+                addressId, customerId);
 
         if (address == null) {
             return false;
@@ -160,8 +153,7 @@ public class AddressServlet extends HttpServlet {
 
         String province = request.getParameter("province");
         String ward = request.getParameter("ward");
-        String detailAddress =
-                request.getParameter("detailAddress");
+        String detailAddress = request.getParameter("detailAddress");
 
         if (isBlank(province)
                 || isBlank(ward)
@@ -173,8 +165,7 @@ public class AddressServlet extends HttpServlet {
         address.setWard(ward.trim());
         address.setDetailAddress(detailAddress.trim());
 
-        String defaultValue =
-                request.getParameter("isDefault");
+        String defaultValue = request.getParameter("isDefault");
 
         boolean isDefault = "true".equals(defaultValue);
 

@@ -9,21 +9,21 @@ public final class VNPayConfig {
     public static final String PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
     public static String getTmnCode() {
-        return "IPVWELXW";
+        return getRequiredEnv("VNPAY_TMN_CODE");
     }
 
     public static String getHashSecret() {
-        return "SRNZKXGZXESCMEKWZHETRSCSBISGOPFK";
+        return getRequiredEnv("VNPAY_HASH_SECRET");
     }
 
     public static String getReturnUrl() {
-        return "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        return getRequiredEnv("VNPAY_RETURN_URL");
     }
 
     private static String getRequiredEnv(String name) {
         String value = System.getenv(name);
 
-        if (value == null || value.trim().isEmpty()) {
+        if (value == null || value.isBlank()) {
             throw new IllegalStateException(
                     "Missing environment variable: " + name);
         }

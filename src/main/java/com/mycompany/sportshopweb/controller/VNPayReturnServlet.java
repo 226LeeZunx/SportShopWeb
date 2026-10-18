@@ -18,7 +18,8 @@ public class VNPayReturnServlet extends HttpServlet {
     @Override
     protected void doGet(
             HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+            HttpServletResponse response)
+            throws ServletException, IOException {
 
         Map<String, String> params = new HashMap<>();
 
@@ -29,50 +30,41 @@ public class VNPayReturnServlet extends HttpServlet {
         });
 
         try {
+            // Xác minh chữ ký phản hồi từ VNPay
             boolean validSignature = VNPayService.isValidSignature(params);
 
             String responseCode = params.get("vnp_ResponseCode");
             String transactionStatus = params.get("vnp_TransactionStatus");
 
-            response.setContentType("text/html;charset=UTF-8");
+            System.out.println("===== VNPAY RETURN =====");
+            System.out.println("Response code = " + responseCode);
+            System.out.println("Transaction status = " + transactionStatus);
+            System.out.println("Signature valid = " + validSignature);
 
+            String contextPath = request.getContextPath();
+
+            // Không cho phép phản hồi có chữ ký sai được xem là thành công
             if (!validSignature) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println(
-                        "<h2>Invalid payment signature</h2>");
+                response.sendRedirect(
+                        contextPath + "/views/VNPayFail.jsp?reason=invalid_signature");
                 return;
             }
 
+            // Chỉ xem là thành công khi cả hai mã đều bằng 00
             boolean success = "00".equals(responseCode)
                     && "00".equals(transactionStatus);
 
             if (success) {
-                response.getWriter().println(
-                        "<h2>Sandbox payment successful</h2>");
+                response.sendRedirect(
+                        contextPath + "/views/VNPaySuccess.jsp");
             } else {
-                response.getWriter().println(
-                        "<h2>Sandbox payment unsuccessful</h2>");
-                response.getWriter().println(
-                        "<p>Response code: "
-                                + escapeHtml(responseCode)
-                                + "</p>");
+                response.sendRedirect(
+                        contextPath + "/views/VNPayFail.jsp");
             }
 
         } catch (Exception e) {
             throw new ServletException(
                     "Unable to verify VNPay response.", e);
         }
-    }
-
-    private String escapeHtml(String value) {
-        if (value == null) {
-            return "N/A";
-        }
-
-        return value.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#39;");
     }
 }
