@@ -101,7 +101,7 @@ public class VNPayServlet extends HttpServlet {
                     .toString()
                     .replace("-", "")
                     .substring(0, 20);
-
+            session.setAttribute("vnpay_order_" + txnRef, orderId);
             String orderInfo = "Thanh toan don hang " + orderId;
 
             String ipAddress = request.getRemoteAddr();

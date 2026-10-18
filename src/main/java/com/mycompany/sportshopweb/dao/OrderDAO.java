@@ -88,7 +88,34 @@ public class OrderDAO {
         em.close();
     }
 }
-    
+   public boolean updateOrderStatus(int orderId, OrderStatus status) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    EntityTransaction trans = em.getTransaction();
+
+    try {
+        trans.begin();
+
+        Order order = em.find(Order.class, orderId);
+
+        if (order == null) {
+            trans.rollback();
+            return false;
+        }
+
+        order.setOrderStatus(status);
+
+        trans.commit();
+        return true;
+
+    } catch (Exception e) {
+        if (trans.isActive()) {
+            trans.rollback();
+        }
+        throw e;
+    } finally {
+        em.close();
+    }
+}
     
     public boolean isPaymentExpired(Order order) {
     if (order == null
