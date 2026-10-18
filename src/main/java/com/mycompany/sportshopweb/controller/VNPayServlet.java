@@ -17,50 +17,75 @@ public class VNPayServlet extends HttpServlet {
     @Override
     protected void doPost(
             HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+            HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String amountParam = request.getParameter("amount");
+
+        if (amountParam == null || amountParam.trim().isEmpty()) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Missing payment amount.");
+            return;
+        }
+
+        final long amountVnd;
 
         try {
-            // Luồng thử nghiệm độc lập: số tiền lấy từ form.
-            String amountText = request.getParameter("amount");
-            if (amountText == null || amountText.isBlank()) {
-                response.sendError(
-                        HttpServletResponse.SC_BAD_REQUEST,
-                        "Missing payment amount.");
-                return;
-            }
-
-            long amountVnd = Long.parseLong(amountText);
+            amountVnd = Long.parseLong(amountParam.trim());
 
             if (amountVnd <= 0) {
                 response.sendError(
                         HttpServletResponse.SC_BAD_REQUEST,
-                        "Amount must be positive.");
+                        "Payment amount must be greater than zero.");
                 return;
             }
+        } catch (NumberFormatException e) {
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Invalid payment amount.");
+            return;
+        }
 
+        try {
             String txnRef = UUID.randomUUID()
                     .toString()
                     .replace("-", "")
                     .substring(0, 20);
 
-            String orderInfo = "Sandbox payment " + txnRef;
-            String ipAddress = request.getRemoteAddr();
+            String orderInfo = "VNPay Sandbox test " + txnRef;
+
+            String clientIp = getClientIp(request);
 
             String paymentUrl = VNPayService.createPaymentUrl(
                     amountVnd,
                     txnRef,
                     orderInfo,
-                    ipAddress);
+                    clientIp);
 
             response.sendRedirect(paymentUrl);
 
-        } catch (NumberFormatException e) {
+        } catch (IllegalStateException e) {
+            log("VNPay configuration error.", e);
             response.sendError(
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    "Invalid payment amount.");
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "VNPay configuration is incomplete. Check server environment variables.");
         } catch (Exception e) {
-            throw new ServletException(
-                    "Unable to create VNPay payment URL.", e);
+            log("Unable to create VNPay payment URL.", e);
+            response.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Unable to create VNPay payment URL.");
         }
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        // Do not trust X-Forwarded-For unless a trusted proxy is configured.
+        String ip = request.getRemoteAddr();
+
+        if (ip == null || ip.trim().isEmpty()) {
+            return "127.0.0.1";
+        }
+
+        return ip.trim();
     }
 }
