@@ -282,13 +282,33 @@
                             </a>
 
                             <!-- Only unpaid orders can show the payment button -->
-                            <c:if test="${status eq 'CONFIRMED'}">
-                                <a class="order-detail-btn"
-                                   href="${pageContext.request.contextPath}/payment?orderId=${order.orderId}">
-                                    Thanh toán ngay
-                                    <i class="fa-solid fa-credit-card"></i>
-                                </a>
-                            </c:if>
+                      
+<!-- Only unpaid orders can show payment and cancel buttons -->
+<c:if test="${status eq 'CONFIRMED'}">
+
+    <a class="order-detail-btn"
+       href="${pageContext.request.contextPath}/payment?orderId=${order.orderId}">
+        Thanh toán ngay
+        <i class="fa-solid fa-credit-card"></i>
+    </a>
+
+    <form action="${pageContext.request.contextPath}/cancel-order"
+          method="post"
+          class="cancel-order-form"
+          onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+
+        <input type="hidden"
+               name="orderId"
+               value="${order.orderId}">
+
+        <button type="submit" class="cancel-order-btn">
+            <i class="fa-solid fa-xmark"></i>
+            Hủy đơn hàng
+        </button>
+
+    </form>
+
+</c:if>
 
                         </div>
 

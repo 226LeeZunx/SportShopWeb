@@ -66,19 +66,27 @@
                 <%-- Cart table --%>
                 <section class="cart-panel">
 
+                    
                     <div class="panel-heading">
                         <div>
                             <h2>Shopping Cart Items</h2>
-                            <p>
-                                Select the products you want to purchase.
-                            </p>
+                            <p>Select the products you want to purchase.</p>
                         </div>
 
-                        <span class="item-count">
-                            <c:out value="${cartItems.size()}" />
-                            item types
-                        </span>
+                        <div class="cart-heading-actions">
+                            <button type="button"
+                                    id="selectAllBtn"
+                                    class="btn-select-all">
+                                Chọn tất cả
+                            </button>
+
+                            <span class="item-count">
+                                <c:out value="${cartItems.size()}" />
+                                item types
+                            </span>
+                        </div>
                     </div>
+
 
                     <div class="cart-table-wrapper">
 
@@ -371,6 +379,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const checkoutForm =
         document.getElementById("proceedCheckoutForm");
+
+    
+const selectAllBtn = document.getElementById("selectAllBtn");
+
+// Cập nhật trạng thái nút theo checkbox
+function updateSelectAllButton() {
+    const checkedCount = Array.from(checkboxes)
+        .filter(function (checkbox) {
+            return checkbox.checked;
+        }).length;
+
+    const allSelected =
+        checkboxes.length > 0 &&
+        checkedCount === checkboxes.length;
+
+    selectAllBtn.textContent = allSelected
+        ? "Bỏ chọn tất cả"
+        : "Chọn tất cả";
+
+    selectAllBtn.classList.toggle("selected", allSelected);
+
+    selectAllBtn.setAttribute(
+        "aria-pressed",
+        String(allSelected)
+    );
+}
+
+// Nhấn nút để chọn hoặc bỏ chọn tất cả
+selectAllBtn.addEventListener("click", function () {
+    const allSelected = Array.from(checkboxes)
+        .every(function (checkbox) {
+            return checkbox.checked;
+        });
+
+    checkboxes.forEach(function (checkbox) {
+        checkbox.checked = !allSelected;
+    });
+
+    updateSelectAllButton();
+});
+
+// Cập nhật nút khi người dùng tự chọn từng sản phẩm
+checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener("change", updateSelectAllButton);
+});
+
+// Khởi tạo đúng trạng thái khi trang tải xong
+updateSelectAllButton();
+
 
     /*
      * Copy checked product IDs into the target form.
