@@ -1,220 +1,191 @@
-```jsp
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-        <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-            <!DOCTYPE html>
-            <html lang="vi">
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận đơn hàng | SportShopWeb</title>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/order-sucess.css">
 
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/common.css">
+ 
+</head>
 
-                <title>Đặt hàng thành công | SportShopWeb</title>
+<body>
+<jsp:include page="/views/common/header.jsp" />
 
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
+<main class="success-page">
+    <div class="success-container">
+        <section class="success-card">
 
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/order-sucess.css">
-            </head>
+            <header class="success-header">
+                <div class="success-icon">&#10003;</div>
+                <p class="eyebrow">SPORTSHOPWEB</p>
+                <h1>Đơn hàng đã được tạo!</h1>
+                <p class="success-message">
+                    Cảm ơn bạn đã mua sắm tại SportShopWeb.
+                    Đơn hàng đã được ghi nhận. Vui lòng tiếp tục
+                    thanh toán nếu bạn chọn phương thức VNPay.
+                </p>
+            </header>
 
-            <body>
+            <div class="content">
+    <h2 class="section-title">Thông tin đơn hàng</h2>
 
-                <jsp:include page="/views/common/header.jsp" />
+    <div class="order-info">
+        <div class="info-row">
+            <span class="info-label">Mã đơn hàng</span>
+            <strong class="info-value">
+                <c:choose>
+                    <c:when test="${not empty orderId}">
+                        #<c:out value="${orderId}"/>
+                    </c:when>
+                    <c:otherwise>Đang cập nhật</c:otherwise>
+                </c:choose>
+            </strong>
+        </div>
 
-                <main class="success-page">
-                    <section class="success-card">
+        <div class="info-row">
+            <span class="info-label">Trạng thái đơn hàng</span>
+            <span class="status-badge">
+                <span class="status-dot"></span>
+                Đã xác nhận
+            </span>
+        </div>
+    </div>
 
-                        <!-- Biểu tượng thành công -->
-                        <div class="success-icon">&#10003;</div>
+    <!-- Danh sách sản phẩm -->
+    <h2 class="section-title product-section-title">
+        Sản phẩm đã đặt
+    </h2>
 
-                        <p class="success-label">SPORTSHOPWEB</p>
+    <div class="ordered-products">
+        <c:choose>
+            <c:when test="${not empty orderItems}">
+                
+<c:forEach var="item" items="${orderItems}">
+    <div class="ordered-product">
 
-                        <h1>Đặt hàng thành công!</h1>
+        <div class="ordered-product-image">
+            <c:if test="${not empty item.productVariant.product.images}">
+                <img
+                    src="<c:out value='${item.productVariant.product.images[0].imageUrl}'/>"
+                    alt="<c:out value='${item.productVariant.variantName}'/>"
+                    class="ordered-product-img"
+                    onerror="this.style.display='none';">
+            </c:if>
+        </div>
 
-                        <p class="success-message">
-                            Cảm ơn bạn đã mua sắm tại SportShopWeb.
-                            <br>
-                            Đơn hàng của bạn đã được tiếp nhận.
-                        </p>
+        <div class="ordered-product-details">
+            <strong class="ordered-product-name">
+                <c:out value="${item.productVariant.variantName}"/>
+            </strong>
 
-                        <!-- Thông tin đơn hàng -->
-                        <div class="order-info">
+            <span class="ordered-product-quantity">
+                Số lượng: <c:out value="${item.quantity}"/>
+            </span>
 
-                            <div class="info-row">
-                                <span class="info-label">
-                                    <span class="info-icon">&#9776;</span>
-                                    Mã đơn hàng
-                                </span>
+            <strong class="ordered-product-price">
+                <fmt:formatNumber
+                    value="${item.productVariant.price * item.quantity}"
+                    type="number"
+                    groupingUsed="true"
+                    maxFractionDigits="0"/> ₫
+            </strong>
+        </div>
 
-                                <strong>
-                                    <c:choose>
-                                        <c:when test="${not empty orderId}">
-                                            #
-                                            <c:out value="${orderId}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            Đang cập nhật
-                                        </c:otherwise>
-                                    </c:choose>
-                                </strong>
-                            </div>
+    </div>
+</c:forEach>
 
-                            <div class="info-row">
-                                <span class="info-label">
-                                    <span class="info-icon">&#9711;</span>
-                                    Trạng thái
-                                </span>
+            </c:when>
 
-                                <span class="status-badge">
-                                    <span class="status-dot"></span>
-                                    Đã tiếp nhận
-                                </span>
-                            </div>
+            <c:otherwise>
+                <p class="ordered-products-empty">
+                    Chưa có thông tin chi tiết sản phẩm.
+                </p>
+            </c:otherwise>
+        </c:choose>
+    </div>
 
-                            <div class="info-row">
-                                <span class="info-label">
-                                    <span class="info-icon">&#8364;</span>
-                                    Tổng thanh toán
-                                </span>
+                <div class="total-box">
+                    <span class="total-label">Số tiền cần thanh toán</span>
+                    <strong class="total-amount">
+                        <c:choose>
+                            <c:when test="${not empty orderTotal}">
+                                <fmt:formatNumber value="${orderTotal}"
+                                                  type="number"
+                                                  groupingUsed="true"
+                                                  maxFractionDigits="0"/> ₫
+                            </c:when>
+                            <c:otherwise>Đang cập nhật</c:otherwise>
+                        </c:choose>
+                    </strong>
+                </div>
 
-                                <strong class="order-total">
-                                    <c:choose>
-                                        <c:when test="${not empty orderTotal}">
-                                            <fmt:formatNumber value="${orderTotal}" type="number" groupingUsed="true"
-                                                maxFractionDigits="0" /> ₫
-                                        </c:when>
-                                        <c:otherwise>
-                                            Đang cập nhật
-                                        </c:otherwise>
-                                    </c:choose>
-                                </strong>
-                            </div>
+                <section class="payment-card">
+                    <h2 class="payment-title">Thanh toán qua VNPay</h2>
+                    <p class="payment-description">
+                        Bạn sẽ được chuyển đến cổng thanh toán VNPay
+                        để hoàn tất giao dịch. Trạng thái đơn hàng chỉ
+                        chuyển sang COMPLETE sau khi máy chủ xác minh
+                        thanh toán thành công.
+                    </p>
 
+                    <div class="vnpay-brand">
+                        <div class="vnpay-mark">V</div>
+                        <div>
+                            <strong>VNPAY</strong>
+                            <small>Cổng thanh toán trực tuyến</small>
                         </div>
+                    </div>
 
-                        <p class="confirmation-note">
-                            Vui lòng lưu lại mã đơn hàng để tiện theo dõi và
-                            liên hệ với cửa hàng khi cần hỗ trợ.
-                        </p>
+                    <c:choose>
+                        <c:when test="${not empty orderId}">
+                            <form action="${pageContext.request.contextPath}/vnpay-create"
+                                  method="post">
+                                <input type="hidden"
+                                       name="orderId"
+                                       value="<c:out value='${orderId}'/>">
 
-                        <!-- Khu vực thanh toán VNPay -->
-                        <section class="payment-section">
+                                <button type="submit" class="btn btn-primary">
+                                    Thanh toán ngay qua VNPay
+                                    <span aria-hidden="true">&#8594;</span>
+                                </button>
+                            </form>
+                        </c:when>
+                        <c:otherwise>
+                            <p>Không tìm thấy mã đơn hàng để bắt đầu thanh toán.</p>
+                        </c:otherwise>
+                    </c:choose>
 
-                            <div class="payment-heading">
-                                <div class="payment-icon">&#128179;</div>
+                    <p class="secure-note">
+                        Lưu ý: Không tải lại hoặc gửi nhiều yêu cầu thanh toán
+                        liên tục. Nếu giao dịch chưa thành công, hãy kiểm tra
+                        trạng thái đơn hàng trước khi thử lại.
+                    </p>
+                </section>
 
-                                <div class="payment-heading-text">
-                                    <h2>Thanh toán đơn hàng</h2>
-                                    <p>
-                                        Tiếp tục thanh toán theo phương thức bạn đã
-                                        chọn khi đặt hàng.
-                                    </p>
-                                </div>
-                            </div>
+                <div class="actions">
+                    <a class="btn btn-secondary"
+                       href="${pageContext.request.contextPath}/HomeServlet">
+                        &#8962; Tiếp tục mua sắm
+                    </a>
 
-                            <div class="payment-content">
+                    <a class="btn btn-secondary"
+                       href="${pageContext.request.contextPath}/orders">
+                        Xem lịch sử đơn hàng
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
 
-                                <!-- Thông tin thanh toán -->
-                                <div class="payment-details">
-
-                                    <div class="payment-detail-row">
-                                        <span>Mã đơn hàng</span>
-                                        <strong>
-                                            <c:choose>
-                                                <c:when test="${not empty orderId}">
-                                                    #
-                                                    <c:out value="${orderId}" />
-                                                </c:when>
-                                                <c:otherwise>
-                                                    Đang cập nhật
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </strong>
-                                    </div>
-
-                                    <div class="payment-detail-row">
-                                        <span>Số tiền thanh toán</span>
-                                        <strong class="payment-amount">
-                                            <c:choose>
-                                                <c:when test="${not empty orderTotal}">
-                                                    <fmt:formatNumber value="${orderTotal}" type="number"
-                                                        groupingUsed="true" maxFractionDigits="0" /> ₫
-                                                </c:when>
-                                                <c:otherwise>
-                                                    Đang cập nhật
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </strong>
-                                    </div>
-
-                                    <div class="secure-payment-note">
-                                        <span class="secure-icon">&#128737;</span>
-
-                                        <div>
-                                            <strong>Thanh toán an toàn qua VNPay</strong>
-                                            <p>
-                                                Bạn sẽ được chuyển đến cổng thanh toán
-                                                thử nghiệm VNPay để tiếp tục giao dịch.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <!-- Logo và nút VNPay -->
-                                <div class="payment-provider">
-
-                                    <div class="vnpay-logo">
-                                        <span class="vnpay-symbol">&#9670;</span>
-                                        <span class="vnpay-word">
-                                            <strong>VNPAY</strong>
-                                            <small>Scan to Pay</small>
-                                        </span>
-                                    </div>
-
-                                    <p class="payment-action-hint">
-                                        Nhấn nút để bắt đầu thanh toán đơn hàng.
-                                    </p>
-
-                                    <!-- Gửi số tiền đến Servlet tạo URL VNPay -->
-                                    <form action="${pageContext.request.contextPath}/vnpay-create" method="post">
-
-                                        <input type="hidden" name="amount" value="${orderTotal}" />
-
-                                        <button type="submit" class="vnpay-button">
-                                            <span>&#128279;</span>
-                                            Thanh toán qua VNPay
-                                            <span class="button-arrow">&#8250;</span>
-                                        </button>
-                                    </form>
-
-                                </div>
-
-                            </div>
-
-                        </section>
-
-                        <!-- Điều hướng -->
-                        <div class="success-actions">
-
-                            <a class="btn btn-primary" href="${pageContext.request.contextPath}/HomeServlet">
-                                <span>&#8962;</span>
-                                Tiếp tục mua sắm
-                            </a>
-
-                            <a class="btn btn-outline" href="${pageContext.request.contextPath}/cart">
-                                <span>&#128722;</span>
-                                Quay lại giỏ hàng
-                            </a>
-
-                        </div>
-
-                    </section>
-                </main>
-
-                <jsp:include page="/views/common/footer.jsp" />
-
-            </body>
-
-            </html>
-            ```
+<jsp:include page="/views/common/footer.jsp" />
+</body>
+</html>
