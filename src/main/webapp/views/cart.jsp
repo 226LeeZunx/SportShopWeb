@@ -13,10 +13,10 @@
     <title>Shopping Cart | SportShopWeb</title>
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/common.css?v=1">
+          href="${pageContext.request.contextPath}/assets/css/common.css">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/cart.css?v=6">
+          href="${pageContext.request.contextPath}/assets/css/cart.css">
 </head>
 
 <body>
