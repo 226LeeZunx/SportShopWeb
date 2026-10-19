@@ -11,6 +11,7 @@ import com.mycompany.sportshopweb.model.Cart;
 import com.mycompany.sportshopweb.model.Customer;
 import com.mycompany.sportshopweb.model.MembershipTier;
 import com.mycompany.sportshopweb.model.User;
+import com.mycompany.sportshopweb.util.EmailService;
 import com.mycompany.sportshopweb.util.PasswordUtil;
 
 import java.io.IOException;
@@ -102,39 +103,25 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // 6. Băm mật khẩu sang chuỗi bảo mật SHA-256
-        String hashedPassword = PasswordUtil.hashPassword(password);
+        // 6. Tạo mã OTP ngẫu nhiên 6 chữ số (Hiệu lực 5 phút)
+        String otp = String.format("%06d", new java.util.Random().nextInt(1000000));
 
-        // 7. Tạo và lưu tài khoản User
-        User user = new User(phone, email, hashedPassword);
-        boolean isUserSaved = userDAO.insert(user);
+        // 7. Lưu tạm thông tin đăng ký vào Session để chờ xác thực OTP
+        jakarta.servlet.http.HttpSession session = request.getSession();
+        session.setAttribute("reg_firstName", firstName);
+        session.setAttribute("reg_lastName", lastName);
+        session.setAttribute("reg_email", email);
+        session.setAttribute("reg_phone", phone);
+        session.setAttribute("reg_gender", (gender != null && !gender.isEmpty()) ? gender : "Other");
+        session.setAttribute("reg_password", password);
+        session.setAttribute("reg_otp", otp);
+        session.setAttribute("reg_otp_expiry", System.currentTimeMillis() + (5 * 60 * 1000)); // 5 phút
 
-        if (!isUserSaved) {
-            request.setAttribute("error", "System error while creating account. Please try again.");
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
-            return;
-        }
+        // 8. Gửi mã OTP xác nhận đến Gmail của khách hàng
+        String fullName = firstName + " " + lastName;
+        EmailService.sendOtpEmail(email, fullName, otp);
 
-        // 8. Tạo và lưu thông tin Khách hàng (Customer) với hạng mặc định
-        CustomerDAO customerDAO = new CustomerDAO();
-        MembershipTier defaultTier = customerDAO.getDefaultMembershipTier();
-
-        Customer customer = new Customer();
-        customer.setUser(user);
-        customer.setMembershipTier(defaultTier);
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setGender(gender != null ? gender : "Other");
-
-        customerDAO.insert(customer);
-        Cart cart = new Cart();
-        cart.setCustomer(customer);
-
-        CartDAO cartDAO = new CartDAO();
-        cartDAO.insert(cart);
-
-        // 9. Đăng ký thành công -> Chuyển về trang đăng nhập với thông báo thành công
-        request.setAttribute("message", "Registration successful! Please sign in with your credentials.");
-        request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+        // 9. Chuyển hướng sang trang xác nhận mã OTP
+        response.sendRedirect(request.getContextPath() + "/VerifyOtpServlet");
     }
 }
