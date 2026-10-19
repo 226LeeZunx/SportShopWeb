@@ -3,48 +3,76 @@
 
 <!-- Lớp nền tối mờ khi mở panel -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/drawer.css?v=1">
 <!-- Cửa sổ trượt danh mục -->
 <aside class="drawer-menu" id="drawerMenu">
     
     <!-- Tiêu đề & nút đóng -->
     <div class="drawer-header">
-        <div class="drawer-logo">
+        <a href="${pageContext.request.contextPath}/HomeServlet" class="drawer-logo">
             <i class="fa-solid fa-bolt"></i>
             <span>SPORTSHOP</span>
-        </div>
+        </a>
         <button type="button" class="drawer-close-btn" onclick="closeDrawer()">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
 
-    <!-- Nội dung danh mục cuộn -->
+    <!-- Thanh tìm kiếm nhanh dùng HTML Form thuần -->
+    <div class="drawer-search-box">
+        <form action="${pageContext.request.contextPath}/HomeServlet#products" method="get">
+            <div class="drawer-search-input-wrapper">
+                <input type="text" name="keyword" value="${param.keyword}" placeholder="Tìm sản phẩm...">
+                <button type="submit">Tìm</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Nội dung cuộn -->
     <div class="drawer-body">
         
-        <!-- Tab danh mục trên cùng -->
+        <!-- Tab danh mục chính (Kiểm tra active bằng JSTL c:if) -->
         <div class="drawer-tabs">
-            <a href="${pageContext.request.contextPath}/AlbumServlet" class="drawer-tab">LOOKBOOK</a>
+            <a href="${pageContext.request.contextPath}/AlbumServlet" 
+               class="drawer-tab ${empty param.cat && empty param.tag ? 'active' : ''}">
+                LOOKBOOK
+            </a>
+
             <c:forEach var="cat" items="${categoryList}">
-                <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}" class="drawer-tab">
+                <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}#products" 
+                   class="drawer-tab ${param.cat == cat.categoryId ? 'active' : ''}">
                     ${cat.name}
                 </a>
             </c:forEach>
-            <a href="${pageContext.request.contextPath}/HomeServlet?tag=sale" class="drawer-tab">SALE</a>
-        </div>
 
-        <!-- Các Album / Lookbook (Hình hiện tại để trống) -->
-        <div class="drawer-cards-grid">
-            <c:forEach var="alb" items="${albumList}">
-                <a href="${pageContext.request.contextPath}/AlbumServlet?id=${alb.albumId}" class="drawer-card-item">
-                    <div class="drawer-card-thumb empty-card-thumb"></div>
-                    <span>${alb.name}</span>
-                </a>
-            </c:forEach>
-            <a href="${pageContext.request.contextPath}/AlbumServlet" class="drawer-card-item">
-                <div class="drawer-card-thumb empty-card-thumb"></div>
-                <span>ALL LOOKBOOK</span>
+            <a href="${pageContext.request.contextPath}/HomeServlet?tag=sale#products" 
+               class="drawer-tab ${param.tag == 'sale' ? 'active' : ''}">
+                SALE
             </a>
         </div>
+
+        <!-- Ảnh Album/Lookbook (Load bằng JSTL, không dùng JS) -->
+        <c:if test="${not empty albumList}">
+            <div class="drawer-cards-grid">
+                <c:forEach var="alb" items="${albumList}">
+                    <a href="${pageContext.request.contextPath}/AlbumServlet?id=${alb.albumId}" class="drawer-card-item">
+                        <div class="drawer-card-thumb">
+                            <c:choose>
+                                <c:when test="${not empty alb.imageUrl}">
+                                    <img src="${alb.imageUrl}" alt="${alb.name}">
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="no-thumb-placeholder">
+                                        <i class="fa-solid fa-shirt"></i>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                        <span>${alb.name}</span>
+                    </a>
+                </c:forEach>
+            </div>
+        </c:if>
 
         <!-- |01| BỘ SƯU TẬP (LOOKBOOK) -->
         <div class="drawer-section">
@@ -53,9 +81,19 @@
                 <span class="drawer-section-title">COLLECTIONS & LOOKBOOK</span>
             </div>
             <ul class="drawer-link-list">
-                <li><a href="${pageContext.request.contextPath}/AlbumServlet">ALL COLLECTIONS</a></li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/AlbumServlet" 
+                       class="${empty param.id ? 'active-link' : ''}">
+                        ALL COLLECTIONS
+                    </a>
+                </li>
                 <c:forEach var="alb" items="${albumList}">
-                    <li><a href="${pageContext.request.contextPath}/AlbumServlet?id=${alb.albumId}">${alb.name}</a></li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/AlbumServlet?id=${alb.albumId}" 
+                           class="${param.id == alb.albumId ? 'active-link' : ''}">
+                            ${alb.name}
+                        </a>
+                    </li>
                 </c:forEach>
             </ul>
         </div>
@@ -68,7 +106,12 @@
             </div>
             <ul class="drawer-link-list">
                 <c:forEach var="cat" items="${categoryList}">
-                    <li><a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}">${cat.name}</a></li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}#products" 
+                           class="${param.cat == cat.categoryId ? 'active-link' : ''}">
+                            ${cat.name}
+                        </a>
+                    </li>
                 </c:forEach>
             </ul>
         </div>
@@ -81,7 +124,12 @@
             </div>
             <ul class="drawer-link-list">
                 <c:forEach var="brand" items="${brandList}">
-                    <li><a href="${pageContext.request.contextPath}/HomeServlet?brand=${brand.brandId}">${brand.name}</a></li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/HomeServlet?brand=${brand.brandId}#products" 
+                           class="${param.brand == brand.brandId ? 'active-link' : ''}">
+                            ${brand.name}
+                        </a>
+                    </li>
                 </c:forEach>
             </ul>
         </div>
@@ -94,31 +142,23 @@
             </div>
             <ul class="drawer-link-list">
                 <li><a href="${pageContext.request.contextPath}/HomeServlet">HOME PAGE</a></li>
-                <li><a href="${pageContext.request.contextPath}/HomeServlet?tag=hot">HOT PRODUCTS</a></li>
-                <li><a href="${pageContext.request.contextPath}/HomeServlet?tag=sale">SALE & OFFERS</a></li>
+                <li><a href="${pageContext.request.contextPath}/HomeServlet?tag=hot#products">HOT PRODUCTS</a></li>
+                <li><a href="${pageContext.request.contextPath}/HomeServlet?tag=sale#products">SALE & OFFERS</a></li>
             </ul>
         </div>
 
     </div>
 </aside>
 
-<!-- Javascript đóng / mở đơn giản -->
+<!-- JavaScript cơ bản duy nhất để toggle ẩn/hiện class -->
 <script>
     function openDrawer() {
-        document.getElementById('drawerMenu').classList.add('active');
-        document.getElementById('drawerOverlay').classList.add('active');
-        document.body.style.overflow = 'hidden';
+        document.getElementById('drawerMenu').className = 'drawer-menu active';
+        document.getElementById('drawerOverlay').className = 'drawer-overlay active';
     }
 
     function closeDrawer() {
-        document.getElementById('drawerMenu').classList.remove('active');
-        document.getElementById('drawerOverlay').classList.remove('active');
-        document.body.style.overflow = '';
+        document.getElementById('drawerMenu').className = 'drawer-menu';
+        document.getElementById('drawerOverlay').className = 'drawer-overlay';
     }
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeDrawer();
-        }
-    });
 </script>

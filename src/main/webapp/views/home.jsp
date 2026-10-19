@@ -79,50 +79,71 @@
         </section>
 
         <!-- 3. SHOP BY CATEGORY -->
-        <section class="home-section">
+        <section class="home-section" id="categories">
+    <div class="section-header-flex">
+        <div>
             <h2 class="home-section-title">Shop by Category</h2>
             <p class="home-section-subtitle">Gear up for greatness with high-performance sportswear and equipment</p>
+        </div>
+        <!-- Nút điều hướng Slide -->
+        <c:if test="${not empty categoryList and categoryList.size() > 6}">
+            <div class="category-slider-controls">
+                <button type="button" class="cat-nav-btn cat-prev" id="catPrevBtn" disabled aria-label="Previous">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <span class="cat-page-indicator" id="catPageIndicator">1 / 1</span>
+                <button type="button" class="cat-nav-btn cat-next" id="catNextBtn" aria-label="Next">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </c:if>
+    </div>
 
-            <c:if test="${empty categoryList}">
-                <div class="empty-catalog"><p>No categories found.</p></div>
-            </c:if>
+    <c:if test="${empty categoryList}">
+        <div class="empty-catalog"><p>No categories found.</p></div>
+    </c:if>
 
-            <ul class="category-grid">
-                <c:forEach var="cat" items="${categoryList}">
-                    <li class="category-card">
-                        <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}#products" class="category-card-link">
-                            <div class="category-thumb">
-                                <c:choose>
-                                    <c:when test="${not empty cat.imageUrl}">
-                                        <img src="${cat.imageUrl}" alt="${cat.name}" loading="lazy">
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="no-thumb-placeholder">
-                                            <i class="fa-regular fa-image"></i><span>No image</span>
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
-                                <div class="category-badge">
-                                    <span>Explore</span><i class="fa-solid fa-arrow-right"></i>
-                                </div>
+    <div class="category-slider-wrapper">
+        <ul class="category-grid" id="categoryGrid">
+            <c:forEach var="cat" items="${categoryList}">
+                <li class="category-card">
+                    <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}#products" class="category-card-link">
+                        <div class="category-thumb">
+                            <c:choose>
+                                <c:when test="${not empty cat.imageUrl}">
+                                    <img src="${cat.imageUrl}" alt="${cat.name}" loading="lazy">
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="no-thumb-placeholder">
+                                        <i class="fa-regular fa-image"></i><span>No image</span>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                            <div class="category-badge">
+                                <span>Explore</span><i class="fa-solid fa-arrow-right"></i>
                             </div>
-                            <div class="category-info">
-                                <h3 class="category-name">${cat.name}</h3>
-                                <c:if test="${not empty cat.description}">
-                                    <p class="category-desc">${cat.description}</p>
-                                </c:if>
-                            </div>
-                        </a>
-                    </li>
-                </c:forEach>
-            </ul>
-        </section>
+                        </div>
+                        <div class="category-info">
+                            <h3 class="category-name">${cat.name}</h3>
+                            <c:if test="${not empty cat.description}">
+                                <p class="category-desc">${cat.description}</p>
+                            </c:if>
+                        </div>
+                    </a>
+                </li>
+            </c:forEach>
+        </ul>
+    </div>
+</section>
 
         <!-- 4. ALL PRODUCTS + FILTER (20 sản phẩm/trang) -->
         <section class="home-section" id="products">
             <h2 class="home-section-title">All Products</h2>
-
             <form class="filter-bar" method="get" action="${pageContext.request.contextPath}/HomeServlet#products">
+                <div class="filter-field">
+                <label for="fKeyword">Search name</label>
+                <input type="text" name="keyword" id="fKeyword" value="${keyword}" placeholder="Product name...">
+                </div>
                 <div class="filter-field">
                     <label for="fBrand">Brand</label>
                     <select name="brand" id="fBrand">
@@ -182,7 +203,7 @@
             <ul class="product-grid">
                 <c:forEach var="p" items="${productList}">
                     <li class="product-card">
-                        <a href="${pageContext.request.contextPath}/ProductServlet?id=${p.productId}">
+                        <a href="${pageContext.request.contextPath}/ProductDetailServlet?id=${p.productId}">
                             <div class="product-thumb">
                                 <c:choose>
                                     <c:when test="${not empty p.images}">
@@ -212,6 +233,7 @@
                     <c:if test="${currentPage > 1}">
                         <c:url var="prevUrl" value="/HomeServlet">
                             <c:param name="page" value="${currentPage - 1}"/>
+                            <c:param name="keyword" value="${param.keyword}"/>
                             <c:param name="brand" value="${param.brand}"/>
                             <c:param name="cat" value="${param.cat}"/>
                             <c:param name="minPrice" value="${param.minPrice}"/>
@@ -224,6 +246,7 @@
                     <c:forEach var="i" begin="1" end="${totalPages}">
                         <c:url var="pageUrl" value="/HomeServlet">
                             <c:param name="page" value="${i}"/>
+                            <c:param name="keyword" value="${param.keyword}"/>
                             <c:param name="brand" value="${param.brand}"/>
                             <c:param name="cat" value="${param.cat}"/>
                             <c:param name="minPrice" value="${param.minPrice}"/>
@@ -236,6 +259,7 @@
                     <c:if test="${currentPage < totalPages}">
                         <c:url var="nextUrl" value="/HomeServlet">
                             <c:param name="page" value="${currentPage + 1}"/>
+                            <c:param name="keyword" value="${param.keyword}"/>
                             <c:param name="brand" value="${param.brand}"/>
                             <c:param name="cat" value="${param.cat}"/>
                             <c:param name="minPrice" value="${param.minPrice}"/>

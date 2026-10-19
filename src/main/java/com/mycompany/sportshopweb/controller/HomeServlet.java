@@ -39,10 +39,7 @@ public class HomeServlet extends HttpServlet {
         
         try {
             List<Album> albumList = AlbumDAO.getAllAlbums();
-            // Lấy tối đa 8 album thô theo yêu cầu
-            if (albumList != null && albumList.size() > 8) {
-                albumList = albumList.subList(0, 8);
-            }
+            
             request.setAttribute("albumList", albumList);
             getServletContext().setAttribute("globalAlbumList", albumList);
         } catch (Exception e) {
@@ -52,7 +49,7 @@ public class HomeServlet extends HttpServlet {
         // ---- 2. Filter params ----
         int brandId = ParseUtils.parseIntOrDefault(request.getParameter("brand"), 0);
         int catId = ParseUtils.parseIntOrDefault(request.getParameter("cat"), 0);
-        
+        String keyword=request.getParameter("keyword");
         String minPriceStr = request.getParameter("minPrice");
         String maxPriceStr = request.getParameter("maxPrice");
 
@@ -69,17 +66,17 @@ public class HomeServlet extends HttpServlet {
         int p = ParseUtils.parseIntOrDefault(request.getParameter("page"), 0);
         if (p != 0) page = p;
 
-        // ---- 3. Products (20 sản phẩm mỗi trang) ----
-        long total = ProductDAO.countFiltered(brandId, catId, minPrice, maxPrice);
+        long total = ProductDAO.countFiltered(brandId, catId, minPrice, maxPrice,keyword);
         int totalPages = (int) Math.ceil((double) total / ProductDAO.PAGE_SIZE);
         if (totalPages == 0) totalPages = 1;
         if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
 
-        request.setAttribute("productList", ProductDAO.getFiltered(brandId, catId, minPrice, maxPrice, sort, page, ProductDAO.PAGE_SIZE));
+        request.setAttribute("productList", ProductDAO.getFiltered(brandId, catId, minPrice, maxPrice, sort, page, ProductDAO.PAGE_SIZE,keyword));
         request.setAttribute("totalProducts", total);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("keyword",keyword);
 
         request.setAttribute("selectedBrand", brandId);
         request.setAttribute("selectedCat", catId);
