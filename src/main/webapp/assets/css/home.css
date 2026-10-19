@@ -146,22 +146,37 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-top: 8px;
-    padding: 13px 32px;
-    background-color: #991b1b;
-    color: #ffffff;
-    font-size: 0.92rem;
-    font-weight: 700;
+    margin-top: 12px;
+    padding: 14px 36px;
+    background-color: #ffc72c;
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-radius: 9999px;
-    box-shadow: 0 4px 18px rgba(153, 27, 27, 0.55);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
     transition: background-color 0.2s, transform 0.2s;
 }
 
 .album-hero-link:hover .album-hero-btn {
-    background-color: #b91c1c;
+    background-color: #f59e0b;
+    color: #000000;
     transform: translateY(-2px);
+}
+
+.announcement-bar {
+    background-color: #111827;
+    color: #f8fafc;
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .album-hero-arrow {
@@ -307,85 +322,7 @@
 }
 
 /* =========================================
-   5. LOOKBOOK / ALBUM GRID (LƯỚI 4 CỘT)
-   ========================================= */
-.album-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-@media (max-width: 1024px) {
-    .album-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 576px) {
-    .album-grid { grid-template-columns: 1fr; }
-}
-
-.album-card {
-    background: #ffffff;
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid #e5e7eb;
-    transition: all 0.3s ease;
-}
-
-.album-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-}
-
-.album-card a {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-}
-
-.album-card-thumb {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background: #f1f5f9;
-}
-
-.album-card-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.album-card:hover .album-card-thumb img {
-    transform: scale(1.06);
-}
-
-.album-card-info {
-    padding: 16px;
-}
-
-.album-card-info h3 {
-    margin: 0 0 8px 0;
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #111827;
-}
-
-.album-card-btn {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: #991b1b;
-    text-transform: uppercase;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* =========================================
-   6. SHOP BY CATEGORY (LƯỚI 3 CỘT)
+   5. SHOP BY CATEGORY (LƯỚI 3 CỘT)
    ========================================= */
 .category-grid {
     list-style: none;
