@@ -7,12 +7,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SportShop</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css?v=3">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/home.css?v=4">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/home.css">
 </head>
 <body>
 
     <jsp:include page="/views/common/header.jsp" />
+
+    <!-- 1. HERO BANNER PANEL LỚN (PHONG CÁCH BARÇA STORE) -->
+    <section class="album-hero-section" id="heroBannerSection">
+        <c:choose>
+            <c:when test="${not empty albumList}">
+                <c:forEach var="album" items="${albumList}" varStatus="status">
+                    <div class="album-hero-slide ${status.first ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/AlbumServlet?id=${album.albumId}" class="album-hero-link">
+                            <div class="album-hero-thumb">
+                                <c:choose>
+                                    <c:when test="${not empty album.imageUrl}">
+                                        <img src="${album.imageUrl}" alt="${album.name}" class="album-hero-img">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="album-hero-empty-thumb">
+                                            <i class="fa-solid fa-shirt"></i>
+                                            <span>LOOKBOOK</span>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div class="album-hero-content">
+                                <span class="album-hero-tag">EXCLUSIVE DROP &bull; LIMITED EDITION</span>
+                                <h1 class="album-hero-title">${album.name}</h1>
+                                <p class="album-hero-desc">
+                                    ${not empty album.description ? album.description : 'Official authentic kit & athletic gear. Elevate your performance with premium sportswear.'}
+                                </p>
+                                <span class="album-hero-btn">
+                                    SHOP NOW <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </c:forEach>
+
+                <c:if test="${albumList.size() > 1}">
+                    <button type="button" class="album-hero-arrow album-hero-prev" onclick="prevHeroSlide()" aria-label="Previous">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="album-hero-arrow album-hero-next" onclick="nextHeroSlide()" aria-label="Next">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </c:if>
+            </c:when>
+
+            <c:otherwise>
+                <div class="album-hero-slide active">
+                    <a href="${pageContext.request.contextPath}/HomeServlet#products" class="album-hero-link">
+                        <div class="album-hero-thumb">
+                            <img src="${pageContext.request.contextPath}/assets/images/hero-banner-1.jpg" alt="FC Barcelona Style Collection" class="album-hero-img">
+                        </div>
+                        <div class="album-hero-content">
+                            <span class="album-hero-tag">NEW DROP &bull; LIMITED EDITION</span>
+                            <h1 class="album-hero-title">FC BARCELONA X SPOTIFY</h1>
+                            <p class="album-hero-desc">Official authentic kit & athletic gear. Elevate your performance with premium sportswear.</p>
+                            <span class="album-hero-btn">SHOP NOW <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </div>
+            </c:otherwise>
+        </c:choose>
+    </section>
+
+    <!-- 2. THANH CAM KẾT / TIỆN ÍCH DƯỚI BANNER -->
+    <div class="hero-trust-bar">
+        <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> 100% Authentic Guaranteed</div>
+        <div class="trust-item"><i class="fa-solid fa-truck-fast"></i> Free Shipping from 500k</div>
+        <div class="trust-item"><i class="fa-solid fa-rotate-left"></i> 7-Day Easy Exchange</div>
+        <div class="trust-item"><i class="fa-solid fa-credit-card"></i> Secure Payment</div>
+    </div>
 
     <main class="home-main-container">
 
@@ -43,42 +113,8 @@
             </ul>
         </section>
 
-        <!-- 2. LOOKBOOK COLLECTIONS / ALBUMS (Lấy tối đa 8 album) -->
-        <section class="home-section">
-            <h2 class="home-section-title">Lookbook Collections</h2>
-            <p class="home-section-subtitle">Curated outfits — shop the whole look</p>
 
-            <c:if test="${empty albumList}">
-                <div class="empty-catalog"><p>No albums yet.</p></div>
-            </c:if>
-
-            <ul class="album-grid">
-                <c:forEach var="album" items="${albumList}">
-                    <li class="album-card">
-                        <a href="${pageContext.request.contextPath}/AlbumServlet?id=${album.albumId}" title="${album.name}">
-                            <div class="album-card-thumb">
-                                <c:choose>
-                                    <c:when test="${not empty album.imageUrl}">
-                                        <img src="${album.imageUrl}" alt="${album.name}" loading="lazy">
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="no-thumb-placeholder">
-                                            <i class="fa-solid fa-shirt"></i><span>LOOKBOOK</span>
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                            <div class="album-card-info">
-                                <h3>${album.name}</h3>
-                                <span class="album-card-btn">SHOP THE LOOK <i class="fa-solid fa-arrow-right"></i></span>
-                            </div>
-                        </a>
-                    </li>
-                </c:forEach>
-            </ul>
-        </section>
-
-        <!-- 3. SHOP BY CATEGORY -->
+        <!-- 2. SHOP BY CATEGORY -->
         <section class="home-section" id="categories">
     <div class="section-header-flex">
         <div>
@@ -274,6 +310,30 @@
     </main>
 
     <jsp:include page="/views/common/footer.jsp" />
+
+    <!-- Script điều khiển trượt Hero Banner đơn giản -->
+    <script>
+        var currentHeroIndex = 0;
+        function showHeroSlide(index) {
+            var slides = document.querySelectorAll('.album-hero-slide');
+            if (!slides || slides.length <= 1) return;
+            for (var i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+            currentHeroIndex = (index + slides.length) % slides.length;
+            slides[currentHeroIndex].classList.add('active');
+        }
+        function prevHeroSlide() { showHeroSlide(currentHeroIndex - 1); }
+        function nextHeroSlide() { showHeroSlide(currentHeroIndex + 1); }
+
+        // Tự động chuyển slide nhẹ nhàng sau mỗi 6 giây nếu có nhiều hơn 1 slide
+        setInterval(function() {
+            var slides = document.querySelectorAll('.album-hero-slide');
+            if (slides && slides.length > 1) {
+                nextHeroSlide();
+            }
+        }, 6000);
+    </script>
 
 </body>
 </html>
