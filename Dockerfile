@@ -1,37 +1,44 @@
-# ==============================================================================
-# DOCKERFILE CHO MODULE PYTHON-RAG (SPORTSHOP AI ASSISTANT)
-# Base Image: Python 3.11 Slim (nhẹ, bảo mật và tối ưu dung lượng)
-# Build Context: Thư mục gốc dự án (SportShopWeb)
-# ==============================================================================
-
-FROM python:3.11-slim
-
-# 1. Thiết lập các biến môi trường hệ thống cho Python
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONIOENCODING=utf-8 \
-    LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
-
-# 2. Đặt thư mục làm việc bên trong container
+# ==========================================
+# GIAI ĐOẠN 1: Build Java Maven Project thành file WAR
+# ==========================================
+FROM maven:3.9-eclipse-temurin-17 AS maven_builder
 WORKDIR /app
+COPY . .
+# Build file WAR (bỏ qua test để tăng tốc độ)
+RUN mvn clean package -DskipTests
 
-# 3. Cài đặt các package hệ thống cần thiết
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+# ==========================================
+# GIAI ĐOẠN 2: Runtime Image (Tomcat 10.1 + Java 17 + Python 3)
+# ==========================================
+FROM tomcat:10.1-jdk17
+
+# Cài đặt Python 3, pip và công cụ tạo môi trường ảo venv trên nền Linux
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# 4. Copy file requirements.txt từ thư mục python-rag vào container để tận dụng Docker Cache
-COPY python-rag/requirements.txt ./
+# Thiết lập thư mục làm việc cho phần Python
+WORKDIR /opt/python-rag
 
 # Copy file requirements.txt chính xác từ thư mục python-rag/ lên container
 COPY python-rag/requirements.txt .
 
-# 6. Copy toàn bộ mã nguồn của module python-rag vào thư mục làm việc /app
+# Tạo môi trường ảo .venv, nâng cấp pip và cài đặt các thư viện Python
+RUN python3 -m venv .venv && \
+    .venv/bin/pip install --no-cache-dir --upgrade pip && \
+    .venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Copy toàn bộ mã nguồn Python còn lại trong thư mục python-rag/ vào container
 COPY python-rag/ .
 
-# 7. Mặc định chạy script query_rag.py để tiếp nhận câu hỏi
-ENTRYPOINT ["python", "query_rag.py"]
+# Xóa ứng dụng mặc định của Tomcat và đưa file WAR của Java vào làm ứng dụng gốc (ROOT)
+RUN rm -rf /usr/local/tomcat/webapps/*
+COPY --from=maven_builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+
+# Mở cổng 8080 cho Tomcat
+EXPOSE 8080
 
 # Khởi chạy Tomcat
 CMD ["catalina.sh", "run"]
