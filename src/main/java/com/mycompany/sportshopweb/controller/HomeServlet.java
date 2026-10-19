@@ -16,7 +16,7 @@ import java.util.Set;
 import com.mycompany.sportshopweb.util.DBUtil;
 import com.mycompany.sportshopweb.util.ParseUtils;
 
-@WebServlet(name = "HomeServlet", urlPatterns = {"/HomeServlet"})
+@WebServlet(name = "HomeServlet", urlPatterns = {"/HomeServlet", "/home"})
 public class HomeServlet extends HttpServlet {
 
     private static final Set<String> SORTS =
