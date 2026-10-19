@@ -176,6 +176,19 @@
                                                 </select>
                                             </div>
 
+                                            <div class="admin-form-group">
+                                                <label for="quantity">Quantity *</label>
+
+                                                <input id="quantity" name="quantity" type="number" min="0" step="1"
+                                                    required
+                                                    value="${param.quantity != null ? param.quantity : product.quantity}"
+                                                    placeholder="Enter product quantity">
+
+                                                <span class="help-text">
+                                                    Enter a non-negative whole number.
+                                                </span>
+                                            </div>
+
                                             <div class="admin-form-group full">
                                                 <label for="description">Description</label>
 

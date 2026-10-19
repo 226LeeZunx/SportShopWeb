@@ -29,17 +29,22 @@ public class Product implements Serializable {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;
 
+    @Column(name = "quantity", nullable = false)
+    private int quantity = 10;
+
     public Product() {
     }
 
-    public Product(int productId, String productName, String description, List<ProductImage> images, Brand brand,
-            Category category) {
+    public Product(int productId, String productName, String description,
+            List<ProductImage> images, Brand brand, Category category,
+            int quantity) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
         this.images = images;
         this.brand = brand;
         this.category = category;
+        this.quantity = quantity;
     }
 
     public int getProductId() {
@@ -88,5 +93,17 @@ public class Product implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException(
+                    "Quantity cannot be negative");
+        }
+        this.quantity = quantity;
     }
 }

@@ -90,6 +90,11 @@ public class AdminProductServlet extends HttpServlet {
         // 7. Lấy sản phẩm theo trang và bộ lọc.
         List<Product> products = ProductDAO.getProductsByPage(
                 page, pageSize, keyword, categoryId);
+        for (Product product : products) {
+            log("PRODUCT DEBUG | id=" + product.getProductId()
+                    + " | name=" + product.getProductName()
+                    + " | quantity=" + product.getQuantity());
+        }
 
         // 8. Lấy danh sách category để hiển thị dropdown.
         // Giữ nguyên cách truy vấn hiện tại, không sửa CategoryDB.
