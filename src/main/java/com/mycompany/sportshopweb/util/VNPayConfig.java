@@ -17,7 +17,7 @@ public final class VNPayConfig {
     }
 
     public static String getReturnUrl() {
-        return "http://localhost:8080/SportShopWeb-1.0-SNAPSHOT/vnpay-return";
+        return "http://localhost:8082/SportShopWeb/vnpay-return";
     }
 
     private static String getRequiredEnv(String name) {

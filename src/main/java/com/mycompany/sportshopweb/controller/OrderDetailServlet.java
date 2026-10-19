@@ -1,8 +1,10 @@
 package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.dao.OrderDAO;
+import com.mycompany.sportshopweb.dao.PaymentDAO;
 import com.mycompany.sportshopweb.model.Customer;
 import com.mycompany.sportshopweb.model.Order;
+import com.mycompany.sportshopweb.model.Payment;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -47,6 +49,28 @@ public class OrderDetailServlet extends HttpServlet {
 
         try {
             int orderId = Integer.parseInt(orderIdParam);
+            PaymentDAO paymentDAO = new PaymentDAO();
+
+List<Payment> payments = paymentDAO.findByOrderId(orderId);
+
+System.out.println("===== PAYMENT DEBUG =====");
+System.out.println("Requested orderId: " + orderId);
+System.out.println("Payment count: " + payments.size());
+
+Payment payment = null;
+
+if (!payments.isEmpty()) {
+    payment = payments.get(0);
+
+    System.out.println("Payment ID: " + payment.getPaymentId());
+    System.out.println("Payment orderId: " + payment.getOrderId());
+    System.out.println("Payment method: " + payment.getPaymentMethod());
+} else {
+    System.out.println("No Payment found for orderId = " + orderId);
+}
+
+request.setAttribute("payment", payment);
+System.out.println("=========================");
 
             // Dung ham DAO co san
             List<Order> orders =
