@@ -12,6 +12,10 @@ RUN mvn clean package -DskipTests
 # ==========================================
 FROM tomcat:10.1-jdk17
 
+# Thiết lập múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh) cho container và máy ảo Java
+ENV TZ=Asia/Ho_Chi_Minh \
+    JAVA_OPTS="-Duser.timezone=Asia/Ho_Chi_Minh"
+
 # Cài đặt Python 3, pip và công cụ tạo môi trường ảo venv trên nền Linux
 RUN apt-get update && apt-get install -y \
     python3 \
