@@ -1,5 +1,13 @@
-
 package com.mycompany.sportshopweb.controller;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,15 +16,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 @WebServlet(name = "RAGChatServlet", urlPatterns = {"/rag-chat"})
 public class RAGChatServlet extends HttpServlet {
@@ -50,14 +50,14 @@ public class RAGChatServlet extends HttpServlet {
 
         String userQuery = request.getParameter("query");
 
-        if (userQuery == null || userQuery.trim().isEmpty()) {
+        if (userQuery == null || userQuery.isBlank()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Vui lòng nhập câu hỏi hợp lệ.");
             return;
         }
 
         try {
-            String answer = callPythonAPI(userQuery.trim());
+            String answer = callChatbotAPI(userQuery.trim());
 
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write(answer);
@@ -65,23 +65,25 @@ public class RAGChatServlet extends HttpServlet {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
 
-            log("Yêu cầu gọi RAG API bị gián đoạn.", e);
+            getServletContext().log(
+                    "Yêu cầu gọi RAG API bị gián đoạn.", e);
+
             response.setStatus(
                     HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.getWriter().write(
                     "Yêu cầu đến hệ thống RAG AI bị gián đoạn. Vui lòng thử lại.");
 
         } catch (Exception e) {
-            log("Lỗi kết nối tới hệ thống RAG AI.", e);
-            response.setStatus(
-                    HttpServletResponse.SC_BAD_GATEWAY);
+            getServletContext().log(
+                    "Lỗi kết nối tới hệ thống RAG AI.", e);
+
+            response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
             response.getWriter().write(
-                    "Lỗi kết nối tới hệ thống RAG AI: "
-                    + e.getMessage());
+                    "Lỗi kết nối tới hệ thống RAG AI. Vui lòng thử lại sau.");
         }
     }
 
-    private String callPythonAPI(String userQuery)
+    private String callChatbotAPI(String userQuery)
             throws IOException, InterruptedException {
 
         String apiUrl = System.getenv("CHATBOT_API_URL");
@@ -96,13 +98,12 @@ public class RAGChatServlet extends HttpServlet {
                     "Chưa cấu hình CHATBOT_API_KEY trên Render.");
         }
 
-        // Tạo request JSON gửi tới Python API.
         String requestBody = OBJECT_MAPPER.writeValueAsString(
-                java.util.Map.of("question", userQuery));
+                Map.of("question", userQuery));
 
         HttpRequest apiRequest = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
-                .timeout(Duration.ofSeconds(90))
+                .timeout(Duration.ofSeconds(120))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("x-api-key", apiKey)
@@ -119,7 +120,7 @@ public class RAGChatServlet extends HttpServlet {
                 || apiResponse.statusCode() >= 300) {
             throw new IOException(
                     "Chatbot API trả về HTTP "
-                    + apiResponse.statusCode());
+                            + apiResponse.statusCode());
         }
 
         String body = apiResponse.body();
@@ -128,14 +129,14 @@ public class RAGChatServlet extends HttpServlet {
             throw new IOException("Chatbot API trả về dữ liệu rỗng.");
         }
 
-        // Nếu API trả về văn bản thuần thì dùng trực tiếp.
         String trimmedBody = body.trim();
 
+        // Nếu API trả về văn bản thuần, sử dụng trực tiếp.
         if (!trimmedBody.startsWith("{")) {
             return trimmedBody;
         }
 
-        // Nếu API trả JSON, lấy nội dung câu trả lời.
+        // Nếu API trả về JSON, lấy trường chứa câu trả lời.
         JsonNode root = OBJECT_MAPPER.readTree(trimmedBody);
 
         String[] answerFields = {
