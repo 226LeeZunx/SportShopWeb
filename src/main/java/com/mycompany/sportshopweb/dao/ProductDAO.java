@@ -9,7 +9,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductDAO {
     public static final int PAGE_SIZE = 20;
@@ -206,75 +208,97 @@ public class ProductDAO {
     }
 
 
-    public static long countFiltered(int brandId, long catId, long minPrice, long maxPrice) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        try {
-            Long total = em.createQuery(
-                    "SELECT COUNT(DISTINCT v.product.productId) FROM ProductVariant v " +
-                    "WHERE (:brandId = 0 OR v.product.brand.brandId = :brandId) " +
-                    "AND (:categoryId = 0 OR v.product.category.categoryId = :categoryId) " +
-                    "AND v.price >= :minPrice " +
-                    "AND v.price <= :maxPrice", Long.class)
+    public static long countFiltered(int brandId, long catId, long minPrice, long maxPrice, String keyword) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        Long total = em.createQuery(
+                "SELECT COUNT(DISTINCT v.product.productId) FROM ProductVariant v " +
+                "WHERE (:brandId = 0 OR v.product.brand.brandId = :brandId) " +
+                "AND (:categoryId = 0 OR v.product.category.categoryId = :categoryId) " +
+                "AND v.price >= :minPrice " +
+                "AND v.price <= :maxPrice " +
+                "AND (:keyword IS NULL OR :keyword = '' OR LOWER(v.product.productName) LIKE LOWER(CONCAT('%', :keyword, '%')))", Long.class)
                 .setParameter("brandId", brandId)
                 .setParameter("categoryId", catId)
                 .setParameter("minPrice", minPrice)
                 .setParameter("maxPrice", maxPrice)
+                .setParameter("keyword", keyword != null ? keyword.trim() : "")
                 .getSingleResult();
                 
-            return total != null ? total : 0L;
-        } finally {
-            em.close();
-        }
+        return total != null ? total : 0L;
+    } finally {
+        em.close();
     }
+}
 
-    public static List<Product> getFiltered(int brandId, long catId, long minPrice, long maxPrice, String sort, int page, int pageSize) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        try {
-            int offset = (page - 1) * pageSize;
+    public static List<Product> getFiltered(int brandId, long catId, long minPrice, long maxPrice, String sort, int page, int pageSize, String keyword) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    try {
+        int offset = (page - 1) * pageSize;
 
-            String jpqlId = "SELECT DISTINCT v.product.productId FROM ProductVariant v " +
-                            "WHERE (:brandId = 0 OR v.product.brand.brandId = :brandId) " +
-                            "AND (:categoryId = 0 OR v.product.category.categoryId = :categoryId) " +
-                            "AND v.price >= :minPrice " +
-                            "AND v.price <= :maxPrice ";
+        String jpqlId = "SELECT v.product.productId FROM ProductVariant v " +
+                        "WHERE (:brandId = 0 OR v.product.brand.brandId = :brandId) " +
+                        "AND (:categoryId = 0 OR v.product.category.categoryId = :categoryId) " +
+                        "AND v.price >= :minPrice " +
+                        "AND v.price <= :maxPrice " +
+                        "AND (:keyword IS NULL OR :keyword = '' OR LOWER(v.product.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+                        "GROUP BY v.product.productId, v.product.productName ";
 
-            if ("id_desc".equals(sort)) {
-                jpqlId += "ORDER BY v.product.productId DESC";
-            } else if ("price_asc".equals(sort)) {
-                jpqlId += "ORDER BY MIN(v.price) ASC"; // Dùng hàm aggregate nếu sort theo giá
-            } else if ("price_desc".equals(sort)) {
-                jpqlId += "ORDER BY MAX(v.price) DESC";
-            } else if ("name_asc".equals(sort)) {
-                jpqlId += "ORDER BY v.product.productName ASC";
-            } else {
-                jpqlId += "ORDER BY v.product.productId ASC";
-            }
+        if ("id_desc".equals(sort)) {
+            jpqlId += "ORDER BY v.product.productId DESC";
+        } else if ("price_asc".equals(sort)) {
+            jpqlId += "ORDER BY MIN(v.price) ASC";
+        } else if ("price_desc".equals(sort)) {
+            jpqlId += "ORDER BY MAX(v.price) DESC";
+        } else if ("name_asc".equals(sort)) {
+            jpqlId += "ORDER BY v.product.productName ASC";
+        } else {
+            jpqlId += "ORDER BY v.product.productId ASC";
+        }
 
-            TypedQuery<Integer> queryId = em.createQuery(jpqlId, Integer.class)
+        // 3. Truyền đầy đủ các tham số (bao gồm keyword) và thực hiện phân trang
+        TypedQuery<Integer> queryId = em.createQuery(jpqlId, Integer.class)
                 .setParameter("brandId", brandId)
                 .setParameter("categoryId", catId)
                 .setParameter("minPrice", minPrice)
                 .setParameter("maxPrice", maxPrice)
+                .setParameter("keyword", keyword != null ? keyword.trim() : "")
                 .setFirstResult(offset)
                 .setMaxResults(pageSize);
 
-            List<Integer> productIds = queryId.getResultList();
-            if (productIds.isEmpty()) {
-                return new ArrayList<>();
-            }
+        List<Integer> productIds = queryId.getResultList();
+        if (productIds.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-            String jpqlProduct = "SELECT DISTINCT p FROM Product p " +
-                                 "LEFT JOIN FETCH p.images " +
-                                 "LEFT JOIN FETCH p.brand " +
-                                 "LEFT JOIN FETCH p.category " +
-                                 "WHERE p.productId IN :productIds";
+        // 4. Lấy đầy đủ danh sách Product kèm theo các mối quan hệ (FETCH JOIN)
+        String jpqlProduct = "SELECT DISTINCT p FROM Product p " +
+                             "LEFT JOIN FETCH p.images " +
+                             "LEFT JOIN FETCH p.brand " +
+                             "LEFT JOIN FETCH p.category " +
+                             "WHERE p.productId IN :productIds";
 
-            return em.createQuery(jpqlProduct, Product.class)
+        List<Product> unorderedProducts = em.createQuery(jpqlProduct, Product.class)
                 .setParameter("productIds", productIds)
                 .getResultList();
 
-        } finally {
-            em.close();
+        Map<Integer, Product> productMap = new HashMap<>();
+        for (Product p : unorderedProducts) {
+            productMap.put(p.getProductId(), p);
         }
+
+        List<Product> orderedProducts = new ArrayList<>();
+        for (Integer id : productIds) {
+            Product p = productMap.get(id);
+            if (p != null) {
+                orderedProducts.add(p);
+            }
+        }
+
+        return orderedProducts;
+
+    } finally {
+        em.close();
     }
+}
 }
