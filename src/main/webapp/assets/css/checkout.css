@@ -888,7 +888,8 @@
             border-color: #e9a69b;
         }
 
-        .address-item.selected {
+        .address-item.selected,
+        .address-item:has(input[type="radio"]:checked) {
             border: 1.5px solid #dc4b35;
             background: #fffaf8;
         }

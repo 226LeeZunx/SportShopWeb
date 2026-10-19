@@ -224,6 +224,7 @@
                                                                 <th>ID</th>
                                                                 <th>BRAND</th>
                                                                 <th>CATEGORY</th>
+                                                                <th>QUANTITY</th>
                                                                 <th>DESCRIPTION</th>
                                                                 <th>ACTIONS</th>
                                                             </tr>
@@ -274,7 +275,10 @@
                                                                                 <c:out value="${product.category.name}"
                                                                                     default="—" />
                                                                             </td>
-
+                                                                            <td>
+                                                                                <c:out value="${product.quantity}"
+                                                                                    default="10" />
+                                                                            </td>
                                                                             <td>
                                                                                 <c:out value="${product.description}"
                                                                                     default="—" />
@@ -311,7 +315,7 @@
 
                                                                 <c:otherwise>
                                                                     <tr>
-                                                                        <td colspan="6">
+                                                                        <td colspan="7">
                                                                             <div class="empty-message">
                                                                                 No products found matching your search.
                                                                             </div>

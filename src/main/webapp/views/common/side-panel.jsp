@@ -150,15 +150,5 @@
     </div>
 </aside>
 
-<!-- JavaScript cơ bản duy nhất để toggle ẩn/hiện class -->
-<script>
-    function openDrawer() {
-        document.getElementById('drawerMenu').className = 'drawer-menu active';
-        document.getElementById('drawerOverlay').className = 'drawer-overlay active';
-    }
-
-    function closeDrawer() {
-        document.getElementById('drawerMenu').className = 'drawer-menu';
-        document.getElementById('drawerOverlay').className = 'drawer-overlay';
-    }
-</script>
+<!-- JavaScript điều khiển đóng mở Side Panel -->
+<script src="${pageContext.request.contextPath}/assets/js/drawer.js"></script>

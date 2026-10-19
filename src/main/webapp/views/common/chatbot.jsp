@@ -4,10 +4,10 @@
 <!-- Link CSS của Chatbot -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/chatbot.css">
 
-<!-- 1. Icon nổi có thể kéo thả di chuyển -->
-<div class="chatbot-toggler" id="chatToggler" title="Bấm để chat, giữ chuột để kéo di chuyển">
+<!-- 1. Icon nổi cố định ở góc dưới phải màn hình -->
+<button type="button" class="chatbot-toggler" id="chatToggler" title="Trợ lý tư vấn SportShop">
     <i class="fa-solid fa-comments"></i>
-</div>
+</button>
 
 <!-- 2. Hộp thoại Chatbox -->
 <div class="chatbot-box" id="chatBox">
@@ -18,7 +18,8 @@
             <i class="fa-solid fa-robot"></i>
             <span>Trợ lý SportShop (RAG AI)</span>
         </div>
-        <button type="button" class="chatbot-close-btn" id="chatCloseBtn">&times;</button>
+        <!-- Nút đóng khung chat -->
+        <button type="button" class="chatbot-close-btn" id="chatCloseBtn" title="Đóng">&times;</button>
     </div>
 
     <!-- Vùng hiển thị tin nhắn -->
@@ -28,13 +29,13 @@
         </div>
     </div>
 
-    <!-- Ô nhập tin nhắn -->
-    <div class="chatbot-input-area">
-        <input type="text" id="chatInput" placeholder="Nhập câu hỏi..." autocomplete="off">
-        <button type="button" id="chatSendBtn">
+    <!-- Ô nhập tin nhắn bọc trong thẻ Form chuẩn HTML -->
+    <form class="chatbot-input-area" id="chatForm">
+        <input type="text" id="chatInput" placeholder="Nhập câu hỏi..." autocomplete="off" required>
+        <button type="submit" id="chatSendBtn">
             <i class="fa-solid fa-paper-plane"></i>
         </button>
-    </div>
+    </form>
 
 </div>
 
