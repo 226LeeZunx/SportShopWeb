@@ -42,20 +42,27 @@ public class RAGChatServlet extends HttpServlet {
                 }
                 
                 // Thư mục chứa các script python của bạn
-                File pythonRagDir = new File(projectRoot.getParentFile(), "python-rag");
+                File pythonRagDir = new File("/opt/python-rag");
                 if (!pythonRagDir.exists()) {
-                    // Thử tìm theo cấu trúc khi build đóng gói chuẩn
-                    pythonRagDir = new File(projectRoot, "python-rag");
+                    pythonRagDir = new File(projectRoot.getParentFile(), "python-rag");
+                    if (!pythonRagDir.exists()) {
+                        pythonRagDir = new File(projectRoot, "python-rag");
+                    }
                 }
 
                 File ragScript = new File(pythonRagDir, "query_rag.py");
 
-                // 3. Chọn lệnh Python (Ưu tiên gọi 'python' hoặc 'python3' từ hệ thống đã cài sẵn môi trường)
-                String pythonCommand = new File(
-                        pythonRagDir,
-                        ".venv\\Scripts\\python.exe"
-                ).getAbsolutePath(); 
-                // Nếu chạy trên Linux/Ubuntu server có thể là "python3"
+                // 3. Chọn lệnh Python (Hỗ trợ cả Windows local và Linux Docker)
+                File venvWin = new File(pythonRagDir, ".venv\\Scripts\\python.exe");
+                File venvLinux = new File(pythonRagDir, ".venv/bin/python");
+                String pythonCommand;
+                if (venvLinux.exists()) {
+                    pythonCommand = venvLinux.getAbsolutePath();
+                } else if (venvWin.exists()) {
+                    pythonCommand = venvWin.getAbsolutePath();
+                } else {
+                    pythonCommand = "python3";
+                }
 
                 // 4. Khởi tạo ProcessBuilder với đường dẫn hoàn toàn tương đối / động
                 ProcessBuilder pb = new ProcessBuilder(
