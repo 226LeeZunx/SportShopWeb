@@ -8,6 +8,7 @@ import com.mycompany.sportshopweb.dao.CustomerDAO;
 import com.mycompany.sportshopweb.dao.UserDAO;
 import com.mycompany.sportshopweb.model.Customer;
 import com.mycompany.sportshopweb.model.User;
+import com.mycompany.sportshopweb.util.PasswordUtil;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -36,11 +37,18 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
+        User user = (User) session.getAttribute("user");
+        CustomerDAO customerDAO = new CustomerDAO();
+        Customer customer = customerDAO.findByUserId(user.getUserId());
+        if (customer != null) {
+            session.setAttribute("customer", customer);
+        }
+
         // Đã đăng nhập -> hiển thị trang profile.jsp
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }
 
-    // Khi người dùng bấm nút "Save Changes" để cập nhật thông tin cá nhân
+    // Khi người dùng bấm nút cập nhật thông tin hoặc đổi mật khẩu
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -55,6 +63,94 @@ public class ProfileServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         Customer customer = (Customer) session.getAttribute("customer");
+
+        String action = request.getParameter("action");
+        if (action == null) {
+            action = "updateProfile";
+        }
+
+        if ("changePassword".equals(action)) {
+            handleChangePassword(request, response, session, user);
+        } else {
+            handleUpdateProfile(request, response, session, user, customer);
+        }
+    }
+
+    // Xử lý đổi mật khẩu
+    private void handleChangePassword(HttpServletRequest request, HttpServletResponse response,
+            HttpSession session, User sessionUser) throws ServletException, IOException {
+        request.setAttribute("activeTab", "password");
+
+        String currentPassword = request.getParameter("currentPassword");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        // 1. Kiểm tra không được để trống
+        if (currentPassword == null || currentPassword.isEmpty()
+                || newPassword == null || newPassword.isEmpty()
+                || confirmPassword == null || confirmPassword.isEmpty()) {
+            request.setAttribute("error", "Please fill in all password fields.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 2. Kiểm tra độ dài mật khẩu mới
+        if (newPassword.length() < 6) {
+            request.setAttribute("error", "New password must be at least 6 characters long.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 3. Kiểm tra xác nhận mật khẩu mới có trùng khớp không
+        if (!newPassword.equals(confirmPassword)) {
+            request.setAttribute("error", "New password and confirmation password do not match.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        UserDAO userDAO = new UserDAO();
+        User userInDb = userDAO.findById(sessionUser.getUserId());
+        if (userInDb == null) {
+            request.setAttribute("error", "User account not found. Please sign in again.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 4. Kiểm tra mật khẩu hiện tại có đúng không
+        if (!PasswordUtil.verifyPassword(currentPassword, userInDb.getPasswordHash())) {
+            request.setAttribute("error", "Current password is incorrect.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 5. Kiểm tra mật khẩu mới không được trùng mật khẩu cũ
+        if (PasswordUtil.verifyPassword(newPassword, userInDb.getPasswordHash())) {
+            request.setAttribute("error", "New password cannot be the same as your current password.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 6. Băm mật khẩu mới và lưu vào database
+        String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
+        userInDb.setPasswordHash(hashedNewPassword);
+        boolean updated = userDAO.update(userInDb);
+
+        if (!updated) {
+            request.setAttribute("error", "System error while updating password. Please try again.");
+            request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 7. Cập nhật lại thông tin mới vào Session
+        session.setAttribute("user", userInDb);
+        request.setAttribute("message", "Password changed successfully!");
+        request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
+    }
+
+    // Xử lý cập nhật thông tin cá nhân (First name, Last name, Phone, Gender)
+    private void handleUpdateProfile(HttpServletRequest request, HttpServletResponse response,
+            HttpSession session, User user, Customer customer) throws ServletException, IOException {
+        request.setAttribute("activeTab", "info");
 
         // 1. Lấy dữ liệu người dùng vừa chỉnh sửa từ form
         String firstName = request.getParameter("firstName");

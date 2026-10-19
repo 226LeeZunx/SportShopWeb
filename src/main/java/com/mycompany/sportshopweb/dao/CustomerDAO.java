@@ -61,7 +61,7 @@ public class CustomerDAO {
     // Tìm khách hàng theo ID tài khoản User
     public Customer findByUserId(int userId) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        String jpql = "SELECT c FROM Customer c WHERE c.user.userId = :userId";
+        String jpql = "SELECT c FROM Customer c LEFT JOIN FETCH c.user LEFT JOIN FETCH c.membershipTier WHERE c.user.userId = :userId";
         try {
             TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
             query.setParameter("userId", userId);
@@ -76,8 +76,13 @@ public class CustomerDAO {
     // Tìm khách hàng theo ID khách hàng
     public Customer findById(int customerId) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        String jpql = "SELECT c FROM Customer c LEFT JOIN FETCH c.user LEFT JOIN FETCH c.membershipTier WHERE c.customerId = :customerId";
         try {
-            return em.find(Customer.class, customerId);
+            TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
+            query.setParameter("customerId", customerId);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
