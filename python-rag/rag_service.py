@@ -15,15 +15,15 @@ class RAGPipeline:
     """Class điều phối toàn bộ luồng RAG kết hợp Jina Embedding & Custom LLM Endpoint."""
     def __init__(self):
         # Lấy chuỗi kết nối MongoDB Atlas từ biến môi trường
-        mongo_uri = os.getenv("MONGO_URI", "mongodb+srv://dung2k2k6_db_user:KmD35KbrP1marL5A@cluster0.iqnuuvu.mongodb.net/?retryWrites=true&w=majority")
-        db_name = os.getenv("DB_NAME", "rag_db")
+        mongo_uri = os.getenv("MONGO_URI")
+        db_name = os.getenv("DB_NAME")
 
         self.chunker = RecursiveChunker(chunk_size=400, chunk_overlap=40)
         self.vector_store = MongoVectorStore(connection_uri=mongo_uri, db_name=db_name)
         
         # Cấu hình OpenAI client trỏ đến Custom Endpoint (nttcodex.com)
         self.llm_client = OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY", "sk-local-96ee4eabb213c6a6c2c6002276d38eae2e1e903504696679"),
+            api_key=os.getenv("OPENAI_API_KEY"),
             base_url="https://nttcodex.com/v1",
             timeout=600.0,
         )
@@ -55,8 +55,8 @@ class RAGPipeline:
 
     def retrieve(self, question: str, top_k: int = 3) -> List[Tuple[Chunk, float]]:
         """Bước 2: Vector hóa câu hỏi bằng Jina (task='retrieval.query') và tìm kiếm Cosine Similarity."""
-        jina_key = os.getenv("JINA_API_KEY") or os.getenv("JINA_EMBEDING", "jina_71b19e11f1c14eafbf5258052bb84058pMlnvr58Kd2UPXyGkZju02ukv8Cp")
-        model_emb = os.getenv("MODEL_EMBEDING", "jina-embeddings-v5-text-small")
+        jina_key = os.getenv("JINA_API_KEY") or os.getenv("JINA_EMBEDING")
+        model_emb = os.getenv("MODEL_EMBEDING")
 
         query_embedding = embed_tex(question, model=model_emb, api_key=jina_key, task="retrieval.query")
         results = self.vector_store.search_similar(query_embedding, top_k=top_k)

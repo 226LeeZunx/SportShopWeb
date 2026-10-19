@@ -15,21 +15,15 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "RAGChatServlet", urlPatterns = {"/rag-chat"})
 public class RAGChatServlet extends HttpServlet {
 
-    private static final String PYTHON_EXE = "D:\\Project Web\\SportShopWeb\\python-rag\\.venv\\Scripts\\python.exe";
-    private static final String RAG_SCRIPT_PATH = "D:\\Project Web\\SportShopWeb\\python-rag\\query_rag.py";
-    private static final String WORKING_DIR = "D:\\Project Web\\SportShopWeb\\python-rag";
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Cho phép truy cập trực tiếp trang nếu cần
         request.getRequestDispatcher("rag-chat.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Cấu hình mã hóa tiếng Việt UTF-8 cho request & response
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain;charset=UTF-8");
 
@@ -38,12 +32,44 @@ public class RAGChatServlet extends HttpServlet {
 
         if (userQuery != null && !userQuery.trim().isEmpty()) {
             try {
-                ProcessBuilder pb = new ProcessBuilder(PYTHON_EXE, RAG_SCRIPT_PATH, userQuery);
-                pb.directory(new File(WORKING_DIR));
+                // 1. Lấy đường dẫn thực tế của ứng dụng web trên server/máy local
+                String webAppPath = getServletContext().getRealPath("/");
+                
+                // 2. Định vị thư mục python-rag nằm ngang hàng với thư mục mã nguồn/webapp của project
+                File projectRoot = new File(webAppPath).getParentFile();
+                if (projectRoot == null) {
+                    projectRoot = new File("."); // Fallback về thư mục hiện tại nếu chạy môi trường đặc biệt
+                }
+                
+                // Thư mục chứa các script python của bạn
+                File pythonRagDir = new File(projectRoot.getParentFile(), "python-rag");
+                if (!pythonRagDir.exists()) {
+                    // Thử tìm theo cấu trúc khi build đóng gói chuẩn
+                    pythonRagDir = new File(projectRoot, "python-rag");
+                }
+
+                File ragScript = new File(pythonRagDir, "query_rag.py");
+
+                // 3. Chọn lệnh Python (Ưu tiên gọi 'python' hoặc 'python3' từ hệ thống đã cài sẵn môi trường)
+                String pythonCommand = "python"; 
+                // Nếu chạy trên Linux/Ubuntu server có thể là "python3"
+
+                // 4. Khởi tạo ProcessBuilder với đường dẫn hoàn toàn tương đối / động
+                ProcessBuilder pb = new ProcessBuilder(
+                    pythonCommand, 
+                    ragScript.getAbsolutePath(), 
+                    userQuery
+                );
+                
+                // Đặt thư mục làm việc (Working Directory) để Python nhận diện file .env chính xác
+                if (pythonRagDir.exists()) {
+                    pb.directory(pythonRagDir);
+                }
                 pb.redirectErrorStream(true);
 
                 Process process = pb.start();
 
+                // Đọc kết quả trả về từ script Python bằng chuẩn UTF-8
                 try (BufferedReader reader = new BufferedReader(
                         new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                     String line;
@@ -54,7 +80,7 @@ public class RAGChatServlet extends HttpServlet {
 
                 int exitCode = process.waitFor();
                 if (exitCode != 0 && aiAnswer.length() == 0) {
-                    aiAnswer.append("Lỗi: Tiến trình Python dừng bất thường (Exit Code: ").append(exitCode).append(")");
+                    aiAnswer.append("Lỗi tiến trình Python (Exit Code: ").append(exitCode).append(")");
                 }
 
             } catch (Exception e) {
@@ -65,7 +91,6 @@ public class RAGChatServlet extends HttpServlet {
             aiAnswer.append("Vui lòng nhập câu hỏi hợp lệ.");
         }
 
-        // Trả kết quả trực tiếp về cho JavaScript Fetch API
         PrintWriter out = response.getWriter();
         out.print(aiAnswer.toString().trim());
         out.flush();
