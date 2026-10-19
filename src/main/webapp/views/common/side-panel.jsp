@@ -3,7 +3,7 @@
 
 <!-- Lớp nền tối mờ khi mở panel -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/drawer.css?v=1">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/drawer.css">
 <!-- Cửa sổ trượt danh mục -->
 <aside class="drawer-menu" id="drawerMenu">
     

@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,7 +30,7 @@
                         <h2>Sign In Required</h2>
                         <p>Please sign in to access and manage your profile details.</p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/views/login.jsp" class="auth-btn auth-btn-block">
+                    <a href="${pageContext.request.contextPath}/LoginServlet" class="auth-btn auth-btn-block">
                         Go to Sign In
                     </a>
                 </div>
@@ -71,19 +71,36 @@
                             <!-- Huy hiệu hạng thành viên -->
                             <span class="tier-badge">
                                 <i class="fa-solid fa-medal"></i> 
-                                ${not empty sessionScope.customer.membershipTier.tierName ? sessionScope.customer.membershipTier.tierName : 'Bronze Member'}
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.customer.membershipTier}">
+                                        ${sessionScope.customer.membershipTier.tierName}
+                                    </c:when>
+                                    <c:otherwise>
+                                        Bronze Member
+                                    </c:otherwise>
+                                </c:choose>
                             </span>
                         </div>
 
                         <!-- Danh sách menu con trong tài khoản -->
                         <ul class="profile-nav-list">
-                            <li class="profile-nav-item active">
-                                <a href="${pageContext.request.contextPath}/views/profile.jsp">
+                            <li class="profile-nav-item ${empty activeTab || activeTab == 'info' ? 'active' : ''}" id="tab-info-btn">
+                                <a href="javascript:void(0)" onclick="switchTab('info')">
                                     <i class="fa-solid fa-id-card"></i> Personal Info
                                 </a>
                             </li>
+                            <li class="profile-nav-item ${activeTab == 'password' ? 'active' : ''}" id="tab-password-btn">
+                                <a href="javascript:void(0)" onclick="switchTab('password')">
+                                    <i class="fa-solid fa-key"></i> Change Password
+                                </a>
+                            </li>
                             <li class="profile-nav-item">
-                                <a href="${pageContext.request.contextPath}/views/orders.jsp">
+                                <a href="${pageContext.request.contextPath}/addresses">
+                                    <i class="fa-solid fa-location-dot"></i> Address Book
+                                </a>
+                            </li>
+                            <li class="profile-nav-item">
+                                <a href="${pageContext.request.contextPath}/orders">
                                     <i class="fa-solid fa-box-archive"></i> Order History
                                 </a>
                             </li>
@@ -95,7 +112,7 @@
                         </ul>
                     </aside>
 
-                    <!-- Cột 2: Nội dung biểu mẫu thông tin cá nhân -->
+                    <!-- Cột 2: Nội dung chính -->
                     <section class="profile-main-content">
                         
                         <!-- Thông báo cập nhật thành công hoặc lỗi (nếu có) -->
@@ -110,75 +127,127 @@
                             </div>
                         </c:if>
 
-                        <!-- Khối Form cập nhật thông tin -->
-                        <div class="profile-card">
-                            <h3 class="profile-card-title">Personal Information</h3>
-                            
-                            <form action="${pageContext.request.contextPath}/ProfileServlet" method="post">
+                        <!-- TAB 1: THÔNG TIN CÁ NHÂN -->
+                        <div id="personalInfoSection" style="${activeTab == 'password' ? 'display: none;' : 'display: block;'}">
+                            <!-- Khối Form cập nhật thông tin -->
+                            <div class="profile-card">
+                                <h3 class="profile-card-title">Personal Information</h3>
                                 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label" for="firstName">First Name</label>
-                                        <input type="text" 
-                                               id="firstName" 
-                                               name="firstName" 
-                                               class="form-input" 
-                                               value="${sessionScope.customer.firstName}" 
-                                               required>
+                                <form action="${pageContext.request.contextPath}/ProfileServlet" method="post">
+                                    <input type="hidden" name="action" value="updateProfile">
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label" for="firstName">First Name</label>
+                                            <input type="text" 
+                                                   id="firstName" 
+                                                   name="firstName" 
+                                                   class="form-input" 
+                                                   value="${sessionScope.customer.firstName}" 
+                                                   required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="lastName">Last Name</label>
+                                            <input type="text" 
+                                                   id="lastName" 
+                                                   name="lastName" 
+                                                   class="form-input" 
+                                                   value="${sessionScope.customer.lastName}" 
+                                                   required>
+                                        </div>
                                     </div>
+
                                     <div class="form-group">
-                                        <label class="form-label" for="lastName">Last Name</label>
-                                        <input type="text" 
-                                               id="lastName" 
-                                               name="lastName" 
-                                               class="form-input" 
-                                               value="${sessionScope.customer.lastName}" 
-                                               required>
+                                        <label class="form-label" for="email">Email Address (Read-only)</label>
+                                        <input type="email" 
+                                               id="email" 
+                                               class="form-input form-input-readonly" 
+                                               value="${not empty sessionScope.user ? sessionScope.user.email : sessionScope.customer.user.email}" 
+                                               readonly>
                                     </div>
-                                </div>
 
-                                <div class="form-group">
-                                    <label class="form-label" for="email">Email Address (Read-only)</label>
-                                    <input type="email" 
-                                           id="email" 
-                                           class="form-input form-input-readonly" 
-                                           value="${not empty sessionScope.user ? sessionScope.user.email : sessionScope.customer.user.email}" 
-                                           readonly>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label" for="phone">Phone Number</label>
-                                        <input type="tel" 
-                                               id="phone" 
-                                               name="phone" 
-                                               class="form-input" 
-                                               value="${not empty sessionScope.user ? sessionScope.user.phone : sessionScope.customer.user.phone}">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label" for="phone">Phone Number</label>
+                                            <input type="tel" 
+                                                   id="phone" 
+                                                   name="phone" 
+                                                   class="form-input" 
+                                                   value="${not empty sessionScope.user ? sessionScope.user.phone : sessionScope.customer.user.phone}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="gender">Gender</label>
+                                            <select id="gender" name="gender" class="form-select">
+                                                <option value="Male" ${sessionScope.customer.gender == 'Male' ? 'selected' : ''}>Male</option>
+                                                <option value="Female" ${sessionScope.customer.gender == 'Female' ? 'selected' : ''}>Female</option>
+                                                <option value="Other" ${sessionScope.customer.gender == 'Other' ? 'selected' : ''}>Other</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="gender">Gender</label>
-                                        <select id="gender" name="gender" class="form-select">
-                                            <option value="Male" ${sessionScope.customer.gender == 'Male' ? 'selected' : ''}>Male</option>
-                                            <option value="Female" ${sessionScope.customer.gender == 'Female' ? 'selected' : ''}>Female</option>
-                                            <option value="Other" ${sessionScope.customer.gender == 'Other' ? 'selected' : ''}>Other</option>
-                                        </select>
-                                    </div>
-                                </div>
 
-                                <button type="submit" class="profile-save-btn">Save Changes</button>
+                                    <button type="submit" class="profile-save-btn">Save Changes</button>
 
-                            </form>
+                                </form>
+                            </div>
+
+                            <!-- Khối thông tin hạng thành viên & ưu đãi -->
+                            <div class="profile-card" style="margin-top: 28px;">
+                                <h3 class="profile-card-title">Membership Tier & Benefits</h3>
+                                <p class="tier-status-text">
+                                    Your current status: <strong class="tier-status-highlight"><c:choose><c:when test="${not empty sessionScope.customer.membershipTier}">${sessionScope.customer.membershipTier.tierName}</c:when><c:otherwise>Bronze Member</c:otherwise></c:choose></strong>
+                                </p>
+                                <p class="tier-discount-text">
+                                    Discount rate: <span class="tier-discount-rate">${not empty sessionScope.customer.membershipTier ? sessionScope.customer.membershipTier.discountRate : 0}% OFF</span> on all orders.
+                                </p>
+                            </div>
                         </div>
 
-                        <!-- Khối thông tin hạng thành viên & ưu đãi -->
-                        <div class="profile-card">
-                            <h3 class="profile-card-title">Membership Tier & Benefits</h3>
-                            <p class="tier-status-text">
-                                Your current status: <strong class="tier-status-highlight">${not empty sessionScope.customer.membershipTier.tierName ? sessionScope.customer.membershipTier.tierName : 'Bronze Member'}</strong>
-                            </p>
-                            <p class="tier-discount-text">
-                                Discount rate: <span class="tier-discount-rate">${not empty sessionScope.customer.membershipTier.discountPercentage ? sessionScope.customer.membershipTier.discountPercentage : 0}% OFF</span> on all orders.
-                            </p>
+                        <!-- TAB 2: ĐỔI MẬT KHẨU -->
+                        <div id="changePasswordSection" style="${activeTab == 'password' ? 'display: block;' : 'display: none;'}">
+                            <div class="profile-card">
+                                <h3 class="profile-card-title">Change Password</h3>
+                                <p style="color: #6b7280; font-size: 0.9rem; margin-top: -12px; margin-bottom: 24px;">
+                                    For your security, please choose a strong password that is at least 6 characters long.
+                                </p>
+
+                                <form action="${pageContext.request.contextPath}/ProfileServlet" method="post">
+                                    <input type="hidden" name="action" value="changePassword">
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="currentPassword">Current Password</label>
+                                        <input type="password" 
+                                               id="currentPassword" 
+                                               name="currentPassword" 
+                                               class="form-input" 
+                                               placeholder="Enter current password" 
+                                               required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="newPassword">New Password</label>
+                                        <input type="password" 
+                                               id="newPassword" 
+                                               name="newPassword" 
+                                               class="form-input" 
+                                               placeholder="At least 6 characters" 
+                                               required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="confirmPassword">Confirm New Password</label>
+                                        <input type="password" 
+                                               id="confirmPassword" 
+                                               name="confirmPassword" 
+                                               class="form-input" 
+                                               placeholder="Re-enter new password" 
+                                               required>
+                                    </div>
+
+                                    <button type="submit" class="profile-save-btn">
+                                        <i class="fa-solid fa-key" style="margin-right: 6px;"></i> Update Password
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
                     </section>
@@ -190,6 +259,39 @@
 
         <!-- 3. Nhúng Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
+
+        <!-- 4. Script chuyển tab mượt mà -->
+        <script>
+            function switchTab(tabName) {
+                var infoSection = document.getElementById('personalInfoSection');
+                var passSection = document.getElementById('changePasswordSection');
+                var infoBtn = document.getElementById('tab-info-btn');
+                var passBtn = document.getElementById('tab-password-btn');
+
+                if (tabName === 'password') {
+                    if (infoSection) infoSection.style.display = 'none';
+                    if (passSection) passSection.style.display = 'block';
+                    if (infoBtn) infoBtn.classList.remove('active');
+                    if (passBtn) passBtn.classList.add('active');
+                    window.location.hash = 'password';
+                } else {
+                    if (infoSection) infoSection.style.display = 'block';
+                    if (passSection) passSection.style.display = 'none';
+                    if (infoBtn) infoBtn.classList.add('active');
+                    if (passBtn) passBtn.classList.remove('active');
+                    if (window.location.hash) {
+                        history.replaceState(null, null, window.location.pathname + window.location.search);
+                    }
+                }
+            }
+
+            // Kích hoạt tab nếu URL có hash #password
+            window.addEventListener('DOMContentLoaded', function () {
+                if (window.location.hash === '#password') {
+                    switchTab('password');
+                }
+            });
+        </script>
 
     </body>
 </html>

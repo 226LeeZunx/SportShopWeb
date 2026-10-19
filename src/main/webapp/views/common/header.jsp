@@ -33,6 +33,13 @@
 
         <!-- 3. BÊN PHẢI: Tài khoản, Đơn hàng & Giỏ hàng -->
         <div class="header-right header-actions">
+            <!-- Nút Quản trị (Dành riêng cho Admin) -->
+            <c:if test="${not empty sessionScope.admin}">
+                <a href="${pageContext.request.contextPath}/admin/dashboard" class="action-btn" title="Admin Dashboard">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </a>
+            </c:if>
+
             <!-- Nút Tài khoản -->
             <c:choose>
                 <c:when test="${not empty sessionScope.customer || not empty sessionScope.user}">
