@@ -1,6 +1,5 @@
 from jina_embeddings import jina_embeddings
 import os 
-from rich import print 
 from dotenv import load_dotenv
 import numpy as np 
 
