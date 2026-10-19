@@ -74,13 +74,14 @@
 
                                 <p class="address-detail-text">${address.detailAddress}</p>
 
+                                <!-- Checkbox ẩn để bật/tắt form sửa bằng CSS thuần -->
+                                <input type="checkbox" id="toggle-edit-${address.addressId}" class="address-edit-toggle" hidden>
+
                                 <!-- Các nút thao tác -->
                                 <div class="address-actions">
-                                    <button type="button"
-                                            class="btn-address-edit"
-                                            onclick="toggleEdit(${address.addressId})">
+                                    <label for="toggle-edit-${address.addressId}" class="btn-address-edit">
                                         <i class="fa-solid fa-pen-to-square"></i> Sửa địa chỉ
-                                    </button>
+                                    </label>
 
                                     <c:if test="${not address.defaultAddress}">
                                         <form action="${pageContext.request.contextPath}/addresses"
@@ -140,11 +141,9 @@
                                             <button type="submit" class="btn-address-default" style="padding: 10px 18px;">
                                                 <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
                                             </button>
-                                            <button type="button"
-                                                    class="btn-address-cancel"
-                                                    onclick="toggleEdit(${address.addressId})">
+                                            <label for="toggle-edit-${address.addressId}" class="btn-address-cancel">
                                                 Hủy
-                                            </button>
+                                            </label>
                                         </div>
                                     </form>
                                 </div>
@@ -209,19 +208,6 @@
     <!-- 3. Nhúng Footer dùng chung -->
     <jsp:include page="/views/common/footer.jsp" />
 
-    <!-- Script ẩn/hiện form sửa địa chỉ -->
-    <script>
-        function toggleEdit(addressId) {
-            var form = document.getElementById("edit-" + addressId);
-            if (form) {
-                if (form.style.display === "block") {
-                    form.style.display = "none";
-                } else {
-                    form.style.display = "block";
-                }
-            }
-        }
-    </script>
 
 </body>
 </html>

@@ -231,6 +231,18 @@
     background-color: #374151;
 }
 
+/* Checkbox ẩn điều khiển mở/đóng form sửa địa chỉ thuần CSS */
+.address-edit-toggle {
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.address-edit-toggle:checked ~ .edit-form-box {
+    display: block;
+}
+
 /* Hộp form sửa mở rộng */
 .edit-form-box {
     display: none;
