@@ -125,9 +125,7 @@ public class LoginServlet extends HttpServlet {
     int cartCount = 0;
 
     if (cart != null && cart.getCartItems() != null) {
-        for (CartItem item : cart.getCartItems()) {
-            cartCount += item.getQuantity();
-        }
+        cartCount = cart.getCartItems().size();
     }
 
     session.setAttribute("cartCount", cartCount);
