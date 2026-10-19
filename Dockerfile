@@ -37,6 +37,9 @@ COPY python-rag/ .
 RUN rm -rf /usr/local/tomcat/webapps/*
 COPY --from=maven_builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
+# Vô hiệu hóa cổng shutdown 8005 để Render phát hiện đúng duy nhất cổng HTTP 8080
+RUN sed -i 's/port="8005"/port="-1"/' /usr/local/tomcat/conf/server.xml
+
 # Mở cổng 8080 cho Tomcat
 EXPOSE 8080
 
