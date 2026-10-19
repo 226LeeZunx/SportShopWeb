@@ -221,61 +221,83 @@
 </section>
 
                         <!-- Customer -->
-                        <section class="detail-card">
-                            <div class="section-heading">
-                                <div>
-                                    <span class="section-eyebrow">ORDER CONTACT</span>
-                                    <h2>Customer Information</h2>
-                                </div>
-                                <span class="section-icon">
-                                    <i class="fa-regular fa-user"></i>
-                                </span>
-                            </div>
+                        
+<!-- Customer -->
+<section class="detail-card">
+    <div class="section-heading">
+        <div>
+            <span class="section-eyebrow">ORDER CONTACT</span>
+            <h2>Customer Information</h2>
+        </div>
+        <span class="section-icon">
+            <i class="fa-regular fa-user"></i>
+        </span>
+    </div>
 
-                            <div class="info-panel">
-                                <div class="info-panel-icon">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                                <div>
-                                    <span class="info-label">Customer ID</span>
-                                    <strong>
-                                        <c:out value="${order.customer.customerId}" />
-                                    </strong>
-                                </div>
-                            </div>
-                        </section>
+    <div class="payment-info-row">
+        <span class="payment-label">Customer ID</span>
+        <strong>
+            <c:out value="${order.customer.customerId}" />
+        </strong>
+    </div>
+    <div class="payment-info-row">
+        <span class="payment-label">Receiver name</span>
+        <strong>
+            <c:out value="${order.customer.firstName}" />
+            <c:out value="${order.customer.lastName}" />
+        </strong>
+    </div>
+    <div class="payment-info-row">
+        <span class="payment-label">Phone number/Email</span>
+        <strong>
+            <c:out value="${order.customer.user.phone}" />
+        </strong>
+    </div>
 
+    <div class="payment-info-row">
+        <span class="payment-label">Shipping address</span>
+        <strong>
+            <c:choose>
+                <c:when test="${not empty order.address}">
+                    <c:out value="${order.address.detailAddress}" />
+                    <c:out value="${order.address.ward}" />
+                    <c:out value="${order.address.province}" />
+                </c:when>
+                <c:otherwise>
+                    Address not available
+                </c:otherwise>
+            </c:choose>
+        </strong>
+    </div>
+</section>
                         <!-- Payment -->
-                        <section class="detail-card">
-                            <div class="section-heading">
-                                <div>
-                                    <span class="section-eyebrow">TRANSACTION</span>
-                                    <h2>Payment Information</h2>
-                                </div>
-                                <span class="section-icon">
-                                    <i class="fa-regular fa-credit-card"></i>
-                                </span>
-                            </div>
+                      
+<!-- Payment -->
+<section class="detail-card">
+    <div class="section-heading">
+        <div>
+            <span class="section-eyebrow">TRANSACTION</span>
+            <h2>Payment Information</h2>
+        </div>
+        <span class="section-icon">
+            <i class="fa-regular fa-credit-card"></i>
+        </span>
+    </div>
 
-                            <div class="payment-info-row">
-                                <span class="payment-label">Order status</span>
-                                <strong><c:out value="${status}" /></strong>
-                            </div>
-
-                            <div class="payment-info-row">
-                                <span class="payment-label">Payment method</span>
-                                <span class="payment-value">
-                                    Not available
-                                </span>
-                            </div>
-
-                            <div class="payment-info-row">
-                                <span class="payment-label">Payment status</span>
-                                <span class="payment-value">
-                                    Not available
-                                </span>
-                            </div>
-                        </section>
+    <div class="payment-info-row">
+    <span class="payment-label">Payment method</span>
+    <strong>
+        <c:choose>
+            <c:when test="${not empty payment}">
+                <c:out value="${payment.paymentMethod}" />
+            </c:when>
+            <c:otherwise>
+                Not available
+            </c:otherwise>
+        </c:choose>
+    </strong>
+</div>
+</section>
                     </div>
 
                     <!-- Right column -->
