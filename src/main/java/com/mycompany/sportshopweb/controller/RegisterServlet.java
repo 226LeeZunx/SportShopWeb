@@ -87,6 +87,22 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
+        // Kiểm tra định dạng Email hợp lệ (chống nhập bậy hoặc sai cú pháp email)
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        if (!email.matches(emailRegex)) {
+            request.setAttribute("error", "Invalid email format. Please enter a valid email address (e.g. name@gmail.com).");
+            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            return;
+        }
+
+        // Kiểm tra định dạng Số điện thoại Việt Nam (10 chữ số, bắt đầu bằng số 0)
+        String phoneRegex = "^0[0-9]{9}$";
+        if (!phone.matches(phoneRegex)) {
+            request.setAttribute("error", "Invalid phone number. Must be 10 digits starting with 0 (e.g. 0901234567).");
+            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            return;
+        }
+
         UserDAO userDAO = new UserDAO();
 
         // 4. Kiểm tra xem Email đã có ai đăng ký chưa

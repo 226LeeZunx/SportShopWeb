@@ -201,9 +201,12 @@
                                 <input type="password" 
                                        id="password" 
                                        name="password" 
-                                       class="form-input has-icon" 
+                                       class="form-input has-icon has-toggle" 
                                        placeholder="At least 6 characters" 
                                        required>
+                                <button type="button" class="btn-toggle-password" title="Show password" aria-label="Toggle password visibility">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -215,9 +218,12 @@
                                 <input type="password" 
                                        id="confirmPassword" 
                                        name="confirmPassword" 
-                                       class="form-input has-icon" 
+                                       class="form-input has-icon has-toggle" 
                                        placeholder="Re-enter your password" 
                                        required>
+                                <button type="button" class="btn-toggle-password" title="Show password" aria-label="Toggle password visibility">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -267,6 +273,9 @@
 
         <!-- 3. Nhúng Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
+
+        <!-- 4. Nhúng script bật/tắt ẩn hiện mật khẩu -->
+        <script src="${pageContext.request.contextPath}/assets/js/password-toggle.js"></script>
 
     </body>
 </html>

@@ -144,7 +144,7 @@
                         <!-- Đồng hồ đếm ngược thời gian hết hạn OTP -->
                         <div class="otp-timer-box">
                             <i class="fa-regular fa-clock"></i>
-                            <span>Code expires in: <strong id="countdownTimer">--:--</strong></span>
+                            <span>Code expires in: <strong id="countdownTimer" data-remaining="${remainingSeconds != null ? remainingSeconds : 300}">--:--</strong></span>
                         </div>
 
                         <!-- Nút xác nhận kích hoạt tài khoản -->
@@ -171,46 +171,8 @@
         <!-- 3. Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
 
-        <!-- 4. Script đếm ngược thời gian OTP -->
-        <script>
-            (function() {
-                // Lấy số giây còn lại từ server (mặc định 300s = 5 phút)
-                let remaining = parseInt("${remainingSeconds != null ? remainingSeconds : 300}", 10);
-                const timerElem = document.getElementById("countdownTimer");
-                const otpInput = document.getElementById("otp");
-
-                // Chỉ cho phép nhập số
-                if (otpInput) {
-                    otpInput.addEventListener("input", function() {
-                        this.value = this.value.replace(/[^0-9]/g, '');
-                    });
-                }
-
-                function updateDisplay() {
-                    if (remaining <= 0) {
-                        timerElem.textContent = "Expired";
-                        timerElem.style.color = "#dc2626";
-                        return;
-                    }
-
-                    const minutes = Math.floor(remaining / 60);
-                    const seconds = remaining % 60;
-                    timerElem.textContent = 
-                        (minutes < 10 ? "0" + minutes : minutes) + ":" + 
-                        (seconds < 10 ? "0" + seconds : seconds);
-                    remaining--;
-                }
-
-                updateDisplay();
-                const interval = setInterval(function() {
-                    if (remaining < 0) {
-                        clearInterval(interval);
-                    } else {
-                        updateDisplay();
-                    }
-                }, 1000);
-            })();
-        </script>
+        <!-- 4. Nhúng file JS xử lý OTP riêng biệt -->
+        <script src="${pageContext.request.contextPath}/assets/js/verify-otp.js"></script>
 
     </body>
 </html>
