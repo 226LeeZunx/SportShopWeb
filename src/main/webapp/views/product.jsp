@@ -16,29 +16,48 @@
 
     <main class="pd-main">
 
+        <%-- Breadcrumb --%>
         <nav class="pd-breadcrumb">
-            <a href="${pageContext.request.contextPath}/">Trang chủ</a> &rsaquo;
-            ${product.category.name} &rsaquo; ${product.productName}
+            <a href="${pageContext.request.contextPath}/">Trang chủ</a>
+            <span>&rsaquo;</span>
+            <span>${product.category.name}</span>
+            <span>&rsaquo;</span>
+            <span class="pd-current">${product.productName}</span>
         </nav>
 
-        <%-- Hình ảnh --%>
+        <%-- Cột trái: Giao diện Focus Ảnh (Thumbnails dọc bên trái + Khung ảnh lớn bên phải) --%>
         <section class="pd-gallery">
-            <c:forEach var="img" items="${product.images}">
-                <img src="${img.imageUrl}" alt="${product.productName}">
-            </c:forEach>
-            <c:if test="${empty product.images}">
-                <img src="${pageContext.request.contextPath}/assets/images/no-image.png" alt="Chưa có ảnh">
-            </c:if>
+            <div class="pd-thumbnails">
+                <c:forEach var="img" items="${product.images}" varStatus="status">
+                    <img src="${img.imageUrl}" alt="${product.productName}" 
+                         class="pd-thumb-img ${status.first ? 'active' : ''}" 
+                         onclick="changeMainImage(this)">
+                </c:forEach>
+                <c:if test="${empty product.images}">
+                    <img src="${pageContext.request.contextPath}/assets/images/no-image.png" alt="Chưa có ảnh" class="pd-thumb-img active">
+                </c:if>
+            </div>
+            <div class="pd-main-photo-wrapper">
+                <c:choose>
+                    <c:when test="${not empty product.images}">
+                        <img id="mainImage" src="${product.images[0].imageUrl}" alt="${product.productName}">
+                    </c:when>
+                    <c:otherwise>
+                        <img id="mainImage" src="${pageContext.request.contextPath}/assets/images/no-image.png" alt="Chưa có ảnh">
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </section>
 
-        <%-- Thông tin cơ bản --%>
-        <section class="pd-info">
+        <%-- Cột phải: thông tin sản phẩm (sticky) --%>
+        <aside class="pd-info">
+
             <p class="pd-brand">${product.brand.name}</p>
             <h1 class="pd-title">${product.productName}</h1>
 
             <c:if test="${not empty variants}">
                 <p class="pd-price">
-                    <c:if test="${variants.size() > 1}">Từ </c:if>
+                    <c:if test="${variants.size() > 1}"><span class="pd-from">Từ</span></c:if>
                     <fmt:formatNumber value="${minPrice}" pattern="#,###"/> đ
                 </p>
             </c:if>
@@ -72,14 +91,15 @@
                 </c:when>
 
                 <c:otherwise>
-                    <form action="${pageContext.request.contextPath}/cart" method="post">
-                    <input type="hidden" name="action" value="add">
+                    <form class="pd-form" action="${pageContext.request.contextPath}/cart" method="post">
+                        <input type="hidden" name="action" value="add">
+
                         <fieldset class="pd-field">
                             <legend>Chọn size / màu</legend>
                             <ul class="pd-options">
                                 <c:forEach var="v" items="${variants}">
                                     <li>
-                                        <label>
+                                        <label class="pd-option">
                                             <input type="radio" name="variantId" value="${v.variantId}"
                                                    ${v.quantity <= 0 ? 'disabled' : ''} required>
                                             <span class="pd-chip">
@@ -97,34 +117,56 @@
                             </ul>
                         </fieldset>
 
-                        <p class="pd-field">
+                        <div class="pd-field pd-qty">
                             <label for="quantity">Số lượng</label>
                             <select id="quantity" name="quantity">
                                 <c:forEach var="q" begin="1" end="10">
                                     <option value="${q}">${q}</option>
                                 </c:forEach>
                             </select>
-                        </p>
+                        </div>
 
                         <button type="submit" class="pd-add">THÊM VÀO GIỎ HÀNG</button>
                     </form>
                 </c:otherwise>
             </c:choose>
 
-            <h2 class="pd-subtitle">Thông tin sản phẩm</h2>
-            <ul class="pd-specs">
-                <li><span>Thương hiệu</span> ${product.brand.name}</li>
-                <li><span>Danh mục</span> ${product.category.name}</li>
-                <li><span>Mã sản phẩm</span> #${product.productId}</li>
-            </ul>
+            <%-- Accordion (HTML thuần, không cần JS phức tạp) --%>
+            <div class="pd-accordion">
+                <details open>
+                    <summary>Mô tả</summary>
+                    <div class="pd-panel">
+                        <p class="pd-desc">${product.description}</p>
+                    </div>
+                </details>
 
-            <h2 class="pd-subtitle">Mô tả</h2>
-            <p class="pd-desc">${product.description}</p>
-        </section>
+                <details>
+                    <summary>Thông tin sản phẩm</summary>
+                    <div class="pd-panel">
+                        <ul class="pd-specs">
+                            <li><span>Thương hiệu</span> ${product.brand.name}</li>
+                            <li><span>Danh mục</span> ${product.category.name}</li>
+                            <li><span>Mã sản phẩm</span> #${product.productId}</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+
+        </aside>
 
     </main>
 
     <jsp:include page="/views/common/footer.jsp" />
 
+    <script>
+        function changeMainImage(element) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = element.src;
+            
+            // Xóa và thiết lập class active cho thumbnail được chọn
+            document.querySelectorAll('.pd-thumb-img').forEach(img => img.classList.remove('active'));
+            element.classList.add('active');
+        }
+    </script>
 </body>
 </html>
