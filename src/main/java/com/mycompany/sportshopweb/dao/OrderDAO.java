@@ -16,17 +16,25 @@ public class OrderDAO {
 
         try {
             String jpql =
-                "SELECT DISTINCT o " +
-                "FROM Order o " +
-                "LEFT JOIN FETCH o.orderItems oi " +
-                "JOIN FETCH o.customer c " +
-                "JOIN FETCH c.user " +
-                "WHERE c.customerId = :customerId " +
-                "ORDER BY o.orderId DESC";
+            "SELECT DISTINCT o " +
+            "FROM Order o " +
+            "LEFT JOIN FETCH o.orderItems oi " +
+            "LEFT JOIN FETCH oi.productVariant pv " +
+            "LEFT JOIN FETCH pv.product p " +
+            "JOIN FETCH o.customer c " +
+            "JOIN FETCH c.user " +
+            "LEFT JOIN FETCH o.address a " +
+            "WHERE c.customerId = :customerId " +
+            "ORDER BY o.orderId DESC";
 
             TypedQuery<Order> query = em.createQuery(jpql, Order.class);
 
             query.setParameter("customerId", customerId);
+            // Yêu cầu JPA làm mới dữ liệu từ database
+            query.setHint(
+                "jakarta.persistence.cache.retrieveMode",
+                jakarta.persistence.CacheRetrieveMode.BYPASS
+            );
 
             return query.getResultList();
 
