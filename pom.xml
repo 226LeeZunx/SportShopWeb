@@ -57,6 +57,19 @@
     <artifactId>cloudinary-http44</artifactId>
     <version>1.36.0</version>
 </dependency>
+    <!-- Thư viện đọc file .env tương đương python-dotenv -->
+    <dependency>
+        <groupId>io.github.cdimascio</groupId>
+        <artifactId>dotenv-java</artifactId>
+        <version>3.2.0</version>
+    </dependency>
+
+    <!-- Thư viện LangChain4j để kết nối Jina AI Embeddings -->
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-jina</artifactId>
+        <version>0.33.0</version>
+    </dependency>
     </dependencies>
     
     <build>
