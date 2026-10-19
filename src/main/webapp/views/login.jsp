@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -169,7 +169,7 @@
                             <span>or continue with</span>
                         </div>
 
-                        <!-- Đăng nhập bằng Google / Apple -->
+                        <!-- Đăng nhập bằng Google / Apple (Giao diện hiển thị) -->
                         <div class="social-buttons">
                             <button type="button" class="btn-social">
                                 <i class="fa-brands fa-google google-icon"></i>

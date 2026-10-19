@@ -594,73 +594,7 @@
 
 <jsp:include page="/views/common/footer.jsp"/>
 
-<script>
-    // Chọn voucher trong danh sách
-    function selectVoucher(button) {
-        document.getElementById("voucherCode").value =
-            button.dataset.code;
-
-        document.getElementById("voucherForm").requestSubmit();
-    }
-
-    // Đồng bộ dữ liệu giao hàng sang form voucher
-    document.getElementById("voucherForm").addEventListener(
-        "submit",
-        function () {
-
-            var fullName =
-                document.getElementById("fullName");
-
-            var phone =
-                document.getElementById("phone");
-
-            var note =
-                document.getElementById("note");
-
-            var selectedAddress =
-                document.querySelector('input[name="addressId"]:checked');
-
-            var paymentMethod =
-                document.querySelector('input[name="paymentMethod"]:checked');
-
-            document.getElementById("voucherFullName").value =
-                fullName ? fullName.value : "";
-
-            document.getElementById("voucherPhone").value =
-                phone ? phone.value : "";
-
-            document.getElementById("voucherNote").value =
-                note ? note.value : "";
-
-            document.getElementById("voucherAddressId").value =
-                selectedAddress ? selectedAddress.value : "";
-
-            document.getElementById("voucherPaymentMethod").value =
-                paymentMethod ? paymentMethod.value : "";
-        }
-    );
-
-    // Làm nổi bật địa chỉ vừa chọn
-    document.querySelectorAll('input[name="addressId"]').forEach(
-        function (radio) {
-
-            radio.addEventListener("change", function () {
-
-                document.querySelectorAll(".address-item").forEach(
-                    function (item) {
-                        item.classList.remove("selected");
-                    }
-                );
-
-                var selectedItem = radio.closest(".address-item");
-
-                if (selectedItem) {
-                    selectedItem.classList.add("selected");
-                }
-            });
-        }
-    );
-</script>
+<script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 
 </body>
 </html>
