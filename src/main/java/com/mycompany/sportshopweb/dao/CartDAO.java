@@ -21,7 +21,8 @@ public Cart findByCustomerId(int customerId) {
             "LEFT JOIN FETCH c.cartItems ci " +
             "LEFT JOIN FETCH ci.productVariant pv " +
             "LEFT JOIN FETCH pv.product p " +
-            "WHERE c.customerId = :customerId";
+            "WHERE c.customerId = :customerId "+ 
+             "ORDER BY pv.variantId ASC";
 
         TypedQuery<Cart> query =
                 em.createQuery(jpql, Cart.class);
