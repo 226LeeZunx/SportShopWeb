@@ -8,16 +8,16 @@ public final class VNPayConfig {
 
     public static final String PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
-    public static String getTmnCode() {
-        return "IPVWELXW";
+        public static String getTmnCode() {
+        return getRequiredEnv("VNPAY_TMN_CODE");
     }
 
     public static String getHashSecret() {
-        return "SRNZKXGZXESCMEKWZHETRSCSBISGOPFK";
+        return getRequiredEnv("VNPAY_HASH_SECRET");
     }
 
     public static String getReturnUrl() {
-        return "http://localhost:8080/SportShopWeb-1.0-SNAPSHOT/vnpay-return";
+        return getRequiredEnv("VNPAY_RETURN_URL");
     }
 
     private static String getRequiredEnv(String name) {
