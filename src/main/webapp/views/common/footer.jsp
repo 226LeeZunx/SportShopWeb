@@ -63,5 +63,5 @@
     </div>
 </footer>
 
-<!-- Component Chatbot AI dùng chung (kéo thả di chuyển được) -->
+<!-- Component Chatbot AI dùng chung (cố định góc phải màn hình) -->
 <jsp:include page="/views/common/chatbot.jsp" />
