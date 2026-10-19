@@ -1,3 +1,4 @@
+
 package com.mycompany.sportshopweb.dao;
 
 import com.mycompany.sportshopweb.model.Brand;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductDAO {
+
     public static final int PAGE_SIZE = 20;
 
     public static long countProducts() {
@@ -22,21 +24,30 @@ public class ProductDAO {
 
     public static long countProducts(String keyword, int categoryId) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
         try {
-            String jpql = "SELECT COUNT(p) FROM Product p WHERE 1=1";
+            String jpql = "SELECT COUNT(p) FROM Product p WHERE 1 = 1";
+
             if (keyword != null && !keyword.trim().isEmpty()) {
                 jpql += " AND LOWER(p.productName) LIKE :keyword";
             }
+
             if (categoryId > 0) {
                 jpql += " AND p.category.categoryId = :categoryId";
             }
+
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+
             if (keyword != null && !keyword.trim().isEmpty()) {
-                query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
+                query.setParameter(
+                        "keyword",
+                        "%" + keyword.trim().toLowerCase() + "%");
             }
+
             if (categoryId > 0) {
                 query.setParameter("categoryId", categoryId);
             }
+
             return query.getSingleResult();
         } finally {
             em.close();
@@ -47,25 +58,38 @@ public class ProductDAO {
         return getProductsByPage(page, pageSize, "", 0);
     }
 
-    public static List<Product> getProductsByPage(int page, int pageSize, String keyword, int categoryId) {
+    public static List<Product> getProductsByPage(
+            int page,
+            int pageSize,
+            String keyword,
+            int categoryId) {
+
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
         try {
             page = Math.max(page, 1);
             pageSize = Math.max(pageSize, 1);
 
             String jpql = "SELECT p.productId FROM Product p WHERE 1 = 1";
+
             if (keyword != null && !keyword.trim().isEmpty()) {
                 jpql += " AND LOWER(p.productName) LIKE :keyword";
             }
+
             if (categoryId > 0) {
                 jpql += " AND p.category.categoryId = :categoryId";
             }
+
             jpql += " ORDER BY p.productId DESC";
 
             TypedQuery<Integer> idQuery = em.createQuery(jpql, Integer.class);
+
             if (keyword != null && !keyword.trim().isEmpty()) {
-                idQuery.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
+                idQuery.setParameter(
+                        "keyword",
+                        "%" + keyword.trim().toLowerCase() + "%");
             }
+
             if (categoryId > 0) {
                 idQuery.setParameter("categoryId", categoryId);
             }
@@ -89,41 +113,113 @@ public class ProductDAO {
                     Product.class)
                     .setParameter("ids", ids)
                     .getResultList();
+
         } finally {
             em.close();
         }
     }
 
+    /**
+     * Tạo Product cùng một transaction.
+     * Giữ lại để tương thích với luồng tạo Product cũ.
+     */
     public void insert(Product product, int brandId, int categoryId) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction tx = em.getTransaction();
+
         try {
             tx.begin();
+
             product.setBrand(em.getReference(Brand.class, brandId));
             product.setCategory(em.getReference(Category.class, categoryId));
+
             em.persist(product);
+
             tx.commit();
         } catch (RuntimeException e) {
-            if (tx.isActive())
+            if (tx.isActive()) {
                 tx.rollback();
+            }
             throw e;
         } finally {
             em.close();
         }
     }
 
+    /**
+     * Tạo Product và ProductVariant trong cùng transaction.
+     * Nếu lưu variant thất bại, việc tạo Product cũng bị rollback.
+     */
+    public int insertWithVariant(
+            Product product,
+            int brandId,
+            int categoryId,
+            String variantName,
+            String size,
+            String color,
+            long price,
+            int quantity) {
+
+        if (product == null) {
+            throw new IllegalArgumentException("Product không được null.");
+        }
+
+        if (brandId <= 0 || categoryId <= 0) {
+            throw new IllegalArgumentException(
+                    "Brand và Category phải hợp lệ.");
+        }
+
+        if (price < 0 || quantity < 0) {
+            throw new IllegalArgumentException(
+                    "Giá và tồn kho không được âm.");
+        }
+
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            product.setBrand(em.getReference(Brand.class, brandId));
+            product.setCategory(em.getReference(Category.class, categoryId));
+
+            em.persist(product);
+            em.flush();
+
+            ProductVariant variant = new ProductVariant();
+            variant.setProduct(product);
+            variant.setVariantName(variantName);
+            variant.setSize(size);
+            variant.setColor(color);
+            variant.setPrice(price);
+            variant.setQuantity(quantity);
+
+            em.persist(variant);
+
+            tx.commit();
+
+            return product.getProductId();
+
+        } catch (RuntimeException e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Cập nhật thông tin cơ bản của Product.
+     * Tồn kho được quản lý riêng ở ProductVariant.
+     */
     public boolean updateProduct(
             int productId,
             String productName,
             String description,
             int brandId,
-            int categoryId,
-            int quantity) {
-
-        if (quantity < 0) {
-            throw new IllegalArgumentException(
-                    "Quantity cannot be negative");
-        }
+            int categoryId) {
 
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -142,7 +238,6 @@ public class ProductDAO {
             product.setDescription(description);
             product.setBrand(em.getReference(Brand.class, brandId));
             product.setCategory(em.getReference(Category.class, categoryId));
-            product.setQuantity(quantity);
 
             tx.commit();
             return true;
@@ -157,11 +252,17 @@ public class ProductDAO {
         }
     }
 
+    /**
+     * Đặt tồn kho tất cả variant của Product về 0.
+     * Không xóa Product khỏi database.
+     */
     public boolean softDeleteProduct(int productId) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction tx = em.getTransaction();
+
         try {
             tx.begin();
+
             Product product = em.find(Product.class, productId);
 
             if (product == null) {
@@ -169,17 +270,20 @@ public class ProductDAO {
                 return false;
             }
 
-            // Đặt quantity của chính sản phẩm về 0.
-            product.setQuantity(0);
             em.createQuery(
-                    "UPDATE ProductVariant v SET v.quantity = 0 WHERE v.product.productId = :productId")
+                    "UPDATE ProductVariant v "
+                            + "SET v.quantity = 0 "
+                            + "WHERE v.product.productId = :productId")
                     .setParameter("productId", productId)
                     .executeUpdate();
+
             tx.commit();
             return true;
+
         } catch (RuntimeException e) {
-            if (tx.isActive())
+            if (tx.isActive()) {
                 tx.rollback();
+            }
             throw e;
         } finally {
             em.close();
@@ -188,10 +292,16 @@ public class ProductDAO {
 
     public List<Product> getAllProducts() {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
         try {
             return em.createQuery(
-                    "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images LEFT JOIN FETCH p.brand LEFT JOIN FETCH p.category",
-                    Product.class).getResultList();
+                    "SELECT DISTINCT p FROM Product p "
+                            + "LEFT JOIN FETCH p.images "
+                            + "LEFT JOIN FETCH p.brand "
+                            + "LEFT JOIN FETCH p.category",
+                    Product.class)
+                    .getResultList();
+
         } finally {
             em.close();
         }
@@ -199,16 +309,20 @@ public class ProductDAO {
 
     public static Product getProductById(int id) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
         try {
-            List<Product> list = em.createQuery(
-                    "Select DISTINCT p From Product p " +
-                            "Left Join Fetch p.images " +
-                            "Left Join Fetch p.brand " +
-                            "Left Join Fetch p.category " +
-                            "Where p.productId = :id",
-                    Product.class).setParameter("id", id)
+            List<Product> products = em.createQuery(
+                    "SELECT DISTINCT p FROM Product p "
+                            + "LEFT JOIN FETCH p.images "
+                            + "LEFT JOIN FETCH p.brand "
+                            + "LEFT JOIN FETCH p.category "
+                            + "WHERE p.productId = :id",
+                    Product.class)
+                    .setParameter("id", id)
                     .getResultList();
-            return list.isEmpty() ? null : list.get(0);
+
+            return products.isEmpty() ? null : products.get(0);
+
         } finally {
             em.close();
         }
@@ -216,62 +330,109 @@ public class ProductDAO {
 
     public static List<ProductVariant> getVariantsByProductId(int productId) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
         try {
             return em.createQuery(
-                    "SELECT v FROM ProductVariant v JOIN FETCH v.product " +
-                            "WHERE v.product.productId = :id " +
-                            "ORDER BY v.price, v.size",
+                    "SELECT v FROM ProductVariant v "
+                            + "JOIN FETCH v.product "
+                            + "WHERE v.product.productId = :id "
+                            + "ORDER BY v.price, v.size",
                     ProductVariant.class)
                     .setParameter("id", productId)
                     .getResultList();
+
         } finally {
             em.close();
         }
     }
 
     public static ProductVariant getVariantById(int variantId) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager(); // Sửa lại thành DBUtil.getEmFactory()
-        return null;
-    }
-
-    public static long countFiltered(int brandId, long catId, long minPrice, long maxPrice, String keyword) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        try {
-            Long total = em.createQuery(
-                    "SELECT COUNT(DISTINCT v.product.productId) FROM ProductVariant v " +
-                            "WHERE (:brandId = 0 OR v.product.brand.brandId = :brandId) " +
-                            "AND (:categoryId = 0 OR v.product.category.categoryId = :categoryId) " +
-                            "AND v.price >= :minPrice " +
-                            "AND v.price <= :maxPrice " +
-                            "AND (:keyword IS NULL OR :keyword = '' OR LOWER(v.product.productName) LIKE LOWER(CONCAT('%', :keyword, '%')))",
-                    Long.class)
-                    .setParameter("brandId", brandId)
-                    .setParameter("categoryId", catId)
-                    .setParameter("minPrice", minPrice)
-                    .setParameter("maxPrice", maxPrice)
-                    .setParameter("keyword", keyword != null ? keyword.trim() : "")
-                    .getSingleResult();
 
-            return total != null ? total : 0L;
+        try {
+            List<ProductVariant> variants = em.createQuery(
+                    "SELECT v FROM ProductVariant v "
+                            + "JOIN FETCH v.product "
+                            + "WHERE v.variantId = :variantId",
+                    ProductVariant.class)
+                    .setParameter("variantId", variantId)
+                    .getResultList();
+
+            return variants.isEmpty() ? null : variants.get(0);
+
         } finally {
             em.close();
         }
     }
 
-    public static List<Product> getFiltered(int brandId, long catId, long minPrice, long maxPrice, String sort,
-            int page, int pageSize, String keyword) {
+    public static long countFiltered(
+            int brandId,
+            long catId,
+            long minPrice,
+            long maxPrice,
+            String keyword) {
+
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
         try {
+            Long total = em.createQuery(
+                    "SELECT COUNT(DISTINCT v.product.productId) "
+                            + "FROM ProductVariant v "
+                            + "WHERE (:brandId = 0 "
+                            + "OR v.product.brand.brandId = :brandId) "
+                            + "AND (:categoryId = 0 "
+                            + "OR v.product.category.categoryId = :categoryId) "
+                            + "AND v.price >= :minPrice "
+                            + "AND v.price <= :maxPrice "
+                            + "AND (:keyword IS NULL OR :keyword = '' "
+                            + "OR LOWER(v.product.productName) "
+                            + "LIKE LOWER(CONCAT('%', :keyword, '%')))",
+                    Long.class)
+                    .setParameter("brandId", brandId)
+                    .setParameter("categoryId", catId)
+                    .setParameter("minPrice", minPrice)
+                    .setParameter("maxPrice", maxPrice)
+                    .setParameter(
+                            "keyword",
+                            keyword != null ? keyword.trim() : "")
+                    .getSingleResult();
+
+            return total != null ? total : 0L;
+
+        } finally {
+            em.close();
+        }
+    }
+
+    public static List<Product> getFiltered(
+            int brandId,
+            long catId,
+            long minPrice,
+            long maxPrice,
+            String sort,
+            int page,
+            int pageSize,
+            String keyword) {
+
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+
+        try {
+            page = Math.max(page, 1);
+            pageSize = Math.max(pageSize, 1);
+
             int offset = (page - 1) * pageSize;
 
-            String jpqlId = "SELECT v.product.productId FROM ProductVariant v " +
-                    "WHERE (:brandId = 0 OR v.product.brand.brandId = :brandId) " +
-                    "AND (:categoryId = 0 OR v.product.category.categoryId = :categoryId) " +
-                    "AND v.price >= :minPrice " +
-                    "AND v.price <= :maxPrice " +
-                    "AND (:keyword IS NULL OR :keyword = '' OR LOWER(v.product.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))) "
-                    +
-                    "GROUP BY v.product.productId, v.product.productName ";
+            String jpqlId = "SELECT v.product.productId FROM ProductVariant v "
+                    + "WHERE (:brandId = 0 "
+                    + "OR v.product.brand.brandId = :brandId) "
+                    + "AND (:categoryId = 0 "
+                    + "OR v.product.category.categoryId = :categoryId) "
+                    + "AND v.price >= :minPrice "
+                    + "AND v.price <= :maxPrice "
+                    + "AND (:keyword IS NULL OR :keyword = '' "
+                    + "OR LOWER(v.product.productName) "
+                    + "LIKE LOWER(CONCAT('%', :keyword, '%'))) "
+                    + "GROUP BY v.product.productId, v.product.productName ";
 
             if ("id_desc".equals(sort)) {
                 jpqlId += "ORDER BY v.product.productId DESC";
@@ -285,42 +446,46 @@ public class ProductDAO {
                 jpqlId += "ORDER BY v.product.productId ASC";
             }
 
-            // 3. Truyền đầy đủ các tham số (bao gồm keyword) và thực hiện phân trang
             TypedQuery<Integer> queryId = em.createQuery(jpqlId, Integer.class)
                     .setParameter("brandId", brandId)
                     .setParameter("categoryId", catId)
                     .setParameter("minPrice", minPrice)
                     .setParameter("maxPrice", maxPrice)
-                    .setParameter("keyword", keyword != null ? keyword.trim() : "")
+                    .setParameter(
+                            "keyword",
+                            keyword != null ? keyword.trim() : "")
                     .setFirstResult(offset)
                     .setMaxResults(pageSize);
 
             List<Integer> productIds = queryId.getResultList();
+
             if (productIds.isEmpty()) {
                 return new ArrayList<>();
             }
 
-            // 4. Lấy đầy đủ danh sách Product kèm theo các mối quan hệ (FETCH JOIN)
-            String jpqlProduct = "SELECT DISTINCT p FROM Product p " +
-                    "LEFT JOIN FETCH p.images " +
-                    "LEFT JOIN FETCH p.brand " +
-                    "LEFT JOIN FETCH p.category " +
-                    "WHERE p.productId IN :productIds";
-
-            List<Product> unorderedProducts = em.createQuery(jpqlProduct, Product.class)
+            List<Product> unorderedProducts = em.createQuery(
+                    "SELECT DISTINCT p FROM Product p "
+                            + "LEFT JOIN FETCH p.images "
+                            + "LEFT JOIN FETCH p.brand "
+                            + "LEFT JOIN FETCH p.category "
+                            + "WHERE p.productId IN :productIds",
+                    Product.class)
                     .setParameter("productIds", productIds)
                     .getResultList();
 
             Map<Integer, Product> productMap = new HashMap<>();
-            for (Product p : unorderedProducts) {
-                productMap.put(p.getProductId(), p);
+
+            for (Product product : unorderedProducts) {
+                productMap.put(product.getProductId(), product);
             }
 
             List<Product> orderedProducts = new ArrayList<>();
+
             for (Integer id : productIds) {
-                Product p = productMap.get(id);
-                if (p != null) {
-                    orderedProducts.add(p);
+                Product product = productMap.get(id);
+
+                if (product != null) {
+                    orderedProducts.add(product);
                 }
             }
 

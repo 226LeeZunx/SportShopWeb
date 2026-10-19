@@ -1,0 +1,394 @@
+/* ===== Base ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 32px;
+    background: #f4f6fb;
+    color: #1f2937;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: #111827;
+}
+
+h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+}
+
+h2 {
+    font-size: 19px;
+}
+
+h3 {
+    font-size: 17px;
+}
+
+h4 {
+    margin-top: 24px;
+    font-size: 15px;
+}
+
+.subtitle {
+    margin: 0;
+    color: #6b7280;
+}
+
+/* ===== Header ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* ===== Buttons ===== */
+.button,
+button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 9px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #fff;
+    color: #374151;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.button:hover,
+button:hover {
+    background: #f3f4f6;
+}
+
+.button-primary {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #fff;
+}
+
+.button-primary:hover {
+    border-color: #1d4ed8;
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.button-danger {
+    border-color: #dc2626;
+    background: #dc2626;
+    color: #fff;
+}
+
+.button-danger:hover {
+    border-color: #b91c1c;
+    background: #b91c1c;
+    color: #fff;
+}
+
+.button-small {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+/* ===== Notifications ===== */
+.message {
+    padding: 13px 16px;
+    margin: 0 0 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.success {
+    border-color: #a7f3d0;
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.error {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* ===== Cards ===== */
+.filter-card,
+.table-card,
+.variant-panel {
+    margin-bottom: 22px;
+    padding: 22px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgb(15 23 42 / 4%);
+}
+
+.section-title {
+    margin: 0 0 18px;
+}
+
+/* ===== Forms ===== */
+.filter-form,
+.variant-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 14px;
+    margin: 0;
+}
+
+.form-group {
+    flex: 1 1 160px;
+    min-width: 130px;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+input,
+select {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #fff;
+    color: #111827;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #bfdbfe;
+    border-color: #3b82f6;
+}
+
+.filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ===== Product table ===== */
+.table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.table-heading h2 {
+    margin: 0 0 5px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.product-table,
+.variant-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.product-table th,
+.product-table td,
+.variant-table th,
+.variant-table td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.product-table th,
+.variant-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.product-table tbody tr:hover,
+.variant-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.product-name {
+    min-width: 160px;
+    font-weight: 600;
+}
+
+.description-cell {
+    min-width: 180px;
+    max-width: 280px;
+    overflow-wrap: anywhere;
+    color: #6b7280;
+}
+
+.empty-state {
+    padding: 32px 16px !important;
+    color: #6b7280;
+    text-align: center !important;
+}
+
+/* ===== Actions ===== */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    min-width: 150px;
+}
+
+.inline-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.inline-form button {
+    font-family: inherit;
+}
+
+.actions a {
+    white-space: nowrap;
+}
+
+/* ===== Variant management ===== */
+.variant-panel {
+    margin: 8px 0;
+    background: #f8fafc;
+    box-shadow: none;
+}
+
+.variant-panel h3 {
+    margin-top: 0;
+}
+
+.variant-table {
+    margin-bottom: 20px;
+}
+
+.variant-table th,
+.variant-table td {
+    padding: 10px;
+}
+
+.variant-form {
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.edit-summary {
+    margin-bottom: 10px;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+details[open] {
+    min-width: 240px;
+}
+
+details .variant-form {
+    min-width: 280px;
+}
+
+.panel-footer {
+    margin-top: 20px;
+}
+
+/* ===== Pagination ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.page-info {
+    color: #4b5563;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+    }
+
+    .page-header h1 {
+        font-size: 23px;
+    }
+
+    .filter-card,
+    .table-card,
+    .variant-panel {
+        padding: 14px;
+    }
+
+    .filter-form,
+    .variant-form {
+        align-items: stretch;
+    }
+
+    .filter-form>*,
+    .variant-form>* {
+        flex-basis: 100%;
+    }
+
+    .filter-actions {
+        width: 100%;
+    }
+
+    .filter-actions .button {
+        flex: 1;
+    }
+
+    .pagination {
+        gap: 8px;
+    }
+}
