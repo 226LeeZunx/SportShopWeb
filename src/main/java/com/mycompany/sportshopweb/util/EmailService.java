@@ -45,6 +45,7 @@ public class EmailService {
                 sendEmailSync(toEmail, subject, htmlContent);
             } catch (Exception e) {
                 System.err.println("[EmailService] Lỗi khi gửi email đến " + toEmail + ": " + e.getMessage());
+                e.printStackTrace();
             }
         }).start();
     }
@@ -60,9 +61,13 @@ public class EmailService {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
         props.put("mail.smtp.host", SMTP_HOST);
         props.put("mail.smtp.port", SMTP_PORT);
         props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.timeout", "10000");
 
         // Xác thực tài khoản gửi thư
         Session session = Session.getInstance(props, new Authenticator() {

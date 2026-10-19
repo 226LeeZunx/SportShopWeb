@@ -12,6 +12,10 @@ RUN mvn clean package -DskipTests
 # ==========================================
 FROM tomcat:10.1-jdk17
 
+# Thiết lập múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh) cho container và máy ảo Java
+ENV TZ=Asia/Ho_Chi_Minh \
+    JAVA_OPTS="-Duser.timezone=Asia/Ho_Chi_Minh"
+
 # Cài đặt Python 3, pip và công cụ tạo môi trường ảo venv trên nền Linux
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -37,11 +41,12 @@ COPY python-rag/ .
 RUN rm -rf /usr/local/tomcat/webapps/*
 COPY --from=maven_builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-# Vô hiệu hóa cổng shutdown 8005 để Render phát hiện đúng duy nhất cổng HTTP 8080
-RUN sed -i 's/port="8005"/port="-1"/' /usr/local/tomcat/conf/server.xml
-
-# Mở cổng 8080 cho Tomcat
-EXPOSE 8080
+# Vô hiệu hóa cổng shutdown 8005 và cấu hình Tomcat lắng nghe trên 0.0.0.0 theo biến môi trường PORT của Render
+ENV PORT=8080
+RUN echo 'export JAVA_OPTS="$JAVA_OPTS -Duser.timezone=Asia/Ho_Chi_Minh -DPORT=${PORT:-8080}"' > /usr/local/tomcat/bin/setenv.sh && \
+    chmod +x /usr/local/tomcat/bin/setenv.sh && \
+    sed -i 's/port="8005"/port="-1"/' /usr/local/tomcat/conf/server.xml && \
+    sed -i 's/port="8080"/port="${PORT}" address="0.0.0.0"/' /usr/local/tomcat/conf/server.xml
 
 # Khởi chạy Tomcat
 CMD ["catalina.sh", "run"]
