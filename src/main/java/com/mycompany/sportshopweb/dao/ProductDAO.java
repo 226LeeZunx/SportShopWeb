@@ -256,7 +256,6 @@ public class ProductDAO {
             jpqlId += "ORDER BY v.product.productId ASC";
         }
 
-        // 3. Truyền đầy đủ các tham số (bao gồm keyword) và thực hiện phân trang
         TypedQuery<Integer> queryId = em.createQuery(jpqlId, Integer.class)
                 .setParameter("brandId", brandId)
                 .setParameter("categoryId", catId)

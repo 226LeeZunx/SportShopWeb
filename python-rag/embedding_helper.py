@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import numpy as np 
 
 load_dotenv()
-modelemb = os.getenv('MODEL_EMBEDING', 'jina-embeddings-v3')
+modelemb = os.getenv('MODEL_EMBEDING')
 
 def embed_tex(text: str, model=modelemb, api_key=None, task="retrieval.query") -> list[float]:
     if api_key is None:
