@@ -1,7 +1,6 @@
 .git
 .gitignore
 target/
-src/
 *.class
 python-rag/.venv/
 **/__pycache__/
