@@ -51,6 +51,7 @@ public class CartServlet extends HttpServlet {
                     (Customer) session.getAttribute("customer");
 
             int customerId = customer.getCustomerId();
+            updateCartCount(session, customerId);
 
             Cart cart = cartDAO.findByCustomerId(customerId);
 
@@ -116,7 +117,8 @@ public class CartServlet extends HttpServlet {
             System.out.println("Customer ID = " + customerId);
             System.out.println("Selected IDs = " + selectedIds);
             System.out.println("Total selected = " + total);
-
+            
+            
             request.getRequestDispatcher("/views/cart.jsp")
                    .forward(request, response);
 
@@ -281,7 +283,7 @@ if (submittedIds != null) {
                         "Action không hợp lệ."
                 );
             }
-
+            updateCartCount(session, customerId);
             // Quay lại giỏ hàng; doGet sẽ giữ checkbox đã lưu.
             response.sendRedirect(
                     request.getContextPath() + "/cart"
@@ -354,4 +356,15 @@ if (submittedIds != null) {
 
         return selectedIds;
     }
+    private void updateCartCount(HttpSession session, int customerId) {
+    Cart cart = cartDAO.findByCustomerId(customerId);
+
+    int cartCount = 0;
+
+    if (cart != null && cart.getCartItems() != null) {
+        cartCount = cart.getCartItems().size();
+    }
+
+    session.setAttribute("cartCount", cartCount);
+}
 }

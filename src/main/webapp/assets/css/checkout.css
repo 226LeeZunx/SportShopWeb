@@ -517,3 +517,465 @@
                 font-size: 15px;
             }
         }
+        
+
+
+/* ========================================
+   VOUCHER CARD
+======================================== */
+.voucher-card {
+    margin: 24px 0;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e8e7f0;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(35, 25, 75, 0.04);
+    overflow: hidden;
+}
+
+.voucher-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.voucher-eyebrow {
+    margin: 0 0 6px;
+    color: #7c3aed;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.voucher-heading h2 {
+    margin: 0;
+    color: #211b35;
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+.voucher-description {
+    margin: 7px 0 0;
+    color: #817b91;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.voucher-icon {
+    display: flex;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: #f1eaff;
+    color: #7c3aed;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+/* ========================================
+   INPUT + APPLY BUTTON
+======================================== */
+.voucher-card label {
+    display: block;
+    margin-bottom: 8px;
+    color: #393247;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.voucher-input-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.voucher-input-group input {
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 13px;
+    border: 1px solid #ded9e9;
+    border-radius: 10px;
+    outline: none;
+    background: #fcfbff;
+    color: #292239;
+    font-size: 13px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.voucher-input-group input::placeholder {
+    color: #aaa4b8;
+}
+
+.voucher-input-group input:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+    background: #ffffff;
+}
+
+.btn-voucher {
+    flex-shrink: 0;
+    min-width: 82px;
+    height: 44px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 10px;
+    background: #6d3de8;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.btn-voucher:hover {
+    background: #582bc9;
+    transform: translateY(-1px);
+}
+
+/* ========================================
+   VOUCHER STATUS
+======================================== */
+.voucher-error,
+.voucher-success {
+    margin: 12px 0 0;
+    padding: 11px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.voucher-error {
+    border: 1px solid #fecaca;
+    background: #fff5f5;
+    color: #b42318;
+}
+
+.voucher-success {
+    border: 1px solid #bbf7d0;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+/* ========================================
+   AVAILABLE VOUCHERS
+======================================== */
+.voucher-list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 24px 0 12px;
+    color: #393247;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.voucher-count {
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: #f2edff;
+    color: #7041d7;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.voucher-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1px 4px 1px 1px;
+}
+
+.voucher-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.voucher-list::-webkit-scrollbar-track {
+    background: #f5f3f9;
+    border-radius: 10px;
+}
+
+.voucher-list::-webkit-scrollbar-thumb {
+    background: #d2c6ee;
+    border-radius: 10px;
+}
+
+/* Mỗi voucher */
+.voucher-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 11px;
+    border: 1px solid #e9e4f2;
+    border-radius: 12px;
+    background: #ffffff;
+    transition: border-color 0.2s, background 0.2s,
+                box-shadow 0.2s, transform 0.2s;
+}
+
+.voucher-item:hover {
+    border-color: #b9a0f5;
+    background: #fcfaff;
+    box-shadow: 0 4px 12px rgba(109, 61, 232, 0.07);
+    transform: translateY(-1px);
+}
+
+/* Huy hiệu phần trăm */
+.voucher-ticket {
+    display: flex;
+    flex: 0 0 43px;
+    width: 43px;
+    height: 43px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.voucher-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.voucher-info strong {
+    overflow-wrap: anywhere;
+    color: #302442;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.voucher-info span {
+    color: #7c3aed;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.voucher-select-btn {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border: 1px solid #d8c8ff;
+    border-radius: 8px;
+    background: #f7f3ff;
+    color: #6d3de8;
+    font-size: 11px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.voucher-select-btn:hover {
+    border-color: #6d3de8;
+    background: #6d3de8;
+    color: #ffffff;
+}
+
+.voucher-empty {
+    margin: 0;
+    padding: 22px 12px;
+    border: 1px dashed #dcd5e9;
+    border-radius: 12px;
+    color: #898196;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* ========================================
+   SUMMARY DISCOUNT ROW
+======================================== */
+.discount-row {
+    margin-top: 14px;
+    color: #198754;
+}
+
+.discount-row strong {
+    color: #198754;
+    font-weight: 750;
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+======================================== */
+@media (max-width: 480px) {
+    .voucher-card {
+        padding: 15px;
+        border-radius: 14px;
+    }
+
+    .voucher-heading h2 {
+        font-size: 18px;
+    }
+
+    .voucher-input-group {
+        gap: 6px;
+    }
+
+    .btn-voucher {
+        min-width: 72px;
+        padding: 0 10px;
+    }
+
+    .voucher-item {
+        gap: 8px;
+        padding: 10px 8px;
+    }
+
+    .voucher-ticket {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+        font-size: 19px;
+    }
+
+    .voucher-select-btn {
+        padding: 7px 9px;
+    }
+}
+
+
+/* ĐỊA CHỈ GIAO HÀNG */
+        .shipping-address {
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .shipping-address h3 {
+            margin: 0 0 6px;
+            font-size: 19px;
+            color: #202124;
+        }
+
+        .address-subtitle {
+            margin: 0 0 16px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .address-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .address-item {
+            border: 1px solid #e2e5e9;
+            border-radius: 10px;
+            padding: 15px 16px;
+            background: #fff;
+            transition: border-color .2s, background .2s;
+        }
+
+        .address-item:hover {
+            border-color: #e9a69b;
+        }
+
+        .address-item.selected,
+        .address-item:has(input[type="radio"]:checked) {
+            border: 1.5px solid #dc4b35;
+            background: #fffaf8;
+        }
+
+        .address-item label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .address-item input[type="radio"] {
+            width: 17px;
+            height: 17px;
+            margin: 3px 0 0;
+            flex-shrink: 0;
+            accent-color: #dc4b35;
+            cursor: pointer;
+        }
+
+        .address-info {
+            flex: 1;
+            min-width: 0;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .address-location {
+            color: #222;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .default-label {
+            display: inline-block;
+            margin: 0 0 0 7px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #fff0ec;
+            border: 1px solid #ffd4ca;
+            color: #c9402b;
+            font-size: 11px;
+            font-weight: 600;
+            vertical-align: middle;
+        }
+
+        .address-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .address-actions a {
+            color: #d74732;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .address-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .address-empty {
+            padding: 20px;
+            text-align: center;
+            border: 1px dashed #d1d5db;
+            border-radius: 9px;
+            color: #6b7280;
+        }
+
+        .address-empty p {
+            margin: 0 0 12px;
+        }
+
+        @media (max-width: 600px) {
+            .shipping-address {
+                padding: 14px;
+            }
+
+            .address-item {
+                padding: 12px;
+            }
+        }

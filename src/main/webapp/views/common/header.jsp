@@ -33,6 +33,13 @@
 
         <!-- 3. BÊN PHẢI: Tài khoản, Đơn hàng & Giỏ hàng -->
         <div class="header-right header-actions">
+            <!-- Nút Quản trị (Dành riêng cho Admin) -->
+            <c:if test="${not empty sessionScope.admin}">
+                <a href="${pageContext.request.contextPath}/admin/dashboard" class="action-btn" title="Admin Dashboard">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </a>
+            </c:if>
+
             <!-- Nút Tài khoản -->
             <c:choose>
                 <c:when test="${not empty sessionScope.customer || not empty sessionScope.user}">
@@ -53,7 +60,7 @@
             </a>
 
             <!-- Nút Giỏ hàng -->
-            <a href="${pageContext.request.contextPath}/views/cart.jsp" class="action-btn cart-btn" title="Shopping Cart">
+            <a href="${pageContext.request.contextPath}/cart" class="action-btn cart-btn" title="Shopping Cart">
                 <i class="fa-solid fa-bag-shopping"></i>
                 <span class="cart-badge">${not empty sessionScope.cartCount ? sessionScope.cartCount : '0'}</span>
             </a>

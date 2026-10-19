@@ -2,7 +2,7 @@
 package com.mycompany.sportshopweb.controller;
 
 // ProductDB nằm trong package util, không phải package dao.
-import com.mycompany.sportshopweb.util.ProductDB;
+import com.mycompany.sportshopweb.dao.ProductDAO;
 import com.mycompany.sportshopweb.model.Product;
 
 import jakarta.servlet.ServletException;
@@ -34,7 +34,7 @@ public class AdminDashboardServlet extends HttpServlet {
 
         try {
             // 1. Đếm tổng số sản phẩm trong hệ thống.
-            long totalProducts = ProductDB.countProducts();
+            long totalProducts = ProductDAO.countProducts();
 
             // 2. Đọc số trang từ URL.
             int page = 1;
@@ -56,7 +56,7 @@ public class AdminDashboardServlet extends HttpServlet {
             }
 
             // 3. Xác định kích thước trang từ ProductDB.
-            int pageSize = ProductDB.PAGE_SIZE;
+            int pageSize = ProductDAO.PAGE_SIZE;
 
             // Tính tổng số trang.
             // Nếu chưa có sản phẩm, vẫn hiển thị trang 1.
@@ -71,7 +71,7 @@ public class AdminDashboardServlet extends HttpServlet {
             }
 
             // 4. Lấy danh sách sản phẩm của trang hiện tại.
-            List<Product> products = ProductDB.getProductsByPage(page, pageSize);
+            List<Product> products = ProductDAO.getProductsByPage(page, pageSize);
 
             // 5. Đưa dữ liệu vào request để JSP sử dụng.
             request.setAttribute("totalProducts", totalProducts);

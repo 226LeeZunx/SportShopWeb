@@ -20,6 +20,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import com.mycompany.sportshopweb.dao.CartDAO;
+import com.mycompany.sportshopweb.model.Cart;
+import com.mycompany.sportshopweb.model.CartItem;
 
 /**
  *
@@ -92,6 +95,7 @@ public class LoginServlet extends HttpServlet {
         // 8. Lưu thông tin đăng nhập vào Session
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
+        
 
         // 9. Nếu là Admin -> Chuyển đến Admin Dashboard
         if (admin != null) {
@@ -107,9 +111,23 @@ public class LoginServlet extends HttpServlet {
         Customer customer = customerDAO.findByUserId(user.getUserId());
 
         session.setAttribute("customer", customer);
+        updateCartCount(session, customer.getCustomerId());
 
         response.sendRedirect(
                 request.getContextPath() + "/HomeServlet");
 
     }
+    private void updateCartCount(HttpSession session, int customerId) {
+    CartDAO cartDAO = new CartDAO();
+
+    Cart cart = cartDAO.findByCustomerId(customerId);
+
+    int cartCount = 0;
+
+    if (cart != null && cart.getCartItems() != null) {
+        cartCount = cart.getCartItems().size();
+    }
+
+    session.setAttribute("cartCount", cartCount);
+}
 }

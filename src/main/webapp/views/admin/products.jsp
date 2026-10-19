@@ -1,379 +1,501 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+    <%@taglib prefix="c" uri="jakarta.tags.core" %>
+        <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-        <!DOCTYPE html>
-        <html lang="en">
+            <!DOCTYPE html>
+            <html lang="vi">
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Products | SportShop Admin</title>
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
-        </head>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Quản lý sản phẩm</title>
 
-        <body class="admin-body">
-            <div class="admin-layout">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-products.css">
+            </head>
 
-                <aside class="admin-sidebar">
-                    <div class="admin-brand">
-                        <span class="admin-brand-mark">S</span>
+            <body>
+                <div class="page-container">
+
+                    <header class="page-header">
                         <div>
-                            <div class="admin-brand-name">SPORTSHOP</div>
-                            <span class="admin-brand-caption">Administration</span>
-                        </div>
-                    </div>
-
-                    <div class="admin-nav-label">Workspace</div>
-
-                    <nav class="admin-nav">
-                        <a href="${pageContext.request.contextPath}/admin/dashboard">
-                            <span class="admin-nav-icon">▦</span>Dashboard
-                        </a>
-
-                        <a class="active" href="${pageContext.request.contextPath}/admin/products">
-                            <span class="admin-nav-icon">▣</span>Products
-                        </a>
-
-                        <a href="${pageContext.request.contextPath}/admin/orders">
-                            <span class="admin-nav-icon">⇄</span>Orders
-                        </a>
-
-                        <a href="${pageContext.request.contextPath}/admin/customers">
-                            <span class="admin-nav-icon">♙</span>Customers
-                        </a>
-                    </nav>
-
-                    <div class="admin-sidebar-bottom">
-                        <nav class="admin-nav">
-                            <a href="${pageContext.request.contextPath}/HomeServlet">
-                                <span class="admin-nav-icon">↗</span>Back to Store
-                            </a>
-                        </nav>
-                    </div>
-                </aside>
-
-                <main class="admin-main">
-
-                    <header class="admin-topbar">
-                        <div>
-                            <h1 class="admin-topbar-title">Products</h1>
-                            <p class="admin-topbar-subtitle">
-                                Workspace / Product inventory
-                            </p>
+                            <h1>Quản lý sản phẩm</h1>
+                            <p class="subtitle">Quản lý sản phẩm, giá bán và tồn kho.</p>
                         </div>
 
-                        <div class="admin-topbar-actions">
-                            <span class="admin-date-label">ADMIN</span>
-                        </div>
+                        <a class="button button-primary"
+                            href="${pageContext.request.contextPath}/ProductActionServlet?action=create">
+                            + Thêm sản phẩm
+                        </a>
                     </header>
 
-                    <section class="admin-content">
+                    <!-- Thông báo sản phẩm -->
+                    <c:if test="${param.createSuccess == '1'}">
+                        <div class="message success">Thêm sản phẩm và biến thể thành công.</div>
+                    </c:if>
 
-                        <div class="page-heading-row">
-                            <div>
-                                <div class="admin-eyebrow">Inventory</div>
-                                <h2 class="admin-page-title">Product Management</h2>
-                                <p class="admin-page-description">
-                                    View products, brands and categories.
-                                </p>
+                    <c:if test="${param.updateSuccess == '1'}">
+                        <div class="message success">Cập nhật sản phẩm thành công.</div>
+                    </c:if>
+
+                    <c:if test="${param.deleteSuccess == '1'}">
+                        <div class="message success">
+                            Đã xử lý yêu cầu xóa sản phẩm. Sản phẩm có thể vẫn xuất hiện trong danh sách
+                            vì chức năng hiện tại đặt tồn kho các biến thể về 0.
+                        </div>
+                    </c:if>
+
+                    <c:if test="${param.deleteError == '1'}">
+                        <div class="message error">Không thể xử lý yêu cầu xóa sản phẩm.</div>
+                    </c:if>
+
+                    <!-- Thông báo biến thể -->
+                    <c:if test="${param.variantMessage == 'created'}">
+                        <div class="message success">Thêm biến thể thành công.</div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'updated'}">
+                        <div class="message success">Cập nhật biến thể thành công.</div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'deleted'}">
+                        <div class="message success">Xóa biến thể thành công.</div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'invalid'}">
+                        <div class="message error">Dữ liệu biến thể không hợp lệ. Vui lòng kiểm tra giá và số lượng.
+                        </div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'failed'}">
+                        <div class="message error">
+                            Thao tác biến thể thất bại. Biến thể có thể không tồn tại hoặc không thuộc sản phẩm đã chọn.
+                        </div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'invalidProduct'}">
+                        <div class="message error">Sản phẩm không hợp lệ.</div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'invalidAction'}">
+                        <div class="message error">Thao tác biến thể không hợp lệ.</div>
+                    </c:if>
+
+                    <c:if test="${param.variantMessage == 'error'}">
+                        <div class="message error">Đã xảy ra lỗi khi xử lý biến thể.</div>
+                    </c:if>
+
+                    <!-- Bộ lọc -->
+                    <section class="filter-card">
+                        <h2 class="section-title">Tìm kiếm và lọc</h2>
+
+                        <form class="filter-form" action="${pageContext.request.contextPath}/admin/products"
+                            method="get">
+
+                            <div class="form-group">
+                                <label for="keyword">Tên sản phẩm</label>
+                                <input type="text" id="keyword" name="keyword" value="<c:out value='${keyword}'/>"
+                                    placeholder="Nhập tên sản phẩm">
                             </div>
 
-                            <a class="admin-button primary"
-                                href="${pageContext.request.contextPath}/ProductActionServlet">
-                                + Add Product
-                            </a>
+                            <div class="form-group">
+                                <label for="brandId">Thương hiệu</label>
+                                <select id="brandId" name="brandId">
+                                    <option value="0">Tất cả thương hiệu</option>
+
+                                    <c:forEach var="brand" items="${brands}">
+                                        <option value="${brand.brandId}" <c:if
+                                            test="${selectedBrandId == brand.brandId}">selected</c:if>>
+                                            <c:out value="${brand.name}" />
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoryId">Danh mục</label>
+                                <select id="categoryId" name="categoryId">
+                                    <option value="0">Tất cả danh mục</option>
+
+                                    <c:forEach var="category" items="${categories}">
+                                        <option value="${category.categoryId}" <c:if
+                                            test="${selectedCategoryId == category.categoryId}">selected</c:if>>
+                                            <c:out value="${category.name}" />
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="filter-actions">
+                                <button type="submit" class="button button-primary">Lọc</button>
+                                <a class="button" href="${pageContext.request.contextPath}/admin/products">
+                                    Xóa bộ lọc
+                                </a>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Danh sách sản phẩm -->
+                    <section class="table-card">
+                        <div class="table-heading">
+                            <div>
+                                <h2>Danh sách sản phẩm</h2>
+                                <p class="subtitle">
+                                    Tổng số kết quả: <strong>${totalProducts}</strong>
+                                </p>
+                            </div>
                         </div>
 
-                        <%-- Create result messages --%>
-                            <c:if test="${param.createSuccess == '1'}">
-                                <div class="admin-message success" role="status">
-                                    Product created successfully.
-                                </div>
+                        <div class="table-responsive">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Thương hiệu</th>
+                                        <th>Danh mục</th>
+                                        <th>Mô tả</th>
+                                        <th>Biến thể</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <c:choose>
+                                        <c:when test="${empty products}">
+                                            <tr>
+                                                <td colspan="7" class="empty-state">
+                                                    Không tìm thấy sản phẩm.
+                                                </td>
+                                            </tr>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <c:forEach var="product" items="${products}">
+                                                <tr>
+                                                    <td>
+                                                        <c:out value="${product.productId}" />
+                                                    </td>
+
+                                                    <td class="product-name">
+                                                        <c:out value="${product.productName}" />
+                                                    </td>
+
+                                                    <td>
+                                                        <c:out value="${product.brand.name}" />
+                                                    </td>
+
+                                                    <td>
+                                                        <c:out value="${product.category.name}" />
+                                                    </td>
+
+                                                    <td class="description-cell">
+                                                        <c:out value="${product.description}" />
+                                                    </td>
+
+                                                    <td>
+                                                        <a class="button button-small"
+                                                            href="${pageContext.request.contextPath}/admin/products?manageVariants=${product.productId}&amp;keyword=${keyword}&amp;brandId=${selectedBrandId}&amp;categoryId=${selectedCategoryId}&amp;page=${currentPage}">
+                                                            Quản lý biến thể
+                                                        </a>
+                                                    </td>
+
+                                                    <td>
+                                                        <div class="actions">
+                                                            <a class="button button-small"
+                                                                href="${pageContext.request.contextPath}/ProductActionServlet?action=edit&amp;productId=${product.productId}">
+                                                                Sửa
+                                                            </a>
+
+                                                            <form class="inline-form"
+                                                                action="${pageContext.request.contextPath}/admin/products"
+                                                                method="post"
+                                                                onsubmit="return confirm('Bạn có chắc muốn xử lý xóa sản phẩm này?');">
+
+                                                                <input type="hidden" name="action" value="delete">
+
+                                                                <input type="hidden" name="productId"
+                                                                    value="${product.productId}">
+
+                                                                <button type="submit"
+                                                                    class="button button-danger button-small">
+                                                                    Xóa
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Phần quản lý biến thể -->
+                                                <c:if test="${manageVariants == product.productId}">
+                                                    <tr>
+                                                        <td colspan="7">
+                                                            <div class="variant-panel">
+                                                                <h3>
+                                                                    Quản lý biến thể:
+                                                                    <c:out value="${product.productName}" />
+                                                                </h3>
+
+                                                                <h4>Các biến thể hiện có</h4>
+
+                                                                <div class="table-responsive">
+                                                                    <table class="variant-table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>ID</th>
+                                                                                <th>Tên biến thể</th>
+                                                                                <th>Size</th>
+                                                                                <th>Màu</th>
+                                                                                <th>Giá</th>
+                                                                                <th>Tồn kho</th>
+                                                                                <th>Thao tác</th>
+                                                                            </tr>
+                                                                        </thead>
+
+                                                                        <tbody>
+                                                                            <c:choose>
+                                                                                <c:when test="${empty managedVariants}">
+                                                                                    <tr>
+                                                                                        <td colspan="7"
+                                                                                            class="empty-state">
+                                                                                            Sản phẩm chưa có biến thể.
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </c:when>
+
+                                                                                <c:otherwise>
+                                                                                    <c:forEach var="variant"
+                                                                                        items="${managedVariants}">
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <c:out
+                                                                                                    value="${variant.variantId}" />
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <c:out
+                                                                                                    value="${variant.variantName}" />
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <c:out
+                                                                                                    value="${variant.size}" />
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <c:out
+                                                                                                    value="${variant.color}" />
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <fmt:formatNumber
+                                                                                                    value="${variant.price}"
+                                                                                                    groupingUsed="true" />
+                                                                                                đ
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <c:out
+                                                                                                    value="${variant.quantity}" />
+                                                                                            </td>
+
+                                                                                            <td>
+                                                                                                <details>
+                                                                                                    <summary
+                                                                                                        class="edit-summary">
+                                                                                                        Sửa</summary>
+
+                                                                                                    <form
+                                                                                                        class="variant-form"
+                                                                                                        action="${pageContext.request.contextPath}/admin/product-variants"
+                                                                                                        method="post">
+
+                                                                                                        <input
+                                                                                                            type="hidden"
+                                                                                                            name="action"
+                                                                                                            value="update">
+                                                                                                        <input
+                                                                                                            type="hidden"
+                                                                                                            name="productId"
+                                                                                                            value="${product.productId}">
+                                                                                                        <input
+                                                                                                            type="hidden"
+                                                                                                            name="variantId"
+                                                                                                            value="${variant.variantId}">
+
+                                                                                                        <div
+                                                                                                            class="form-group">
+                                                                                                            <label>Tên
+                                                                                                                biến
+                                                                                                                thể</label>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="variantName"
+                                                                                                                value="<c:out value='${variant.variantName}'/>"
+                                                                                                                required>
+                                                                                                        </div>
+
+                                                                                                        <div
+                                                                                                            class="form-group">
+                                                                                                            <label>Size</label>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="size"
+                                                                                                                value="<c:out value='${variant.size}'/>">
+                                                                                                        </div>
+
+                                                                                                        <div
+                                                                                                            class="form-group">
+                                                                                                            <label>Màu</label>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="color"
+                                                                                                                value="<c:out value='${variant.color}'/>">
+                                                                                                        </div>
+
+                                                                                                        <div
+                                                                                                            class="form-group">
+                                                                                                            <label>Giá</label>
+                                                                                                            <input
+                                                                                                                type="number"
+                                                                                                                name="price"
+                                                                                                                min="0"
+                                                                                                                step="1"
+                                                                                                                value="${variant.price}"
+                                                                                                                required>
+                                                                                                        </div>
+
+                                                                                                        <div
+                                                                                                            class="form-group">
+                                                                                                            <label>Tồn
+                                                                                                                kho</label>
+                                                                                                            <input
+                                                                                                                type="number"
+                                                                                                                name="quantity"
+                                                                                                                min="0"
+                                                                                                                step="1"
+                                                                                                                value="${variant.quantity}"
+                                                                                                                required>
+                                                                                                        </div>
+
+                                                                                                        <button
+                                                                                                            type="submit"
+                                                                                                            class="button button-primary">
+                                                                                                            Lưu thay đổi
+                                                                                                        </button>
+                                                                                                    </form>
+                                                                                                </details>
+
+                                                                                                <form
+                                                                                                    class="inline-form"
+                                                                                                    action="${pageContext.request.contextPath}/admin/product-variants"
+                                                                                                    method="post"
+                                                                                                    onsubmit="return confirm('Bạn có chắc muốn xóa biến thể này?');">
+
+                                                                                                    <input type="hidden"
+                                                                                                        name="action"
+                                                                                                        value="delete">
+                                                                                                    <input type="hidden"
+                                                                                                        name="productId"
+                                                                                                        value="${product.productId}">
+                                                                                                    <input type="hidden"
+                                                                                                        name="variantId"
+                                                                                                        value="${variant.variantId}">
+
+                                                                                                    <button
+                                                                                                        type="submit"
+                                                                                                        class="button button-danger button-small">
+                                                                                                        Xóa
+                                                                                                    </button>
+                                                                                                </form>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </c:forEach>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+
+                                                                <h4>Thêm biến thể mới</h4>
+
+                                                                <form class="variant-form"
+                                                                    action="${pageContext.request.contextPath}/admin/product-variants"
+                                                                    method="post">
+
+                                                                    <input type="hidden" name="action" value="create">
+                                                                    <input type="hidden" name="productId"
+                                                                        value="${product.productId}">
+
+                                                                    <div class="form-group">
+                                                                        <label>Tên biến thể</label>
+                                                                        <input type="text" name="variantName"
+                                                                            placeholder="Ví dụ: Áo size M" required>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Size</label>
+                                                                        <input type="text" name="size"
+                                                                            placeholder="S, M, L...">
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Màu</label>
+                                                                        <input type="text" name="color"
+                                                                            placeholder="Đen, trắng...">
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Giá (VND)</label>
+                                                                        <input type="number" name="price" min="0"
+                                                                            step="1" required>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Tồn kho</label>
+                                                                        <input type="number" name="quantity" min="0"
+                                                                            step="1" value="0" required>
+                                                                    </div>
+
+                                                                    <button type="submit" class="button button-primary">
+                                                                        Thêm biến thể
+                                                                    </button>
+                                                                </form>
+
+                                                                <div class="panel-footer">
+                                                                    <a class="button"
+                                                                        href="${pageContext.request.contextPath}/admin/products?keyword=${keyword}&amp;brandId=${selectedBrandId}&amp;categoryId=${selectedCategoryId}&amp;page=${currentPage}">
+                                                                        Đóng phần quản lý biến thể
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Phân trang -->
+                        <nav class="pagination" aria-label="Phân trang">
+                            <c:if test="${currentPage > 1}">
+                                <a class="button"
+                                    href="${pageContext.request.contextPath}/admin/products?keyword=${keyword}&amp;brandId=${selectedBrandId}&amp;categoryId=${selectedCategoryId}&amp;page=${currentPage - 1}">
+                                    ← Trang trước
+                                </a>
                             </c:if>
 
-                            <%-- Update result messages --%>
-                                <c:if test="${param.updateSuccess == '1'}">
-                                    <div class="admin-message success" role="status">
-                                        Product information updated successfully.
-                                    </div>
-                                </c:if>
+                            <span class="page-info">
+                                Trang <strong>${currentPage}</strong> / ${totalPages}
+                            </span>
 
-                                <%-- Delete result messages --%>
-                                    <c:if test="${param.deleteSuccess == '1'}">
-                                        <div class="admin-message success" role="status">
-                                            Product inventory updated successfully. All variants
-                                            of this product now have quantity zero.
-                                        </div>
-                                    </c:if>
-
-                                    <c:if test="${param.deleteError == 'notFound'}">
-                                        <div class="admin-message error" role="alert">
-                                            The product could not be found.
-                                        </div>
-                                    </c:if>
-
-                                    <c:if test="${param.deleteError == 'server'}">
-                                        <div class="admin-message error" role="alert">
-
-                                            An error occurred while updating product inventory.
-                                            Please try again.
-                                        </div>
-                                    </c:if>
-
-                                    <div class="admin-stats-grid">
-
-                                        <article class="admin-stat-card">
-                                            <div class="admin-stat-top">
-                                                <span class="admin-stat-label">TOTAL PRODUCTS</span>
-                                            </div>
-
-                                            <div class="admin-stat-value">
-                                                <c:out value="${totalProducts}" default="—" />
-                                            </div>
-
-                                            <div class="admin-stat-foot">
-                                                Products matching the current filter
-                                            </div>
-                                        </article>
-
-                                        <article class="admin-stat-card">
-                                            <div class="admin-stat-top">
-                                                <span class="admin-stat-label">CATEGORIES</span>
-                                            </div>
-
-                                            <div class="admin-stat-value">
-                                                <c:choose>
-                                                    <c:when test="${not empty categories}">
-                                                        <c:out value="${categories.size()}" />
-                                                    </c:when>
-                                                    <c:otherwise>—</c:otherwise>
-                                                </c:choose>
-                                            </div>
-
-                                            <div class="admin-stat-foot">
-                                                Available categories
-                                            </div>
-                                        </article>
-
-                                        <article class="admin-stat-card">
-                                            <div class="admin-stat-top">
-                                                <span class="admin-stat-label">INVENTORY VALUE</span>
-                                            </div>
-
-                                            <div class="admin-stat-value">—</div>
-
-                                            <div class="admin-stat-foot">
-                                                Not available in Product model
-                                            </div>
-                                        </article>
-
-                                    </div>
-
-                                    <section class="admin-panel">
-
-                                        <div class="admin-panel-header">
-                                            <div>
-                                                <h2 class="admin-panel-title">Product List</h2>
-                                                <p class="admin-panel-description">
-                                                    Product details from the current model.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <%-- Search and category filter --%>
-                                            <form class="toolbar"
-                                                action="${pageContext.request.contextPath}/admin/products" method="get">
-
-                                                <input type="search" name="keyword" placeholder="Search product name..."
-                                                    value="<c:out value='${keyword}'/>">
-
-                                                <select name="category">
-                                                    <option value="0" <c:if test="${selectedCategory == 0}">
-                                                        selected
-                                                        </c:if>>
-                                                        All categories
-                                                    </option>
-
-                                                    <c:forEach items="${categories}" var="category">
-                                                        <option value="${category.categoryId}" <c:if
-                                                            test="${selectedCategory == category.categoryId}">
-                                                            selected
-                                                            </c:if>>
-                                                            <c:out value="${category.name}" />
-                                                        </option>
-                                                    </c:forEach>
-                                                </select>
-
-                                                <button class="admin-button primary" type="submit">
-                                                    Search
-                                                </button>
-
-                                                <a class="admin-button"
-                                                    href="${pageContext.request.contextPath}/admin/products">
-                                                    Reset
-                                                </a>
-                                            </form>
-
-                                            <%-- Product table --%>
-                                                <div class="admin-table-wrap">
-                                                    <table class="admin-table">
-
-                                                        <thead>
-                                                            <tr>
-                                                                <th>PRODUCT</th>
-                                                                <th>ID</th>
-                                                                <th>BRAND</th>
-                                                                <th>CATEGORY</th>
-                                                                <th>DESCRIPTION</th>
-                                                                <th>ACTIONS</th>
-                                                            </tr>
-                                                        </thead>
-
-                                                        <tbody>
-                                                            <c:choose>
-
-                                                                <c:when test="${not empty products}">
-                                                                    <c:forEach items="${products}" var="product">
-                                                                        <tr>
-
-                                                                            <td>
-                                                                                <div class="product-cell">
-                                                                                    <c:choose>
-                                                                                        <c:when
-                                                                                            test="${not empty product.images}">
-                                                                                            <img class="product-thumbnail"
-                                                                                                src="<c:out value='${product.images[0].imageUrl}'/>"
-                                                                                                alt="Product image">
-                                                                                        </c:when>
-
-                                                                                        <c:otherwise>
-                                                                                            <div
-                                                                                                class="product-thumbnail">
-                                                                                            </div>
-                                                                                        </c:otherwise>
-                                                                                    </c:choose>
-
-                                                                                    <span class="product-name">
-                                                                                        <c:out
-                                                                                            value="${product.productName}"
-                                                                                            default="Unnamed product" />
-                                                                                    </span>
-                                                                                </div>
-                                                                            </td>
-
-                                                                            <td>
-                                                                                <c:out value="${product.productId}" />
-                                                                            </td>
-
-                                                                            <td>
-                                                                                <c:out value="${product.brand.name}"
-                                                                                    default="—" />
-                                                                            </td>
-
-                                                                            <td>
-                                                                                <c:out value="${product.category.name}"
-                                                                                    default="—" />
-                                                                            </td>
-
-                                                                            <td>
-                                                                                <c:out value="${product.description}"
-                                                                                    default="—" />
-                                                                            </td>
-
-                                                                            <td>
-                                                                                <a class="admin-button"
-                                                                                    href="${pageContext.request.contextPath}/ProductActionServlet?action=edit&amp;id=${product.productId}">
-                                                                                    Edit
-                                                                                </a>
-
-                                                                                <form
-                                                                                    action="${pageContext.request.contextPath}/admin/products"
-                                                                                    method="post"
-                                                                                    onsubmit="return confirm('Set all variants of this product quantity to zero?');">
-
-                                                                                    <input type="hidden" name="action"
-                                                                                        value="delete">
-
-                                                                                    <input type="hidden"
-                                                                                        name="productId"
-                                                                                        value="${product.productId}">
-
-                                                                                    <button class="admin-button"
-                                                                                        type="submit">
-                                                                                        Delete
-                                                                                    </button>
-                                                                                </form>
-                                                                            </td>
-
-                                                                        </tr>
-                                                                    </c:forEach>
-                                                                </c:when>
-
-                                                                <c:otherwise>
-                                                                    <tr>
-                                                                        <td colspan="6">
-                                                                            <div class="empty-message">
-                                                                                No products found matching your search.
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </c:otherwise>
-
-                                                            </c:choose>
-                                                        </tbody>
-
-                                                    </table>
-                                                </div>
-
-                                                <%-- Pagination --%>
-                                                    <div class="pagination">
-
-                                                        <span>
-                                                            Page
-                                                            <c:out value="${currentPage}" />
-                                                            of
-                                                            <c:out value="${totalPages}" />
-                                                            —
-                                                            <c:out value="${totalProducts}" /> products
-                                                        </span>
-
-                                                        <div class="pagination-actions">
-
-                                                            <c:if test="${currentPage > 1}">
-                                                                <c:url var="previousPageUrl" value="/admin/products">
-                                                                    <c:param name="page" value="${currentPage - 1}" />
-                                                                    <c:param name="keyword" value="${keyword}" />
-                                                                    <c:param name="category"
-                                                                        value="${selectedCategory}" />
-                                                                </c:url>
-
-                                                                <a class="admin-button"
-                                                                    href="${pageContext.request.contextPath}${previousPageUrl}">
-                                                                    Previous
-                                                                </a>
-                                                            </c:if>
-
-                                                            <c:if test="${currentPage < totalPages}">
-                                                                <c:url var="nextPageUrl" value="/admin/products">
-                                                                    <c:param name="page" value="${currentPage + 1}" />
-                                                                    <c:param name="keyword" value="${keyword}" />
-                                                                    <c:param name="category"
-                                                                        value="${selectedCategory}" />
-                                                                </c:url>
-
-                                                                <a class="admin-button"
-                                                                    href="${pageContext.request.contextPath}${nextPageUrl}">
-                                                                    Next
-                                                                </a>
-                                                            </c:if>
-
-                                                        </div>
-                                                    </div>
-
-                                    </section>
+                            <c:if test="${currentPage < totalPages}">
+                                <a class="button"
+                                    href="${pageContext.request.contextPath}/admin/products?keyword=${keyword}&amp;brandId=${selectedBrandId}&amp;categoryId=${selectedCategoryId}&amp;page=${currentPage + 1}">
+                                    Trang sau →
+                                </a>
+                            </c:if>
+                        </nav>
                     </section>
-                </main>
-            </div>
-        </body>
 
-        </html>
+                </div>
+            </body>
+
+            </html>

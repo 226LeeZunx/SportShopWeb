@@ -1,21 +1,23 @@
+
 package com.mycompany.sportshopweb.controller;
 
 import com.cloudinary.utils.ObjectUtils;
+import com.mycompany.sportshopweb.dao.BrandDAO;
+import com.mycompany.sportshopweb.dao.ProductDAO;
 import com.mycompany.sportshopweb.model.Product;
 import com.mycompany.sportshopweb.model.ProductImage;
-import com.mycompany.sportshopweb.util.BrandDB;
 import com.mycompany.sportshopweb.util.CategoryDB;
 import com.mycompany.sportshopweb.util.CloudinaryConfig;
-import com.mycompany.sportshopweb.util.ProductDB;
-import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,57 +26,36 @@ import java.util.Map;
 @WebServlet(name = "ProductActionServlet", urlPatterns = { "/ProductActionServlet" })
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 25 * 1024 * 1024)
 public class ProductActionServlet extends HttpServlet {
+
+    private ProductDAO productDAO;
+
     @Override
     public void init() {
-        ProductDB productDAO = new ProductDB();
+        productDAO = new ProductDAO();
         getServletContext().setAttribute("ProductDAO", productDAO);
-
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Chuẩn bị dữ liệu cho các dropdown Brand và Category.
-        BrandDB brandDAO = new BrandDB();
-        CategoryDB categoryDAO = new CategoryDB();
+        request.setCharacterEncoding("UTF-8");
 
-        request.setAttribute("brands", brandDAO.getAllBrand());
-        request.setAttribute("categories", categoryDAO.getAllCategory());
-
-        // 2. Xác định thao tác: tạo mới hoặc chỉnh sửa sản phẩm.
         String action = request.getParameter("action");
 
         if ("edit".equals(action)) {
+            String idStr = request.getParameter("productId");
 
-            // Lấy productId từ URL, ví dụ:
-            // /ProductActionServlet?action=edit&id=5
-            String idStr = request.getParameter("id");
+            int productId;
 
             try {
-                int productId = Integer.parseInt(idStr);
+                productId = Integer.parseInt(idStr);
 
                 if (productId <= 0) {
-                    response.sendError(
-                            HttpServletResponse.SC_BAD_REQUEST,
-                            "Invalid product ID");
-                    return;
+                    throw new NumberFormatException("Invalid product ID");
                 }
-
-                // 3. Tìm sản phẩm trong database.
-                Product product = ProductDB.getProductById(productId);
-
-                if (product == null) {
-                    response.sendError(
-                            HttpServletResponse.SC_NOT_FOUND,
-                            "Product not found");
-                    return;
-                }
-
-                // 4. Gửi dữ liệu sản phẩm sang JSP ở chế độ Edit.
-                request.setAttribute("product", product);
-                request.setAttribute("editMode", true);
-
             } catch (NumberFormatException e) {
                 response.sendError(
                         HttpServletResponse.SC_BAD_REQUEST,
@@ -82,28 +63,43 @@ public class ProductActionServlet extends HttpServlet {
                 return;
             }
 
-        } else {
+            Product product = ProductDAO.getProductById(productId);
 
-            // Chế độ Create: chưa có sản phẩm để chỉnh sửa.
+            if (product == null) {
+                response.sendError(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "Product not found");
+                return;
+            }
+
+            request.setAttribute("product", product);
+            request.setAttribute("editMode", true);
+
+        } else {
+            request.setAttribute("product", new Product());
             request.setAttribute("editMode", false);
         }
 
-        // 5. Hiển thị form Admin dùng chung cho Create và Edit.
+        prepareFormData(request);
+
         request.getRequestDispatcher(
-                "/views/admin/products-form.jsp").forward(request, response);
+                "/views/admin/products-form.jsp")
+                .forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Xác định thao tác từ form: create hoặc update.
         String action = request.getParameter("action");
         boolean isUpdate = "update".equals(action);
+        boolean isCreate = "create".equals(action);
 
-        if (!isUpdate && !"create".equals(action)) {
+        if (!isUpdate && !isCreate) {
             response.sendError(
                     HttpServletResponse.SC_BAD_REQUEST,
                     "Invalid product action");
@@ -119,55 +115,54 @@ public class ProductActionServlet extends HttpServlet {
         int brandId;
         int categoryId;
 
-        // Kiểm tra dữ liệu cơ bản trước khi thao tác database.
-        if (name == null || name.isBlank()
-                || brandStr == null || brandStr.isBlank()
-                || categoryStr == null || categoryStr.isBlank()) {
-
-            request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin.");
-            doGet(request, response);
-            return;
-        }
-
-        try {
-            brandId = Integer.parseInt(brandStr);
-            categoryId = Integer.parseInt(categoryStr);
-
-            if (brandId <= 0 || categoryId <= 0) {
-                throw new NumberFormatException("Invalid brand/category ID");
-            }
-
-            if (isUpdate) {
-                String productIdStr = request.getParameter("productId");
-
-                if (productIdStr == null || productIdStr.isBlank()) {
-                    throw new NumberFormatException("Missing product ID");
-                }
-
-                productId = Integer.parseInt(productIdStr);
+        if (isUpdate) {
+            try {
+                productId = Integer.parseInt(
+                        request.getParameter("productId"));
 
                 if (productId <= 0) {
                     throw new NumberFormatException("Invalid product ID");
                 }
+            } catch (NumberFormatException e) {
+                response.sendError(
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        "Invalid product ID");
+                return;
             }
+        }
 
-        } catch (NumberFormatException e) {
-            response.sendError(
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    "Invalid product, brand, or category ID");
+        if (name == null || name.isBlank()
+                || brandStr == null || brandStr.isBlank()
+                || categoryStr == null || categoryStr.isBlank()) {
+
+            request.setAttribute(
+                    "error",
+                    "Vui lòng nhập đầy đủ tên sản phẩm, thương hiệu và danh mục.");
+
+            showFormAfterError(request, response, isUpdate, productId);
             return;
         }
 
-        ProductDB productDAO = (ProductDB) getServletContext().getAttribute("ProductDAO");
+        try {
+            brandId = Integer.parseInt(brandStr.trim());
+            categoryId = Integer.parseInt(categoryStr.trim());
 
-        if (productDAO == null) {
-            productDAO = new ProductDB();
-            getServletContext().setAttribute("ProductDAO", productDAO);
+            if (brandId <= 0 || categoryId <= 0) {
+                throw new NumberFormatException(
+                        "Invalid brand/category ID");
+            }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute(
+                    "error",
+                    "Thương hiệu hoặc danh mục không hợp lệ.");
+
+            showFormAfterError(request, response, isUpdate, productId);
+            return;
         }
 
         try {
             if (isUpdate) {
-                // Cập nhật thông tin cơ bản, chưa thay đổi danh sách ảnh.
                 boolean updated = productDAO.updateProduct(
                         productId,
                         name.trim(),
@@ -182,50 +177,109 @@ public class ProductActionServlet extends HttpServlet {
                     return;
                 }
 
-                // Ở bước này, Update chỉ cập nhật thông tin cơ bản.
-                // Ảnh cũ được giữ nguyên; xử lý thêm ảnh mới ở bước tiếp theo.
                 response.sendRedirect(
                         request.getContextPath()
                                 + "/admin/products?updateSuccess=1");
                 return;
             }
 
-            // CREATE: giữ nguyên luồng tạo sản phẩm và upload Cloudinary.
+            // Các trường biến thể bắt buộc khi tạo Product.
+            String variantName = request.getParameter("variantName");
+            String size = request.getParameter("size");
+            String color = request.getParameter("color");
+            String priceStr = request.getParameter("price");
+            String quantityStr = request.getParameter("quantity");
+
+            if (variantName == null || variantName.isBlank()
+                    || size == null || size.isBlank()
+                    || color == null || color.isBlank()
+                    || priceStr == null || priceStr.isBlank()
+                    || quantityStr == null || quantityStr.isBlank()) {
+
+                request.setAttribute(
+                        "error",
+                        "Vui lòng nhập đầy đủ tên biến thể, size, màu sắc, giá và tồn kho.");
+
+                showFormAfterError(request, response, false, 0);
+                return;
+            }
+
+            long price;
+            int quantity;
+
+            try {
+                price = Long.parseLong(priceStr.trim());
+                quantity = Integer.parseInt(quantityStr.trim());
+
+                if (price < 0 || quantity < 0) {
+                    throw new NumberFormatException(
+                            "Price and quantity must be non-negative");
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute(
+                        "error",
+                        "Giá và tồn kho phải là số hợp lệ, không được âm.");
+
+                showFormAfterError(request, response, false, 0);
+                return;
+            }
+
             Product product = new Product();
             product.setProductName(name.trim());
             product.setDescription(description);
 
+            // Giữ nguyên chức năng upload nhiều ảnh lên Cloudinary.
             List<ProductImage> images = new ArrayList<>();
             int order = 0;
 
             for (Part part : request.getParts()) {
-                if (!"images".equals(part.getName()) || part.getSize() == 0) {
+                if (!"images".equals(part.getName())
+                        || part.getSize() == 0) {
                     continue;
                 }
 
-                String type = part.getContentType();
+                String contentType = part.getContentType();
 
-                if (type == null || !type.startsWith("image/")) {
+                if (contentType == null
+                        || !contentType.toLowerCase().startsWith("image/")) {
                     continue;
                 }
 
-                Map result = CloudinaryConfig.getInstance().uploader().upload(
-                        part.getInputStream().readAllBytes(),
-                        ObjectUtils.asMap("folder", "Product"));
+                Map<?, ?> result = CloudinaryConfig.getInstance()
+                        .uploader()
+                        .upload(
+                                part.getInputStream().readAllBytes(),
+                                ObjectUtils.asMap("folder", "Product"));
 
-                ProductImage img = new ProductImage();
-                img.setImageUrl((String) result.get("secure_url"));
-                img.setPrimary(order == 0);
-                img.setSortOrder(order++);
-                img.setCreatedAt(LocalDateTime.now());
-                img.setProduct(product);
+                String imageUrl = (String) result.get("secure_url");
 
-                images.add(img);
+                if (imageUrl == null || imageUrl.isBlank()) {
+                    throw new IOException(
+                            "Cloudinary did not return a secure image URL.");
+                }
+
+                ProductImage image = new ProductImage();
+                image.setImageUrl(imageUrl);
+                image.setPrimary(order == 0);
+                image.setSortOrder(order++);
+                image.setCreatedAt(LocalDateTime.now());
+                image.setProduct(product);
+
+                images.add(image);
             }
 
             product.setImages(images);
 
-            productDAO.insert(product, brandId, categoryId);
+            // Lưu Product và ProductVariant trong cùng transaction.
+            productDAO.insertWithVariant(
+                    product,
+                    brandId,
+                    categoryId,
+                    variantName.trim(),
+                    size.trim(),
+                    color.trim(),
+                    price,
+                    quantity);
 
             response.sendRedirect(
                     request.getContextPath()
@@ -238,34 +292,68 @@ public class ProductActionServlet extends HttpServlet {
                     "error",
                     isUpdate
                             ? "Cập nhật sản phẩm thất bại. Vui lòng kiểm tra lại dữ liệu."
-                            : "Thêm sản phẩm thất bại. Vui lòng kiểm tra lại dữ liệu.");
+                            : "Thêm sản phẩm hoặc biến thể thất bại. Vui lòng kiểm tra lại dữ liệu.");
 
-            // Khôi phục chế độ Edit khi xảy ra lỗi để không mất productId.
-            if (isUpdate) {
-                Product product = ProductDB.getProductById(productId);
-
-                if (product == null) {
-                    response.sendError(
-                            HttpServletResponse.SC_NOT_FOUND,
-                            "Product not found");
-                    return;
-                }
-
-                request.setAttribute("product", product);
-                request.setAttribute("editMode", true);
-            } else {
-                request.setAttribute("editMode", false);
-            }
-
-            BrandDB brandDAO = new BrandDB();
-            CategoryDB categoryDAO = new CategoryDB();
-
-            request.setAttribute("brands", brandDAO.getAllBrand());
-            request.setAttribute("categories", categoryDAO.getAllCategory());
-
-            request.getRequestDispatcher(
-                    "/views/admin/products-form.jsp").forward(request, response);
+            showFormAfterError(request, response, isUpdate, productId);
         }
     }
 
+    /**
+     * Chuẩn bị danh sách thương hiệu và danh mục cho form.
+     */
+    private void prepareFormData(HttpServletRequest request) {
+        BrandDAO brandDAO = new BrandDAO();
+        CategoryDB categoryDAO = new CategoryDB();
+
+        request.setAttribute("brands", brandDAO.getAllBrand());
+        request.setAttribute("categories", categoryDAO.getAllCategory());
+    }
+
+    /**
+     * Hiển thị lại form khi có lỗi.
+     */
+    private void showFormAfterError(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            boolean isUpdate,
+            int productId)
+            throws ServletException, IOException {
+
+        Product product;
+
+        if (isUpdate) {
+            product = ProductDAO.getProductById(productId);
+
+            if (product == null) {
+                response.sendError(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "Product not found");
+                return;
+            }
+
+            request.setAttribute("editMode", true);
+        } else {
+            product = new Product();
+            request.setAttribute("editMode", false);
+        }
+
+        // Giữ lại dữ liệu người dùng vừa nhập.
+        String name = request.getParameter("productName");
+        String description = request.getParameter("description");
+
+        if (name != null) {
+            product.setProductName(name);
+        }
+
+        if (description != null) {
+            product.setDescription(description);
+        }
+
+        request.setAttribute("product", product);
+        prepareFormData(request);
+
+        request.getRequestDispatcher(
+                "/views/admin/products-form.jsp")
+                .forward(request, response);
+    }
 }

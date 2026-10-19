@@ -1,4 +1,3 @@
-```jsp
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
@@ -8,6 +7,7 @@
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
+
             <title>
                 <c:choose>
                     <c:when test="${editMode}">Edit Product</c:when>
@@ -15,6 +15,7 @@
                 </c:choose>
                 | SportShop Admin
             </title>
+
             <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
         </head>
 
@@ -90,8 +91,12 @@
                             <div>
                                 <h2 class="admin-page-title">
                                     <c:choose>
-                                        <c:when test="${editMode}">Update Product Information</c:when>
-                                        <c:otherwise>Product Information</c:otherwise>
+                                        <c:when test="${editMode}">
+                                            Update Product Information
+                                        </c:when>
+                                        <c:otherwise>
+                                            Product Information
+                                        </c:otherwise>
                                     </c:choose>
                                 </h2>
 
@@ -101,7 +106,7 @@
                                             Update the selected product's information.
                                         </c:when>
                                         <c:otherwise>
-                                            Enter information for a new product.
+                                            Enter product information and its initial variant.
                                         </c:otherwise>
                                     </c:choose>
                                 </p>
@@ -123,100 +128,149 @@
                             <form class="admin-form" action="${pageContext.request.contextPath}/ProductActionServlet"
                                 method="post" enctype="multipart/form-data">
 
-                                <%-- Xác định thao tác Create hay Update. --%>
-                                    <input type="hidden" name="action" value="${editMode ? 'update' : 'create'}">
+                                <input type="hidden" name="action" value="${editMode ? 'update' : 'create'}">
 
-                                    <%-- Chỉ cần productId khi đang chỉnh sửa. --%>
-                                        <c:if test="${editMode}">
-                                            <input type="hidden" name="productId" value="${product.productId}">
-                                        </c:if>
+                                <c:if test="${editMode}">
+                                    <input type="hidden" name="productId" value="${product.productId}">
+                                </c:if>
 
-                                        <div class="admin-form-grid">
+                                <div class="admin-form-grid">
 
-                                            <div class="admin-form-group full">
-                                                <label for="productName">Product name *</label>
+                                    <!-- Product information -->
 
-                                                <input id="productName" name="productName" type="text" maxlength="150"
-                                                    required
-                                                    value="<c:out value='${param.productName != null ? param.productName : product.productName}'/>"
-                                                    placeholder="Enter product name">
-                                            </div>
+                                    <div class="admin-form-group full">
+                                        <label for="productName">Product name *</label>
 
-                                            <div class="admin-form-group">
-                                                <label for="brandId">Brand *</label>
+                                        <input id="productName" name="productName" type="text" maxlength="150" required
+                                            value="${param.productName != null ? param.productName : product.productName}"
+                                            placeholder="Enter product name">
+                                    </div>
 
-                                                <select id="brandId" name="brandId" required>
-                                                    <option value="">Select a brand</option>
+                                    <div class="admin-form-group">
+                                        <label for="brandId">Brand *</label>
 
-                                                    <c:forEach items="${brands}" var="brand">
-                                                        <option value="${brand.brandId}" <c:if
-                                                            test="${param.brandId != null ? param.brandId == brand.brandId : product.brand.brandId == brand.brandId}">
-                                                            selected
-                                                            </c:if>>
-                                                            <c:out value="${brand.name}" />
-                                                        </option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
+                                        <select id="brandId" name="brandId" required>
+                                            <option value="">Select a brand</option>
 
-                                            <div class="admin-form-group">
-                                                <label for="categoryId">Category *</label>
+                                            <c:forEach items="${brands}" var="brand">
+                                                <option value="${brand.brandId}" <c:if test="${param.brandId != null
+                                            ? param.brandId == brand.brandId
+                                            : product.brand.brandId == brand.brandId}">
+                                                    selected
+                                                    </c:if>>
+                                                    <c:out value="${brand.name}" />
+                                                </option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
 
-                                                <select id="categoryId" name="categoryId" required>
-                                                    <option value="">Select a category</option>
+                                    <div class="admin-form-group">
+                                        <label for="categoryId">Category *</label>
 
-                                                    <c:forEach items="${categories}" var="category">
-                                                        <option value="${category.categoryId}" <c:if
-                                                            test="${param.categoryId != null ? param.categoryId == category.categoryId : product.category.categoryId == category.categoryId}">
-                                                            selected
-                                                            </c:if>>
-                                                            <c:out value="${category.name}" />
-                                                        </option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
+                                        <select id="categoryId" name="categoryId" required>
+                                            <option value="">Select a category</option>
 
-                                            <div class="admin-form-group full">
-                                                <label for="description">Description</label>
+                                            <c:forEach items="${categories}" var="category">
+                                                <option value="${category.categoryId}" <c:if test="${param.categoryId != null
+                                            ? param.categoryId == category.categoryId
+                                            : product.category.categoryId == category.categoryId}">
+                                                    selected
+                                                    </c:if>>
+                                                    <c:out value="${category.name}" />
+                                                </option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
 
-                                                <textarea id="description" name="description"
-                                                    placeholder="Describe the product"><c:out value="${param.description != null ? param.description : product.description}"/></textarea>
-                                            </div>
+                                    <div class="admin-form-group full">
+                                        <label for="description">Description</label>
 
-                                            <div class="admin-form-group full">
-                                                <label for="images">Product images</label>
+                                        <textarea id="description" name="description"
+                                            placeholder="Describe the product"><c:out value="${param.description != null ? param.description : product.description}"/></textarea>
+                                    </div>
 
-                                                <input id="images" name="images" type="file" accept="image/*" multiple>
+                                    <!-- Initial variant: only required when creating -->
 
-                                                <span class="help-text">
-                                                    <c:choose>
-                                                        <c:when test="${editMode}">
-                                                            Select new images only if you want to upload additional
-                                                            images.
-                                                            Leaving this field empty will not request new uploads.
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            Select one or more image files.
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </div>
-
+                                    <c:if test="${not editMode}">
+                                        <div class="admin-form-group full">
+                                            <h3>Initial Product Variant</h3>
+                                            <p class="help-text">
+                                                Every new product needs an initial variant.
+                                                Stock quantity belongs to the variant, not Product.
+                                            </p>
                                         </div>
 
-                                        <div class="form-actions">
-                                            <a class="admin-button"
-                                                href="${pageContext.request.contextPath}/admin/products">
-                                                Cancel
-                                            </a>
+                                        <div class="admin-form-group">
+                                            <label for="variantName">Variant name *</label>
 
-                                            <button class="admin-button primary" type="submit">
-                                                <c:choose>
-                                                    <c:when test="${editMode}">Save Changes</c:when>
-                                                    <c:otherwise>Create Product</c:otherwise>
-                                                </c:choose>
-                                            </button>
+                                            <input id="variantName" name="variantName" type="text" maxlength="100"
+                                                required value="${param.variantName}" placeholder="Example: Basic">
                                         </div>
+
+                                        <div class="admin-form-group">
+                                            <label for="size">Size *</label>
+
+                                            <input id="size" name="size" type="text" maxlength="50" required
+                                                value="${param.size}" placeholder="Example: M, L, XL">
+                                        </div>
+
+                                        <div class="admin-form-group">
+                                            <label for="color">Color *</label>
+
+                                            <input id="color" name="color" type="text" maxlength="50" required
+                                                value="${param.color}" placeholder="Example: Black">
+                                        </div>
+
+                                        <div class="admin-form-group">
+                                            <label for="price">Price (VND) *</label>
+
+                                            <input id="price" name="price" type="number" min="0" step="1" required
+                                                value="${param.price}" placeholder="Example: 250000">
+                                        </div>
+
+                                        <div class="admin-form-group">
+                                            <label for="quantity">Initial stock *</label>
+
+                                            <input id="quantity" name="quantity" type="number" min="0" step="1" required
+                                                value="${param.quantity}" placeholder="Enter stock quantity">
+                                        </div>
+                                    </c:if>
+
+                                    <!-- Product images -->
+
+                                    <div class="admin-form-group full">
+                                        <label for="images">Product images</label>
+
+                                        <input id="images" name="images" type="file" accept="image/*" multiple>
+
+                                        <span class="help-text">
+                                            <c:choose>
+                                                <c:when test="${editMode}">
+                                                    Image uploads are not processed by the current
+                                                    update action. Existing images will be retained.
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Select one or more image files.
+                                                    The first uploaded image becomes the primary image.
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-actions">
+                                    <a class="admin-button" href="${pageContext.request.contextPath}/admin/products">
+                                        Cancel
+                                    </a>
+
+                                    <button class="admin-button primary" type="submit">
+                                        <c:choose>
+                                            <c:when test="${editMode}">Save Changes</c:when>
+                                            <c:otherwise>Create Product</c:otherwise>
+                                        </c:choose>
+                                    </button>
+                                </div>
 
                             </form>
                         </section>
@@ -226,4 +280,3 @@
         </body>
 
         </html>
-        ```

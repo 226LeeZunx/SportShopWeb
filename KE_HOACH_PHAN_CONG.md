@@ -1,389 +1,157 @@
-﻿# KẾ HOẠCH PHÂN CÔNG & QUY TRÌNH DỰ ÁN — SPORTSHOPWEB
+# KẾ HOẠCH PHÂN CÔNG & QUY TRÌNH DỰ ÁN SPORTSHOPWEB
 
-> **Dự án:** SportShopWeb — Website thương mại điện tử đồ thể thao đa năng (Multi-Sports)  
-> **Công nghệ:** Java 17 · Servlet / JSP · Maven WAR · JPA (EclipseLink) · PostgreSQL (Neon.tech Cloud) · HTML5 / CSS3 / JS  
-> **Kiến trúc:** MVC phân tầng — Entity → DAO → Service → Controller (Servlet) → View (JSP)  
+> **Dự án:** SportShopWeb — Website thương mại điện tử đồ thể thao & bóng đá  
+> **Công nghệ:** Java 17, Servlet/JSP, Maven WAR, JPA / PostgreSQL, HTML5/CSS3/JS  
+> **Kiến trúc:** MVC phân tầng (Entity → DAO → Service → Servlet / Controller → JSP / View)  
 > **Ngày cập nhật:** 09/10/2026
 
 ---
 
-## 1. BẢNG PHÂN CÔNG THÀNH VIÊN
+## 👥 1. BẢNG PHÂN CÔNG THÀNH VIÊN THEO MODULE
 
-| Thành viên | Git Branch | Module phụ trách | Entity liên quan |
-|:---|:---|:---|:---|
-| **Tuấn** | `feature/account` | Account & Customer | `User`, `Customer`, `Admin`, `Role`, `MembershipTier`, `Address` |
-| **Dũng** | `feature/catalog` | Product & Catalog | `Product`, `ProductVariant`, `ProductImage`, `Category`, `Brand`, `Review` |
-| **Duy** | `feature/order-cart` | Cart & Order | `Cart`, `CartItem`, `Order`, `OrderItem`, `Voucher` |
-| **Vũ** | `feature/payment-admin` | Payment & Admin | `Payment`, `PaymentMethod` + toàn bộ màn hình Admin |
-
----
-
-## 2. CHI TIẾT CÔNG VIỆC & CHỨC NĂNG TỪNG MODULE
+| Thành viên | Git Branch | Module phụ trách | Các Model / Entity liên quan |
+| :--- | :--- | :--- | :--- |
+| **Tuấn** *(Leader)* | `feature/account` | **Tài khoản & Khách hàng (Account)** | `User`, `Customer`, `Admin`, `Role`, `MembershipTier`, `Address`, `Notification` |
+| **Dũng** | `feature/catalog` | **Sản phẩm & Danh mục (Catalog)** | `Product`, `ProductVariant`, `ProductImage`, `Category`, `Brand`, `Review` |
+| **Duy** | `feature/order-cart` | **Giỏ hàng & Đơn hàng (Cart & Order)** | `Cart`, `CartItem`, `Order`, `OrderItem`, `Voucher` |
+| **Vũ** | `feature/payment-admin` | **Thanh toán & Quản trị (Payment & Admin)** | `Payment`, `PaymentMethod`, Các chức năng quản trị Admin |
 
 ---
 
-### 👤 TUẤN — feature/account — Account & Customer
+## 🎯 2. CHI TIẾT CÔNG VIỆC TỪNG THÀNH VIÊN (GIAI ĐOẠN UI + MVC)
 
-#### Chức năng phụ trách:
-
-| Chức năng | Mô tả |
-|:---|:---|
-| **Đăng ký tài khoản** | Khách hàng nhập họ tên, email, số điện thoại, mật khẩu. Hệ thống kiểm tra email/username chưa tồn tại, mã hóa mật khẩu rồi tạo bản ghi User + Customer. |
-| **Đăng nhập** | Xác thực email/username và mật khẩu. Nếu đúng, lưu đối tượng Customer/User vào HttpSession. Nếu sai hiển thị thông báo lỗi tại form. |
-| **Đăng xuất** | Huỷ session (session.invalidate()), chuyển hướng về trang chủ. |
-| **Hồ sơ cá nhân** | Khách hàng đã đăng nhập xem và sửa: Họ tên, số điện thoại, ngày sinh, hạng thành viên (MembershipTier). |
-| **Quản lý địa chỉ** | Khách hàng thêm, sửa, xóa địa chỉ giao hàng (Address). Chọn địa chỉ mặc định. |
-| **Lịch sử đơn hàng (View)** | Khách hàng xem danh sách đơn hàng của mình (phối hợp dữ liệu từ module feature/order-cart). |
-
-#### File cần tạo:
-
-**Giao diện (View):**
-- [x] `src/main/webapp/views/login.jsp`
-- [x] `src/main/webapp/views/register.jsp`
-- [x] `src/main/webapp/views/profile.jsp`
-- [x] `src/main/webapp/assets/css/account.css`
-
-**Backend (Java):**
-- [ ] `src/main/java/.../dao/UserDAO.java`
-- [ ] `src/main/java/.../dao/CustomerDAO.java`
-- [ ] `src/main/java/.../dao/AddressDAO.java`
-- [ ] `src/main/java/.../service/UserService.java`
-- [ ] `src/main/java/.../service/CustomerService.java`
-- [ ] `src/main/java/.../controller/LoginServlet.java`
-- [ ] `src/main/java/.../controller/RegisterServlet.java`
-- [ ] `src/main/java/.../controller/LogoutServlet.java`
-- [ ] `src/main/java/.../controller/ProfileServlet.java`
-
-**Session sau khi đăng nhập:**
-```java
-// LoginServlet lưu vào session để các trang khác kiểm tra
-session.setAttribute("customer", customer);
-session.setAttribute("user", user);
-```
+### 👤 1. TUẤN — Nhánh `feature/account`
+* **Nhiệm vụ:** Quản lý toàn bộ luồng người dùng, đăng ký, đăng nhập và thông tin khách hàng.
+* **Giao diện (JSP/CSS):**
+  * [ ] `src/main/webapp/views/login.jsp`: Giao diện Đăng nhập (Form nhập email/username, mật khẩu, link quên mật khẩu/đăng ký).
+  * [ ] `src/main/webapp/views/register.jsp`: Giao diện Đăng ký (Họ tên, email, SĐT, mật khẩu, xác nhận mật khẩu).
+  * [ ] `src/main/webapp/views/profile.jsp`: Trang Hồ sơ cá nhân (Xem/sửa thông tin, hạng thành viên `MembershipTier`, sổ địa chỉ `Address`).
+  * [ ] `src/main/webapp/assets/css/account.css`: CSS riêng cho module tài khoản.
+* **Backend (Java):**
+  * [ ] `UserDAO.java`, `CustomerDAO.java`, `AddressDAO.java` (Truy vấn CSDL qua JPA/EntityManager).
+  * [ ] `UserService.java`, `CustomerService.java` (Logic mã hóa mật khẩu, kiểm tra trùng lặp email/username).
+  * [ ] `LoginServlet.java`: Tiếp nhận đăng nhập, lưu thông tin `Customer` / `User` vào `HttpSession`.
+  * [ ] `RegisterServlet.java`: Tiếp nhận form đăng ký và tạo mới khách hàng.
+  * [ ] `LogoutServlet.java`: Hủy session và chuyển hướng về trang chủ.
+  * [ ] `ProfileServlet.java`: Lấy thông tin user hiện tại từ session để hiển thị và cập nhật.
 
 ---
 
-### 👤 DŨNG — feature/catalog — Product & Catalog
-
-#### Chức năng phụ trách:
-
-| Chức năng | Mô tả |
-|:---|:---|
-| **Trang chủ** | Hiển thị Hero Banner thể thao đa năng, các danh mục nổi bật (Running, Football, Basketball, Gym...), khối sản phẩm mới nhất và bán chạy lấy từ database. |
-| **Danh sách sản phẩm** | Hiển thị toàn bộ sản phẩm dạng lưới (Grid). Hỗ trợ lọc theo Category (môn thể thao), lọc theo Brand (Nike, Adidas...), tìm kiếm theo tên. Có phân trang. |
-| **Chi tiết sản phẩm** | Hiển thị ảnh lớn + thumbnail từ ProductImage. Hiển thị tên, mô tả, giá từ ProductVariant. Bộ chọn Size và Màu sắc. Nút Add to Cart. Khu vực đánh giá Review. |
-| **Lọc & Tìm kiếm** | Tìm kiếm theo từ khóa. Lọc theo danh mục. Lọc theo hãng. Sắp xếp theo giá tăng/giảm, mới nhất. |
-
-#### File cần tạo:
-
-**Giao diện (View):**
-- [ ] `src/main/webapp/views/home.jsp` (Hoàn thiện Hero + danh mục + sản phẩm)
-- [ ] `src/main/webapp/views/products.jsp`
-- [ ] `src/main/webapp/views/product-detail.jsp`
-- [ ] `src/main/webapp/assets/css/home.css`
-- [ ] `src/main/webapp/assets/css/product.css`
-
-**Backend (Java):**
-- [ ] `src/main/java/.../dao/ProductDAO.java`
-- [ ] `src/main/java/.../dao/CategoryDAO.java`
-- [ ] `src/main/java/.../dao/BrandDAO.java`
-- [ ] `src/main/java/.../dao/ReviewDAO.java`
-- [ ] `src/main/java/.../service/ProductService.java`
-- [ ] `src/main/java/.../controller/HomeServlet.java` (Hiện đang có, cần mở rộng)
-- [ ] `src/main/java/.../controller/ProductListServlet.java`
-- [ ] `src/main/java/.../controller/ProductDetailServlet.java`
-
-**Request attributes truyền sang JSP:**
-```java
-// HomeServlet
-request.setAttribute("newProducts", productService.getNewProducts(8));
-request.setAttribute("categories", categoryDAO.getAll());
-
-// ProductListServlet
-request.setAttribute("productList", products);
-request.setAttribute("totalPages", totalPages);
-
-// ProductDetailServlet
-request.setAttribute("product", product);
-request.setAttribute("variants", variants);
-request.setAttribute("images", images);
-```
+### 👤 2. DŨNG — Nhánh `feature/catalog`
+* **Nhiệm vụ:** Trải nghiệm duyệt sản phẩm, trang chủ, bộ lọc và chi tiết sản phẩm.
+* **Giao diện (JSP/CSS):**
+  * [ ] `src/main/webapp/views/home.jsp`: Hoàn thiện trang chủ (Hero Banner bóng đá, danh mục nổi bật, sản phẩm mới nhất).
+  * [ ] `src/main/webapp/views/products.jsp`: Trang danh sách sản phẩm dạng Grid, thanh bên lọc theo Category/Brand/Price, phân trang.
+  * [ ] `src/main/webapp/views/product-detail.jsp`: Trang chi tiết sản phẩm (Bộ chọn ảnh thumbnail, chọn Size/Màu từ `ProductVariant`, nút Add to Cart, đánh giá `Review`).
+  * [ ] `src/main/webapp/assets/css/home.css`, `product.css`.
+* **Backend (Java):**
+  * [ ] `ProductDAO.java`, `CategoryDAO.java`, `BrandDAO.java`, `ReviewDAO.java`.
+  * [ ] `ProductService.java` (Lấy sản phẩm theo danh mục, tìm kiếm theo từ khóa, lọc theo khoảng giá, lấy chi tiết kèm biến thể).
+  * [ ] `HomeServlet.java`: Đổ dữ liệu sản phẩm mới / bán chạy lên `home.jsp`.
+  * [ ] `ProductListServlet.java`: Xử lý tìm kiếm, lọc và phân trang.
+  * [ ] `ProductDetailServlet.java`: Xử lý hiển thị chi tiết 1 sản phẩm.
 
 ---
 
-### 👤 DUY — feature/order-cart — Cart & Order
-
-#### Chức năng phụ trách:
-
-| Chức năng | Mô tả |
-|:---|:---|
-| **Thêm vào giỏ hàng** | Nhận variantId và quantity từ trang chi tiết sản phẩm, thêm vào đối tượng Cart trong HttpSession. Nếu sản phẩm đã có trong giỏ thì cộng thêm số lượng. |
-| **Xem giỏ hàng** | Hiển thị danh sách sản phẩm trong giỏ: ảnh, tên, size, màu, đơn giá, số lượng, tổng từng dòng. Hiển thị tổng tiền toàn giỏ. |
-| **Cập nhật giỏ hàng** | Nút (+) và (-) để tăng/giảm số lượng từng sản phẩm. Nút xóa sản phẩm khỏi giỏ. |
-| **Áp mã Voucher** | Khách hàng nhập mã voucher, hệ thống kiểm tra hợp lệ (còn hạn, chưa dùng, đủ điều kiện) và tính giảm giá. |
-| **Thanh toán (Checkout)** | Khách hàng chọn/nhập địa chỉ giao hàng. Xem lại tóm tắt đơn hàng. Chọn phương thức (COD hoặc chuyển khoản). Xác nhận đặt hàng → Tạo bản ghi Order + OrderItem + Payment. |
-| **Lịch sử đơn hàng** | Xem danh sách đơn hàng đã đặt, trạng thái từng đơn (Pending, Shipping, Completed, Cancelled). |
-
-#### File cần tạo:
-
-**Giao diện (View):**
-- [ ] `src/main/webapp/views/cart.jsp`
-- [ ] `src/main/webapp/views/checkout.jsp`
-- [ ] `src/main/webapp/views/orders.jsp`
-- [ ] `src/main/webapp/views/order-detail.jsp`
-- [ ] `src/main/webapp/assets/css/cart.css`
-
-**Backend (Java):**
-- [ ] `src/main/java/.../dao/OrderDAO.java`
-- [ ] `src/main/java/.../dao/OrderItemDAO.java`
-- [ ] `src/main/java/.../dao/VoucherDAO.java`
-- [ ] `src/main/java/.../service/CartService.java`
-- [ ] `src/main/java/.../service/OrderService.java`
-- [ ] `src/main/java/.../service/VoucherService.java`
-- [ ] `src/main/java/.../controller/CartServlet.java`
-- [ ] `src/main/java/.../controller/CheckoutServlet.java`
-- [ ] `src/main/java/.../controller/OrderHistoryServlet.java`
-
-**Cách CartServlet hoạt động:**
-```java
-// Nhận action từ request
-String action = request.getParameter("action");
-// "add"    → Thêm sản phẩm vào giỏ trong session
-// "update" → Cập nhật số lượng
-// "remove" → Xóa sản phẩm khỏi giỏ
-```
+### 👤 3. DUY — Nhánh `feature/order-cart`
+* **Nhiệm vụ:** Luồng mua sắm, giỏ hàng, áp mã giảm giá và đặt hàng.
+* **Giao diện (JSP/CSS):**
+  * [ ] `src/main/webapp/views/cart.jsp`: Bảng giỏ hàng, nút tăng/giảm số lượng (+/-), nút xóa sản phẩm, tính tổng tiền tạm tính.
+  * [ ] `src/main/webapp/views/checkout.jsp`: Form chọn/nhập địa chỉ giao hàng, tóm tắt đơn hàng, ô nhập `Voucher` giảm giá, chọn phương thức thanh toán.
+  * [ ] `src/main/webapp/views/orders.jsp`: Lịch sử các đơn hàng đã đặt của khách hàng.
+  * [ ] `src/main/webapp/assets/css/cart.css`.
+* **Backend (Java):**
+  * [ ] Xây dựng đối tượng giỏ hàng trong Session (`Cart`, `CartItem`) theo chuẩn Chapter 7.
+  * [ ] `OrderDAO.java`, `OrderItemDAO.java`, `VoucherDAO.java`.
+  * [ ] `OrderService.java` (Tính tổng tiền, kiểm tra voucher, chuyển giỏ hàng thành bản ghi `Order` & `OrderItem` trong CSDL).
+  * [ ] `CartServlet.java`: Xử lý thêm vào giỏ (`action=add`), sửa số lượng (`action=update`), xóa (`action=delete`).
+  * [ ] `CheckoutServlet.java`: Tiếp nhận đặt hàng và lưu xuống CSDL.
+  * [ ] `OrderHistoryServlet.java`: Hiển thị lịch sử đơn hàng của user đang đăng nhập.
 
 ---
 
-### 👤 VŨ — feature/payment-admin — Payment & Admin
-
-#### Chức năng phụ trách:
-
-| Chức năng | Mô tả |
-|:---|:---|
-| **Xử lý thanh toán** | Ghi nhận bản ghi Payment khi khách đặt hàng (COD hoặc chuyển khoản). Cập nhật trạng thái thanh toán. |
-| **Dashboard Admin** | Thống kê tổng quan: Doanh thu hôm nay/tháng này, số đơn hàng mới, số khách hàng mới, sản phẩm sắp hết hàng. |
-| **Quản lý sản phẩm** | Admin xem danh sách sản phẩm. Thêm mới. Sửa thông tin. Thêm/sửa biến thể (ProductVariant: size, màu, giá). Xóa (soft delete). |
-| **Quản lý danh mục & hãng** | CRUD danh mục (Category) và thương hiệu (Brand). |
-| **Quản lý đơn hàng** | Xem danh sách toàn bộ đơn hàng. Lọc theo trạng thái. Cập nhật trạng thái đơn hàng (Pending → Shipping → Completed). Xem chi tiết từng đơn. |
-| **Quản lý khách hàng** | Xem danh sách khách hàng. Xem thông tin và lịch sử mua hàng. Khoá/mở khoá tài khoản. |
-| **Bảo mật Admin** | Tất cả trang /admin/* đều yêu cầu Role = ADMIN. Tạo AdminFilter để tự động chặn và chuyển hướng về trang login nếu chưa đủ quyền. |
-
-#### File cần tạo:
-
-**Giao diện (View):**
-- [ ] `src/main/webapp/views/admin/dashboard.jsp`
-- [ ] `src/main/webapp/views/admin/products.jsp`
-- [ ] `src/main/webapp/views/admin/product-form.jsp` (Form thêm/sửa sản phẩm)
-- [ ] `src/main/webapp/views/admin/orders.jsp`
-- [ ] `src/main/webapp/views/admin/order-detail.jsp`
-- [ ] `src/main/webapp/views/admin/customers.jsp`
-- [ ] `src/main/webapp/assets/css/admin.css`
-
-**Backend (Java):**
-- [ ] `src/main/java/.../dao/PaymentDAO.java`
-- [ ] `src/main/java/.../service/PaymentService.java`
-- [ ] `src/main/java/.../controller/AdminDashboardServlet.java`
-- [ ] `src/main/java/.../controller/AdminProductServlet.java`
-- [ ] `src/main/java/.../controller/AdminOrderServlet.java`
-- [ ] `src/main/java/.../controller/AdminCustomerServlet.java`
-- [ ] `src/main/java/.../controller/AdminFilter.java` (Bộ lọc bảo mật quyền admin)
+### 👤 4. VŨ — Nhánh `feature/payment-admin`
+* **Nhiệm vụ:** Quản lý phương thức thanh toán và toàn bộ cổng quản trị dành cho Admin.
+* **Giao diện (JSP/CSS):**
+  * [ ] `src/main/webapp/views/admin/dashboard.jsp`: Thống kê tổng doanh thu, số đơn hàng mới, số lượng khách hàng.
+  * [ ] `src/main/webapp/views/admin/products.jsp`: Bảng CRUD quản lý sản phẩm và biến thể.
+  * [ ] `src/main/webapp/views/admin/orders.jsp`: Bảng quản lý đơn hàng và cập nhật trạng thái (Pending → Shipping → Completed).
+  * [ ] `src/main/webapp/views/admin/customers.jsp`: Bảng xem danh sách khách hàng.
+  * [ ] `src/main/webapp/assets/css/admin.css`.
+* **Backend (Java):**
+  * [ ] `PaymentDAO.java`, `PaymentService.java` (Xử lý bản ghi `Payment`).
+  * [ ] `AdminDashboardServlet.java`, `AdminProductServlet.java`, `AdminOrderServlet.java`.
+  * [ ] `AdminFilter.java`: Bộ lọc bảo mật Servlet Filter chặn người dùng không có role Admin vào các trang `/admin/*`.
 
 ---
 
-## 3. CƠ SỞ DỮ LIỆU & DỮ LIỆU MẪU (DATABASE SEED DATA)
+## 🌳 3. QUY TRÌNH PHỐI HỢP GIT (GIT FLOW)
 
-Dự án dùng chung Cloud PostgreSQL tại **Neon.tech** thông qua cấu hình `SportShopWebPU` trong `persistence.xml`.
-
-### Danh mục & Thương hiệu thống nhất:
-* **Category:**
-  1. `Running & Training` (Giày chạy, quần áo tập)
-  2. `Football` (Áo đấu CLB, giày đinh, bóng đá)
-  3. `Basketball` (Giày bóng rổ, áo bóng rổ)
-  4. `Gym & Fitness` (Đồ tập thể hình, phụ kiện gym)
-  5. `Tennis & Badminton` (Vợt, giày chuyên dụng)
-  6. `Sports Accessories` (Balo thể thao, tất, bình nước)
-* **Brand:** `Nike`, `Adidas`, `Puma`, `Under Armour`, `Mizuno`
-
-### Tài khoản test mẫu:
-* **Admin:** `admin@sportshop.com` / Mật khẩu: `admin123` (Role = `ADMIN`)
-* **Customer:** `customer@sportshop.com` / Mật khẩu: `123456` (Role = `CUSTOMER`)
-
----
-
-## 4. CẤU TRÚC GIT FLOW
-
-```
-main                          <- Nhánh sản phẩm cuối — nộp đồ án
-  └── develop                 <- Nhánh tích hợp — merge sau khi test
+```text
+main (Nhánh production nộp đồ án)
+  └── develop (Nhánh tích hợp chung của cả nhóm)
         ├── feature/account        (Tuấn)
         ├── feature/catalog        (Dũng)
         ├── feature/order-cart     (Duy)
         └── feature/payment-admin  (Vũ)
 ```
 
-### Quy tắc bắt buộc:
-- KHÔNG BAO GIỜ commit thẳng lên `main` hoặc `develop`.
-- Mỗi người chỉ làm việc trên nhánh `feature/...` của mình.
-- Khi xong một tính năng hoàn chỉnh → Tạo Pull Request (PR) vào `develop` → Nhóm review → Merge.
+### 📌 Nguyên tắc cốt lõi:
+1. **Tuyệt đối KHÔNG code trực tiếp** trên nhánh `main` hoặc `develop`.
+2. Mỗi thành viên chỉ làm việc trên nhánh `feature/...` của mình.
+3. Mỗi khi xong một chức năng:
+   * Commit và Push lên GitHub trên nhánh của mình.
+   * Tạo **Pull Request (PR)** vào nhánh `develop`.
+   * Cả nhóm (hoặc Leader) kiểm tra, test không lỗi thì mới bấm **Merge**.
 
-### Lệnh Git hàng ngày:
+### 💻 Lệnh Git chuẩn hàng ngày cho từng bạn:
 ```bash
-# Bắt đầu buổi code: Lấy code mới nhất về
-git checkout feature/<ten_nhanh_cua_ban>
+# 1. Chuyển sang nhánh của mình và lấy code mới nhất từ develop về
+git checkout feature/<ten_nhanh>
 git pull origin develop
 
-# Kết thúc buổi code: Lưu và đẩy lên
+# 2. Sau khi code xong tính năng:
 git add .
-git commit -m "feat: mô tả ngắn gọn tính năng vừa làm"
-git push origin feature/<ten_nhanh_cua_ban>
-```
+git commit -m "feat: <mô tả ngắn gọn tính năng vừa làm>"
+git push origin feature/<ten_nhanh>
 
-### Quy ước commit message:
-| Tiền tố | Ý nghĩa | Ví dụ |
-|:---|:---|:---|
-| `feat:` | Thêm tính năng mới | `feat: add LoginServlet and session management` |
-| `fix:` | Sửa lỗi | `fix: correct redirect path after logout` |
-| `style:` | Chỉ sửa CSS/UI | `style: update login page dark theme` |
-| `refactor:` | Tối ưu code, không đổi logic | `refactor: extract CartService from CartServlet` |
-| `docs:` | Cập nhật tài liệu | `docs: update KE_HOACH_PHAN_CONG.md` |
-
----
-
-## 5. CẤU TRÚC THƯ MỤC JAVA
-
-```
-src/main/java/com/mycompany/sportshopweb/
-├── model/          [DONE] 22 Entity có sẵn
-├── dao/            [TODO] Viết DAO cho từng thành viên
-├── service/        [TODO] Viết Service logic
-├── controller/     [TODO] Viết Servlet (đang có HomeServlet)
-└── util/
-    ├── DBUtil.java         [OK] EntityManagerFactory
-    └── ProductDB.java      [OK] Đang dùng tạm
-```
-
-**Cấu trúc tầng phân lớp:**
-```
-JSP (View)
-  ^ forward / redirect
-Controller (Servlet)
-  ^ gọi xuống
-Service (Business Logic)
-  ^ gọi xuống
-DAO (Database Access via JPA)
-  ^ dùng
-Entity / Model
-  ^ ánh xạ
-PostgreSQL Database
+# 3. Lên GitHub tạo Pull Request gộp vào nhánh develop
 ```
 
 ---
 
-## 6. QUY ƯỚC CODE (CODING CONVENTIONS)
+## 📝 4. QUY ƯỚC ĐẶT TÊN & CODE (CODING CONVENTIONS)
 
-| Loại | Quy tắc | Ví dụ |
-|:---|:---|:---|
-| Class / Interface | PascalCase | `ProductVariant`, `CustomerDAO`, `LoginServlet` |
-| Variable / Field | camelCase | `productId`, `totalPrice`, `customerName` |
-| Method | camelCase | `getAllProducts()`, `calculateTotal()` |
-| ID chính | {object}Id | `userId`, `productId`, `orderId` |
-| Package | chữ thường | `model`, `dao`, `service`, `controller` |
-| File JSP | kebab-case | `login.jsp`, `product-detail.jsp` |
-| CSS class | kebab-case | `.header-nav`, `.product-card`, `.cart-badge` |
-
----
-
-## 7. CẤU TRÚC GIAO DIỆN (UI/UX)
-
-**Phong cách thiết kế:** Dark Luxury Sports — Tông đen than (#0a0a0a), điểm nhấn vàng chanh neon (#ccff00).
-
-**Layout dùng chung (ĐÃ HOÀN THIỆN):**
-- [x] `assets/css/common.css` — Biến màu, reset CSS, Header, Dropdown menu, Footer
-- [x] `views/common/header.jsp` — Logo, Menu (Home, Categories dropdown, Brands dropdown, Hot Products, Sale), icon Search/Account/Cart
-- [x] `views/common/footer.jsp` — 4 cột thông tin thể thao đa năng, form newsletter, bản quyền
-
-**Mọi trang JSP đều nhúng Header/Footer theo chuẩn:**
-```jsp
-<head>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/common.css">
-</head>
-<body>
-    <jsp:include page="/views/common/header.jsp" />
-    <main>
-        <!-- Nội dung riêng của từng trang -->
-    </main>
-    <jsp:include page="/views/common/footer.jsp" />
-</body>
-```
+* **Class / Interface:** PascalCase → `ProductVariant.java`, `CustomerDAO.java`, `LoginServlet.java`
+* **Variable / Field:** camelCase → `productId`, `customerName`, `totalPrice`
+* **Method:** camelCase → `getAllProducts()`, `findCustomerByEmail()`
+* **Khóa chính ID:** `{object}Id` → `userId`, `productId`, `orderId`
+* **Package Java:** Chữ thường toàn bộ → `model`, `dao`, `service`, `controller`, `util`
+* **File JSP:** Kebab-case hoặc chữ thường → `login.jsp`, `product-detail.jsp`, `order-history.jsp`
+* **Commit Message:** Chuẩn Conventional Commits:
+  * `feat: ...` (Tính năng mới)
+  * `fix: ...` (Sửa lỗi)
+  * `style: ...` (Chỉnh sửa UI/CSS)
+  * `refactor: ...` (Tối ưu code không đổi logic)
 
 ---
 
-## 8. CHECKLIST TO-DO THEO GIAI ĐOẠN
+## 📋 5. CHECKLIST TO-DO LIST (THEO TỪNG GIAI ĐOẠN)
 
-### Giai đoạn 1 — Đồng bộ Layout & Data Mẫu (Đang thực hiện)
-- [x] Tạo `common.css`, `header.jsp`, `footer.jsp`
-- [x] Menu Header đa năng có hiệu ứng rê chuột xổ xuống (Dropdown)
-- [x] Giao diện 100% tiếng Anh, chú thích code tiếng Việt
-- [x] Tạo file `data_seed.sql` và nạp data mẫu vào Cloud NeonDB
-- [x] **Tuấn:** Push layout chung, tạo PR gộp vào `develop`
-- [x] **Dũng / Duy / Vũ:** `git pull origin develop` để lấy layout về
+### 🏁 Giai đoạn 1: Khởi động & Đồng bộ Layout (Tuần này - Ưu tiên #1)
+- [x] Tạo layout chung: `common.css`, `header.jsp`, `footer.jsp`.
+- [x] Chuyển đổi toàn bộ UI sang tiếng Anh, chú thích tiếng Việt.
+- [ ] Tuấn push layout dùng chung lên nhánh `feature/account` và tạo PR gộp vào `develop`.
+- [ ] Dũng, Duy, Vũ `git pull origin develop` về nhánh của mình để nhận layout chung.
 
----
+### 🚀 Giai đoạn 2: Xây dựng UI & Tích hợp Servlet độc lập
+- [ ] **Tuấn:** Dựng `login.jsp`, `register.jsp` → Viết `LoginServlet`, `RegisterServlet` → Xác thực Session.
+- [ ] **Dũng:** Dựng `products.jsp`, `product-detail.jsp` → Viết `ProductListServlet`, `ProductDetailServlet`.
+- [ ] **Duy:** Dựng `cart.jsp`, `checkout.jsp` → Viết `CartServlet` (Session Cart).
+- [ ] **Vũ:** Dựng giao diện `admin/dashboard.jsp`, `admin/products.jsp` → Viết `AdminServlet`.
 
-### Giai đoạn 2 — Xây dựng UI & Servlet (Song song 4 người)
-
-#### Tuấn — feature/account
-- [x] Dựng `login.jsp` (Dark theme, form đăng nhập)
-- [x] Dựng `register.jsp` (Form đăng ký tài khoản)
-- [x] Dựng `profile.jsp` (Hồ sơ cá nhân, địa chỉ giao hàng)
-- [x] Viết `UserDAO`, `CustomerDAO`, `AddressDAO`
-- [x] Viết `UserService`, `CustomerService`
-- [x] Viết `LoginServlet` — Xác thực và quản lý Session
-- [x] Viết `RegisterServlet` — Tạo tài khoản mới
-- [x] Viết `LogoutServlet` — Huỷ Session
-- [x] Viết `ProfileServlet` — Xem và cập nhật hồ sơ
-
-#### Dũng — feature/catalog
-- [x] Hoàn thiện `home.jsp` (Hero banner thể thao + danh mục + sản phẩm hot)
-- [x] Dựng `products.jsp` (Grid sản phẩm + bộ lọc + tìm kiếm)
-- [x] Dựng `product-detail.jsp` (Chi tiết + chọn size/màu + Add to Cart)
-- [ ] Viết `ProductDAO`, `CategoryDAO`, `BrandDAO`, `ReviewDAO`
-- [ ] Viết `ProductService`
-- [x] Mở rộng `HomeServlet` (Đổ dữ liệu thật lên trang chủ)
-- [x] Viết `ProductListServlet` (Tìm kiếm, lọc, phân trang)
-- [x] Viết `ProductDetailServlet`
-
-#### Duy — feature/order-cart
-- [ ] Dựng `cart.jsp` (Bảng giỏ hàng, tăng/giảm, xóa, tổng tiền)
-- [ ] Dựng `checkout.jsp` (Địa chỉ, tóm tắt, Voucher, thanh toán)
-- [ ] Dựng `orders.jsp` (Lịch sử đơn hàng)
-- [ ] Xây dựng cấu trúc `Cart` trong Session
-- [ ] Viết `OrderDAO`, `OrderItemDAO`, `VoucherDAO`
-- [ ] Viết `CartService`, `OrderService`, `VoucherService`
-- [ ] Viết `CartServlet` (action: add, update, remove)
-- [ ] Viết `CheckoutServlet`
-- [ ] Viết `OrderHistoryServlet`
-
-#### Vũ — feature/payment-admin
-- [ ] Dựng `admin/dashboard.jsp` (Thống kê tổng quan)
-- [ ] Dựng `admin/products.jsp` (Bảng CRUD sản phẩm)
-- [ ] Dựng `admin/orders.jsp` (Duyệt và cập nhật đơn hàng)
-- [ ] Dựng `admin/customers.jsp` (Danh sách khách hàng)
-- [ ] Viết `PaymentDAO`, `PaymentService`
-- [ ] Viết `AdminDashboardServlet`, `AdminProductServlet`, `AdminOrderServlet`
-- [ ] Viết `AdminFilter` — Bảo vệ tất cả trang `/admin/*`
-
----
-
-### Giai đoạn 3 — Tích hợp CSDL thật & Test Luồng
-
-- [ ] Nối `CustomerDAO` và `UserDAO` vào PostgreSQL thật → Test đăng nhập
-- [ ] Nối `ProductDAO` → Test hiển thị sản phẩm thật từ database
-- [ ] Test luồng khép kín: Vào web → Xem sản phẩm → Thêm giỏ → Đăng nhập → Đặt hàng → Admin xem đơn
-- [ ] Kiểm tra bảo mật Session (trang cần đăng nhập, trang Admin)
-- [ ] Merge `develop` → `main`, chuẩn bị báo cáo và demo
-
----
-
-*Tài liệu được duy trì bởi nhóm SportShopWeb. Mỗi khi hoàn thành một checkbox, hãy cập nhật trực tiếp vào file này và commit lên nhánh develop.*
+### 🔄 Giai đoạn 3: Tích hợp CSDL thật (JPA/PostgreSQL) & Khép kín luồng
+- [ ] Nối `CustomerDAO` vào database thật để đăng nhập tài khoản thực.
+- [ ] Nối `ProductDAO` để lấy danh sách sản phẩm và ảnh thật từ PostgreSQL.
+- [ ] Kiểm thử luồng khép kín: **Vào web → Xem sản phẩm → Thêm vào giỏ → Đăng nhập → Đặt hàng → Admin thấy đơn hàng**.
+- [ ] Merge toàn bộ `develop` vào `main` để chuẩn bị báo cáo.

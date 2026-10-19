@@ -60,6 +60,8 @@
     </c:if>
 
     <c:choose>
+
+       
         <c:when test="${empty orders}">
             <section class="orders-empty">
                 <div class="orders-empty-icon">
@@ -81,14 +83,48 @@
             </section>
         </c:when>
 
+       
         <c:otherwise>
-            <section class="orders-list">
+
+            
+            <div class="order-tabs">
+                <button type="button"
+                        class="order-tab active"
+                        data-filter="ALL">
+                    Tất cả
+                </button>
+
+                <button type="button"
+                        class="order-tab"
+                        data-filter="COMPLETED">
+                    Đã thanh toán
+                </button>
+
+                <button type="button"
+                        class="order-tab"
+                        data-filter="CONFIRMED">
+                    Chưa thanh toán
+                </button>
+
+                <button type="button"
+                        class="order-tab"
+                        data-filter="CANCELLED">
+                    Đã hủy
+                </button>
+            </div>
+
+            <!-- Order list -->
+            <section class="orders-list" id="ordersList">
 
                 <c:forEach var="order" items="${orders}">
 
-                    <article class="order-card">
+                    <c:set var="status"
+                           value="${order.orderStatus.toString()}" />
 
-                     
+                    <article class="order-card"
+                             data-status="${status}">
+
+                        <!-- Card header -->
                         <div class="order-card-header">
 
                             <div>
@@ -117,63 +153,69 @@
                                 </p>
                             </div>
 
-                          
-                            <c:set var="status" value="${order.orderStatus.toString()}" />
-
+                            <!-- Order status -->
                             <c:choose>
-                            <c:when test="${status eq 'PENDING'}">
-                                <span class="order-status status-pending">
-                                    <i class="fa-regular fa-clock"></i>
-                                    Pending
-                                </span>
-                                
-                                
-                            </c:when>
 
-                            <c:when test="${status eq 'CONFIRMED'}">
-                                <span class="order-status status-confirmed">
-                                    <i class="fa-solid fa-check"></i>
-                                    Confirmed
-                                </span>
-                            </c:when>
+                                <c:when test="${status eq 'CONFIRMED'}">
+                                    <span class="order-status status-confirmed">
+                                        <i class="fa-regular fa-clock"></i>
+                                        Chưa thanh toán
+                                    </span>
+                                </c:when>
 
-                            <c:when test="${status eq 'PROCESSING'}">
-                                <span class="order-status status-processing">
-                                    <i class="fa-solid fa-box"></i>
-                                    Processing
-                                </span>
-                            </c:when>
+                                <c:when test="${status eq 'COMPLETED'}">
+                                    <span class="order-status status-delivered">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Đã thanh toán
+                                    </span>
+                                </c:when>
 
-                            <c:when test="${status eq 'SHIPPING'}">
-                                <span class="order-status status-shipping">
-                                    <i class="fa-solid fa-truck"></i>
-                                    Shipping
-                                </span>
-                            </c:when>
+                                <c:when test="${status eq 'CANCELLED'}">
+                                    <span class="order-status status-cancelled">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        Đã hủy
+                                    </span>
+                                </c:when>
 
-                            <c:when test="${status eq 'DELIVERED'}">
-                                <span class="order-status status-delivered">
-                                    <i class="fa-solid fa-circle-check"></i>
-                                    Delivered
-                                </span>
-                            </c:when>
+                                <c:when test="${status eq 'PENDING'}">
+                                    <span class="order-status status-pending">
+                                        <i class="fa-regular fa-clock"></i>
+                                        Pending
+                                    </span>
+                                </c:when>
 
-                            <c:when test="${status eq 'CANCELLED'}">
-                                <span class="order-status status-cancelled">
-                                    <i class="fa-solid fa-circle-xmark"></i>
-                                    Cancelled
-                                </span>
-                            </c:when>
+                                <c:when test="${status eq 'PROCESSING'}">
+                                    <span class="order-status status-processing">
+                                        <i class="fa-solid fa-box"></i>
+                                        Processing
+                                    </span>
+                                </c:when>
 
-                            <c:otherwise>
-                                <span class="order-status status-default">
-                                    <c:out value="${status}" />
-                                </span>
-                            </c:otherwise>
-                        </c:choose>
+                                <c:when test="${status eq 'SHIPPING'}">
+                                    <span class="order-status status-shipping">
+                                        <i class="fa-solid fa-truck"></i>
+                                        Shipping
+                                    </span>
+                                </c:when>
+
+                                <c:when test="${status eq 'DELIVERED'}">
+                                    <span class="order-status status-delivered">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Delivered
+                                    </span>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <span class="order-status status-default">
+                                        <c:out value="${status}" />
+                                    </span>
+                                </c:otherwise>
+
+                            </c:choose>
 
                         </div>
 
+                        <!-- Card body -->
                         <div class="order-card-body">
 
                             <div class="order-info-grid">
@@ -184,7 +226,8 @@
                                     <p class="order-info-value">
                                         <c:choose>
                                             <c:when test="${not empty order.customer}">
-                                                Customer: <c:out value="${order.customer.firstName} ${order.customer.lastName}" />
+                                                <c:out value="${order.customer.firstName}" />
+                                                <c:out value="${order.customer.lastName}" />
                                             </c:when>
 
                                             <c:otherwise>
@@ -229,30 +272,59 @@
 
                         </div>
 
-<!-- Order footer -->
-<div class="order-card-footer">
+                        <!-- Card footer -->
+                        <div class="order-card-footer">
+
+                            <a class="order-detail-btn"
+                               href="${pageContext.request.contextPath}/order-detail?orderId=${order.orderId}">
+                                Xem chi tiết
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+
+                            <!-- Only unpaid orders can show the payment button -->
+                      
+<!-- Only unpaid orders can show payment and cancel buttons -->
+<c:if test="${status eq 'CONFIRMED'}">
 
     <a class="order-detail-btn"
-       href="${pageContext.request.contextPath}/order-detail?orderId=${order.orderId}">
-        View Details
-        <i class="fa-solid fa-arrow-right"></i>
+       href="${pageContext.request.contextPath}/payment?orderId=${order.orderId}">
+        Thanh toán ngay
+        <i class="fa-solid fa-credit-card"></i>
     </a>
 
-    <c:if test="${status ne 'COMPLETE'}">
-        <a class="order-detail-btn"
-           href="${pageContext.request.contextPath}/payment?orderId=${order.orderId}">
-            Pay Now
-            <i class="fa-solid fa-credit-card"></i>
-        </a>
-    </c:if>
+    <form action="${pageContext.request.contextPath}/cancel-order"
+          method="post"
+          class="cancel-order-form"
+          onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
 
-</div>
+        <input type="hidden"
+               name="orderId"
+               value="${order.orderId}">
+
+        <button type="submit" class="cancel-order-btn">
+            <i class="fa-solid fa-xmark"></i>
+            Hủy đơn hàng
+        </button>
+
+    </form>
+
+</c:if>
+
+                        </div>
 
                     </article>
 
                 </c:forEach>
 
             </section>
+
+            <!-- No matching orders for selected tab -->
+            <div id="filteredEmpty"
+                 class="filtered-empty"
+                 style="display: none;">
+                Không có đơn hàng trong mục này.
+            </div>
+
         </c:otherwise>
 
     </c:choose>
@@ -260,6 +332,8 @@
 </main>
 
 <jsp:include page="/views/common/footer.jsp" />
+
+<script src="${pageContext.request.contextPath}/assets/js/orders.js"></script>
 
 </body>
 </html>

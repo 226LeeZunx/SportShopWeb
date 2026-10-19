@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 
 <!-- Khung Footer dùng chung - Phong cách thể thao Dark Luxury -->
 <footer class="site-footer">
@@ -62,3 +62,6 @@
 
     </div>
 </footer>
+
+<!-- Component Chatbot AI dùng chung (cố định góc phải màn hình) -->
+<jsp:include page="/views/common/chatbot.jsp" />

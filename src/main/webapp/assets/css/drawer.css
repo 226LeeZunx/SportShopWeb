@@ -1,0 +1,286 @@
+/* =========================================
+   DRAWER MENU / NAVIGATION PANEL FIXES
+   ========================================= */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.drawer-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.drawer-menu {
+    position: fixed;
+    top: 0;
+    left: -400px;
+    width: 380px;
+    max-width: 85vw;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.drawer-menu.active {
+    left: 0;
+}
+
+.drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background-color: #ffffff;
+}
+
+.drawer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #0f172a;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+.drawer-logo i {
+    color: #991b1b;
+    font-size: 1.3rem;
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.drawer-close-btn:hover {
+    color: #0f172a;
+}
+
+/* Fix thanh tìm kiếm chuẩn Flexbox */
+.drawer-search-box {
+    padding: 16px 24px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.drawer-search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.drawer-search-input-wrapper:focus-within {
+    border-color: #111827;
+}
+
+.drawer-search-input-wrapper input {
+    flex: 1;
+    width: 0;
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    outline: none;
+    font-size: 0.88rem;
+    color: #0f172a;
+    background: transparent;
+}
+
+.drawer-search-input-wrapper button {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 18px;
+    background-color: #111827;
+    color: #ffffff;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.drawer-search-input-wrapper button:hover {
+    background-color: #000000;
+}
+
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Fix các Tab chuyển nhanh dạng cuộn ngang mượt mà, không bị rớt dòng */
+.drawer-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+}
+
+.drawer-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.drawer-tabs::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.drawer-tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    background-color: #f1f5f9;
+    color: #475569;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.drawer-tab:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.drawer-tab.active {
+    background-color: #111827;
+    color: #ffffff;
+}
+
+.drawer-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.drawer-card-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: #0f172a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.drawer-card-thumb {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+}
+
+.drawer-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.drawer-card-item:hover .drawer-card-thumb img {
+    transform: scale(1.06);
+}
+
+.no-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    background-color: #f1f5f9;
+    font-size: 1.2rem;
+}
+
+.drawer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.drawer-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.drawer-idx {
+    font-size: 0.78rem;
+    font-weight: 900;
+    color: #991b1b;
+}
+
+.drawer-section-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.5px;
+}
+
+.drawer-link-list {
+    list-style: none;
+    padding: 2px 0 2px 14px;
+    margin: 2px 0 0 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    border-left: 2px solid #f1f5f9;
+}
+
+.drawer-link-list a {
+    text-decoration: none;
+    color: #64748b;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}
+
+.drawer-link-list a:hover {
+    color: #0f172a;
+    transform: translateX(4px);
+}
+
+.drawer-link-list a.active-link {
+    color: #991b1b;
+    font-weight: 800;
+}

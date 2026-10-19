@@ -1,27 +1,29 @@
+
 package com.mycompany.sportshopweb.controller;
 
+import com.mycompany.sportshopweb.dao.ProductDAO;
+import com.mycompany.sportshopweb.model.Brand;
 import com.mycompany.sportshopweb.model.Category;
 import com.mycompany.sportshopweb.model.Product;
-import com.mycompany.sportshopweb.util.DBUtil;
-import com.mycompany.sportshopweb.util.ProductDB;
+import com.mycompany.sportshopweb.model.ProductVariant;
 
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @WebServlet(name = "AdminProductServlet", urlPatterns = { "/admin/products" })
 public class AdminProductServlet extends HttpServlet {
 
-    private final ProductDB productDB = new ProductDB();
+    private final ProductDAO productDAO = new ProductDAO();
 
-    // GET: Hiển thị danh sách sản phẩm trong trang quản trị.
+    private static final int PAGE_SIZE = 10;
 
     @Override
     protected void doGet(
@@ -29,148 +31,225 @@ public class AdminProductServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Đọc số trang từ URL.
-        int page = 1;
+        request.setCharacterEncoding("UTF-8");
 
         try {
+            // 1. Nhận tham số lọc và phân trang
+            String keyword = request.getParameter("keyword");
+            String brandIdParam = request.getParameter("brandId");
+            String categoryIdParam = request.getParameter("categoryId");
             String pageParam = request.getParameter("page");
 
-            if (pageParam != null && !pageParam.isBlank()) {
-                page = Integer.parseInt(pageParam);
+            int brandId = parseInt(brandIdParam, 0);
+            int categoryId = parseInt(categoryIdParam, 0);
+            int requestedPage = Math.max(1, parseInt(pageParam, 1));
+
+            // 2. Lấy danh sách sản phẩm
+            List<Product> allProducts = productDAO.getAllProducts();
+
+            if (allProducts == null) {
+                allProducts = new ArrayList<>();
             }
 
-            if (page < 1) {
-                page = 1;
-            }
-        } catch (NumberFormatException e) {
-            page = 1;
-        }
+            // 3. Lọc theo tên, thương hiệu và danh mục
+            List<Product> filteredProducts = new ArrayList<>();
 
-        // 2. Đọc bộ lọc từ form GET.
-        String keyword = request.getParameter("keyword");
+            String normalizedKeyword = keyword == null
+                    ? ""
+                    : keyword.trim().toLowerCase(Locale.ROOT);
 
-        if (keyword == null) {
-            keyword = "";
-        } else {
-            keyword = keyword.trim();
-        }
+            List<Brand> brands = new ArrayList<>();
+            List<Category> categories = new ArrayList<>();
 
-        int categoryId = 0;
-        String categoryParam = request.getParameter("category");
+            for (Product product : allProducts) {
+                if (product == null) {
+                    continue;
+                }
 
-        try {
-            if (categoryParam != null && !categoryParam.isBlank()) {
-                categoryId = Integer.parseInt(categoryParam);
+                String productName = product.getProductName() == null
+                        ? ""
+                        : product.getProductName().toLowerCase(Locale.ROOT);
 
-                if (categoryId < 0) {
-                    categoryId = 0;
+                boolean matchesKeyword = normalizedKeyword.isEmpty()
+                        || productName.contains(normalizedKeyword);
+
+                int productBrandId = product.getBrand() == null
+                        ? 0
+                        : product.getBrand().getBrandId();
+
+                int productCategoryId = product.getCategory() == null
+                        ? 0
+                        : product.getCategory().getCategoryId();
+
+                boolean matchesBrand = brandId <= 0
+                        || productBrandId == brandId;
+
+                boolean matchesCategory = categoryId <= 0
+                        || productCategoryId == categoryId;
+
+                if (matchesKeyword && matchesBrand && matchesCategory) {
+                    filteredProducts.add(product);
+                }
+
+                // Thu thập thương hiệu và danh mục để hiển thị bộ lọc
+                if (product.getBrand() != null
+                        && !containsBrandId(
+                                brands, product.getBrand().getBrandId())) {
+                    brands.add(product.getBrand());
+                }
+
+                if (product.getCategory() != null
+                        && !containsCategoryId(
+                                categories, product.getCategory().getCategoryId())) {
+                    categories.add(product.getCategory());
                 }
             }
-        } catch (NumberFormatException e) {
-            categoryId = 0;
+
+            // 4. Phân trang
+            int totalProducts = filteredProducts.size();
+
+            int totalPages = Math.max(
+                    1,
+                    (int) Math.ceil((double) totalProducts / PAGE_SIZE));
+
+            int currentPage = Math.min(requestedPage, totalPages);
+
+            int fromIndex = (currentPage - 1) * PAGE_SIZE;
+            int toIndex = Math.min(fromIndex + PAGE_SIZE, totalProducts);
+
+            List<Product> products = new ArrayList<>(
+                    filteredProducts.subList(fromIndex, toIndex));
+
+            // 5. Đưa dữ liệu lên JSP
+            request.setAttribute("products", products);
+            request.setAttribute("keyword", keyword == null ? "" : keyword);
+            request.setAttribute("selectedBrandId", brandId);
+            request.setAttribute("selectedCategoryId", categoryId);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("brands", brands);
+            request.setAttribute("categories", categories);
+
+            // 6. Xác định sản phẩm đang được quản lý biến thể
+            int manageVariantsId = parseInt(
+                    request.getParameter("manageVariants"), 0);
+
+            request.setAttribute("manageVariants", manageVariantsId);
+            request.setAttribute(
+                    "variantMessage",
+                    request.getParameter("variantMessage"));
+
+            if (manageVariantsId > 0) {
+                boolean productExists = false;
+
+                for (Product product : allProducts) {
+                    if (product != null
+                            && product.getProductId() == manageVariantsId) {
+                        productExists = true;
+                        break;
+                    }
+                }
+
+                if (productExists) {
+                    List<ProductVariant> managedVariants = ProductDAO.getVariantsByProductId(manageVariantsId);
+
+                    request.setAttribute(
+                            "managedVariants",
+                            managedVariants == null
+                                    ? new ArrayList<ProductVariant>()
+                                    : managedVariants);
+                } else {
+                    request.setAttribute(
+                            "managedVariants",
+                            new ArrayList<ProductVariant>());
+                    request.setAttribute("variantMessage", "invalidProduct");
+                }
+            }
+
+            // 7. Chuyển đến trang quản lý sản phẩm
+            request.getRequestDispatcher("/views/admin/products.jsp")
+                    .forward(request, response);
+
+        } catch (Exception e) {
+            throw new ServletException(
+                    "Unable to load admin product page.", e);
         }
-
-        // 3. Xác định kích thước trang.
-        int pageSize = ProductDB.PAGE_SIZE;
-
-        // 4. Đếm sản phẩm theo bộ lọc hiện tại.
-        long totalProducts = ProductDB.countProducts(keyword, categoryId);
-
-        // 5. Tính tổng số trang sau khi lọc.
-        int totalPages = (int) Math.ceil(
-                (double) totalProducts / pageSize);
-
-        // 6. Điều chỉnh page nếu vượt phạm vi.
-        if (totalPages == 0) {
-            page = 1;
-        } else if (page > totalPages) {
-            page = totalPages;
-        }
-
-        // 7. Lấy sản phẩm theo trang và bộ lọc.
-        List<Product> products = ProductDB.getProductsByPage(
-                page, pageSize, keyword, categoryId);
-
-        // 8. Lấy danh sách category để hiển thị dropdown.
-        // Giữ nguyên cách truy vấn hiện tại, không sửa CategoryDB.
-        List<Category> categories;
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-
-        try {
-            categories = em.createQuery(
-                    "SELECT c FROM Category c ORDER BY c.name",
-                    Category.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-
-        // 9. Chuyển dữ liệu sang JSP.
-        request.setAttribute("products", products);
-        request.setAttribute("totalProducts", totalProducts);
-        request.setAttribute("categories", categories);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("pageSize", pageSize);
-
-        // Giữ bộ lọc trên form và khi chuyển trang.
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("selectedCategory", categoryId);
-
-        // 10. Forward sang trang quản lý sản phẩm.
-        request.getRequestDispatcher(
-                "/views/admin/products.jsp")
-                .forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Đảm bảo dữ liệu gửi từ form được đọc đúng encoding.
         request.setCharacterEncoding("UTF-8");
 
-        // Chỉ xử lý action Delete ở bước này.
         String action = request.getParameter("action");
 
-        if (!"delete".equals(action)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-            return;
-        }
-
-        // Đọc ID sản phẩm từ hidden input trong products.jsp.
-        int productId;
-
-        try {
-            productId = Integer.parseInt(request.getParameter("productId"));
+        if ("delete".equals(action)) {
+            int productId = parseInt(
+                    request.getParameter("productId"), -1);
 
             if (productId <= 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid product ID");
+                response.sendRedirect(
+                        request.getContextPath()
+                                + "/admin/products?deleteError=1");
                 return;
             }
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid product ID");
+
+            try {
+                boolean success = productDAO.softDeleteProduct(productId);
+
+                if (success) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/admin/products?deleteSuccess=1");
+                } else {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/admin/products?deleteError=1");
+                }
+
+            } catch (Exception e) {
+                throw new ServletException(
+                        "Unable to delete product.", e);
+            }
+
             return;
         }
 
+        response.sendRedirect(
+                request.getContextPath() + "/admin/products");
+    }
+
+    private int parseInt(String value, int defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+
         try {
-            // Đặt quantity = 0 cho tất cả biến thể của sản phẩm.
-            boolean success = productDB.softDeleteProduct(productId);
-
-            // Chuyển về danh sách sản phẩm và hiển thị kết quả.
-            String contextPath = request.getContextPath();
-
-            if (success) {
-                response.sendRedirect(contextPath + "/admin/products?deleteSuccess=1");
-            } else {
-                response.sendRedirect(contextPath + "/admin/products?deleteError=notFound");
-            }
-
-        } catch (RuntimeException e) {
-            log("Unable to update product inventory for product ID: " + productId, e);
-            response.sendRedirect(
-                    request.getContextPath() + "/admin/products?deleteError=server");
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
         }
     }
 
+    private boolean containsBrandId(List<Brand> brands, int id) {
+        for (Brand brand : brands) {
+            if (brand.getBrandId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsCategoryId(List<Category> categories, int id) {
+        for (Category category : categories) {
+            if (category.getCategoryId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

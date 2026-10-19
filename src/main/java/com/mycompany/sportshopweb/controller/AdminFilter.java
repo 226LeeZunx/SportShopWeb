@@ -16,8 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-/*  */
-@WebFilter(urlPatterns = { "/admin/*" })
+@WebFilter(urlPatterns = { "/admin/*", "/views/admin/*" })
 public class AdminFilter implements Filter {
 
     @Override

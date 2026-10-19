@@ -16,17 +16,25 @@ public class OrderDAO {
 
         try {
             String jpql =
-                "SELECT DISTINCT o " +
-                "FROM Order o " +
-                "LEFT JOIN FETCH o.orderItems oi " +
-                "JOIN FETCH o.customer c " +
-                "JOIN FETCH c.user " +
-                "WHERE c.customerId = :customerId " +
-                "ORDER BY o.orderId DESC";
+            "SELECT DISTINCT o " +
+            "FROM Order o " +
+            "LEFT JOIN FETCH o.orderItems oi " +
+            "LEFT JOIN FETCH oi.productVariant pv " +
+            "LEFT JOIN FETCH pv.product p " +
+            "JOIN FETCH o.customer c " +
+            "JOIN FETCH c.user " +
+            "LEFT JOIN FETCH o.address a " +
+            "WHERE c.customerId = :customerId " +
+            "ORDER BY o.orderId DESC";
 
             TypedQuery<Order> query = em.createQuery(jpql, Order.class);
 
             query.setParameter("customerId", customerId);
+            // Yêu cầu JPA làm mới dữ liệu từ database
+            query.setHint(
+                "jakarta.persistence.cache.retrieveMode",
+                jakarta.persistence.CacheRetrieveMode.BYPASS
+            );
 
             return query.getResultList();
 
@@ -64,21 +72,96 @@ public class OrderDAO {
         
     }
     public void cancelOrder(int orderId) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        EntityTransaction trans = em.getTransaction();
-        try {
-            trans.begin();
-            Order order = em.find(Order.class, orderId);
-            if (order == null) {
-            throw new IllegalArgumentException("Order not found!");
-            }
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    EntityTransaction trans = em.getTransaction();
+
+    try {
+        trans.begin();
+
+        Order order = em.find(Order.class, orderId);
+
+        if (order != null
+                && order.getOrderStatus() == OrderStatus.CONFIRMED) {
             order.setOrderStatus(OrderStatus.CANCELLED);
-            trans.commit();
         }
-        catch (Exception e) {
+
+        trans.commit();
+
+    } catch (Exception e) {
+        if (trans.isActive()) {
             trans.rollback();
-        } finally {
-            em.close();
         }
+        throw e;
+    } finally {
+        em.close();
+    }
+}
+   public boolean updateOrderStatus(int orderId, OrderStatus status) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    EntityTransaction trans = em.getTransaction();
+
+    try {
+        trans.begin();
+
+        Order order = em.find(Order.class, orderId);
+
+        if (order == null) {
+            trans.rollback();
+            return false;
+        }
+
+        order.setOrderStatus(status);
+
+        trans.commit();
+        return true;
+
+    } catch (Exception e) {
+        if (trans.isActive()) {
+            trans.rollback();
+        }
+        throw e;
+    } finally {
+        em.close();
+    }
+}
+    
+    public boolean isPaymentExpired(Order order) {
+    if (order == null
+            || order.getOrderStatus() != OrderStatus.CONFIRMED
+            || order.getOrderDate() == null) {
+        return false;
+    }
+
+    long elapsed = System.currentTimeMillis()
+            - order.getOrderDate().getTime();
+
+    long fifteenMinutes = 15 * 60 * 1000L;
+
+    return elapsed >= fifteenMinutes;
+}
+
+public void cancelExpiredOrder(int orderId) {
+    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    EntityTransaction trans = em.getTransaction();
+
+    try {
+        trans.begin();
+
+        Order order = em.find(Order.class, orderId);
+
+        if (isPaymentExpired(order)) {
+            order.setOrderStatus(OrderStatus.CANCELLED);
+        }
+
+        trans.commit();
+
+    } catch (Exception e) {
+        if (trans.isActive()) {
+            trans.rollback();
+        }
+        throw e;
+    } finally {
+        em.close();
+    }
 }
 }

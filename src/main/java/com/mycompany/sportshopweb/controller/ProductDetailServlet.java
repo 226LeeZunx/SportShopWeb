@@ -2,7 +2,7 @@ package com.mycompany.sportshopweb.controller;
 
 import com.mycompany.sportshopweb.model.Product;
 import com.mycompany.sportshopweb.model.ProductVariant;
-import com.mycompany.sportshopweb.util.ProductDB;
+import com.mycompany.sportshopweb.dao.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,7 +18,7 @@ public class ProductDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Đọc id
+        // 1. Đọc id sản phẩm từ request parameter
         int id;
         try {
             id = Integer.parseInt(request.getParameter("id"));
@@ -27,21 +27,21 @@ public class ProductDetailServlet extends HttpServlet {
             return;
         }
 
-        // 2. Lấy sản phẩm
-        Product product = ProductDB.getProductById(id);
+        // 2. Lấy thông tin sản phẩm từ DAO
+        Product product = ProductDAO.getProductById(id);
         if (product == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy sản phẩm");
             return;
         }
 
-        // 3. Lấy biến thể và tính tồn kho
-        List<ProductVariant> variants = ProductDB.getVariantsByProductId(id);
+        // 3. Lấy danh sách biến thể (size, màu, giá, số lượng tồn kho)
+        List<ProductVariant> variants = ProductDAO.getVariantsByProductId(id);
 
         int totalStock = 0;
         long minPrice = 0;
         boolean first = true;
         for (ProductVariant v : variants) {
-            if (v.getQuantity() > 0) {                 // chỉ tính biến thể còn hàng
+            if (v.getQuantity() > 0) { // Chỉ tính tồn kho các biến thể còn hàng
                 totalStock += v.getQuantity();
                 if (first || v.getPrice() < minPrice) {
                     minPrice = v.getPrice();
@@ -49,12 +49,12 @@ public class ProductDetailServlet extends HttpServlet {
                 }
             }
         }
-        // Nếu hết sạch hàng thì vẫn hiện giá của biến thể đầu tiên (nếu có)
+        // Nếu hết sạch hàng, vẫn lấy giá của biến thể đầu tiên để hiển thị
         if (first && !variants.isEmpty()) {
             minPrice = variants.get(0).getPrice();
         }
 
-        // 4. Đẩy sang JSP
+        // 4. Đẩy dữ liệu sang file JSP
         request.setAttribute("product", product);
         request.setAttribute("variants", variants);
         request.setAttribute("totalStock", totalStock);
@@ -62,5 +62,11 @@ public class ProductDetailServlet extends HttpServlet {
         request.setAttribute("minPrice", minPrice);
 
         request.getRequestDispatcher("/views/product.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
     }
 }

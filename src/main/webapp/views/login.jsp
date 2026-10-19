@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -143,9 +143,12 @@
                                 <input type="password" 
                                        id="password" 
                                        name="password" 
-                                       class="form-input has-icon" 
+                                       class="form-input has-icon has-toggle" 
                                        placeholder="Enter your password" 
                                        required>
+                                <button type="button" class="btn-toggle-password" title="Show password" aria-label="Toggle password visibility">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -169,7 +172,7 @@
                             <span>or continue with</span>
                         </div>
 
-                        <!-- Đăng nhập bằng Google / Apple -->
+                        <!-- Đăng nhập bằng Google / Apple (Giao diện hiển thị) -->
                         <div class="social-buttons">
                             <button type="button" class="btn-social">
                                 <i class="fa-brands fa-google google-icon"></i>
@@ -196,6 +199,9 @@
 
         <!-- 3. Nhúng Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
+
+        <!-- 4. Nhúng script bật/tắt ẩn hiện mật khẩu -->
+        <script src="${pageContext.request.contextPath}/assets/js/password-toggle.js"></script>
 
     </body>
 </html>

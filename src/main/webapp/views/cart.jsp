@@ -13,10 +13,10 @@
     <title>Shopping Cart | SportShopWeb</title>
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/common.css?v=1">
+          href="${pageContext.request.contextPath}/assets/css/common.css">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/cart.css?v=6">
+          href="${pageContext.request.contextPath}/assets/css/cart.css">
 </head>
 
 <body>
@@ -66,19 +66,27 @@
                 <%-- Cart table --%>
                 <section class="cart-panel">
 
+                    
                     <div class="panel-heading">
                         <div>
                             <h2>Shopping Cart Items</h2>
-                            <p>
-                                Select the products you want to purchase.
-                            </p>
+                            <p>Select the products you want to purchase.</p>
                         </div>
 
-                        <span class="item-count">
-                            <c:out value="${cartItems.size()}" />
-                            item types
-                        </span>
+                        <div class="cart-heading-actions">
+                            <button type="button"
+                                    id="selectAllBtn"
+                                    class="btn-select-all">
+                                Chọn tất cả
+                            </button>
+
+                            <span class="item-count">
+                                <c:out value="${cartItems.size()}" />
+                                item types
+                            </span>
+                        </div>
                     </div>
+
 
                     <div class="cart-table-wrapper">
 
@@ -360,110 +368,7 @@
 
 <jsp:include page="/views/common/footer.jsp" />
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const checkboxes =
-        document.querySelectorAll(".product-checkbox");
-
-    const updateTotalForm =
-        document.getElementById("updateTotalForm");
-
-    const checkoutForm =
-        document.getElementById("proceedCheckoutForm");
-
-    /*
-     * Copy checked product IDs into the target form.
-     * This is necessary because the checkboxes are outside both forms.
-     */
-    function syncSelectedIds(form) {
-
-        // Remove IDs added by a previous submission.
-        form.querySelectorAll("[data-selected-id]")
-            .forEach(function (input) {
-                input.remove();
-            });
-
-        let selectedCount = 0;
-
-        checkboxes.forEach(function (checkbox) {
-
-            if (checkbox.checked) {
-
-                const hiddenInput =
-                    document.createElement("input");
-
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "selectedVariantIds";
-                hiddenInput.value = checkbox.value;
-                hiddenInput.setAttribute("data-selected-id", "true");
-
-                form.appendChild(hiddenInput);
-                selectedCount++;
-            }
-        });
-
-        return selectedCount;
-    }
-
-    // Submit selected product IDs when clicking Update Total.
-    updateTotalForm.addEventListener("submit", function (event) {
-
-        const selectedCount = syncSelectedIds(updateTotalForm);
-
-        if (selectedCount === 0) {
-            event.preventDefault();
-            alert("Please select at least one product.");
-        }
-    });
-
-    // Submit selected product IDs when proceeding to Checkout.
-    checkoutForm.addEventListener("submit", function (event) {
-
-        const selectedCount = syncSelectedIds(checkoutForm);
-
-        if (selectedCount === 0) {
-            event.preventDefault();
-            alert("Please select at least one product.");
-        }
-    });
-
-    /*
-     * When updating quantity, preserve the current checkbox choices
-     * in the form submitted to CartServlet.
-     */
-    document.querySelectorAll(".quantity-form")
-        .forEach(function (form) {
-
-            form.addEventListener("submit", function () {
-
-                form.querySelectorAll("[data-selected-id]")
-                    .forEach(function (input) {
-                        input.remove();
-                    });
-
-                checkboxes.forEach(function (checkbox) {
-
-                    if (checkbox.checked) {
-
-                        const hiddenInput =
-                            document.createElement("input");
-
-                        hiddenInput.type = "hidden";
-                        hiddenInput.name = "selectedVariantIds";
-                        hiddenInput.value = checkbox.value;
-                        hiddenInput.setAttribute(
-                            "data-selected-id", "true"
-                        );
-
-                        form.appendChild(hiddenInput);
-                    }
-                });
-            });
-        });
-
-});
-</script>
+<script src="${pageContext.request.contextPath}/assets/js/cart.js"></script>
 
 </body>
 </html>
