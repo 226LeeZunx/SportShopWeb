@@ -24,9 +24,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # 4. Copy file requirements.txt từ thư mục python-rag vào container để tận dụng Docker Cache
 COPY python-rag/requirements.txt ./
 
-# 5. Cài đặt các thư viện Python (OpenAI, PyMongo, Pydantic, Requests, NumPy, python-dotenv)
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Copy file requirements.txt chính xác từ thư mục python-rag/ lên container
+COPY python-rag/requirements.txt .
 
 # 6. Copy toàn bộ mã nguồn của module python-rag vào thư mục làm việc /app
 COPY python-rag/ .
@@ -34,5 +33,5 @@ COPY python-rag/ .
 # 7. Mặc định chạy script query_rag.py để tiếp nhận câu hỏi
 ENTRYPOINT ["python", "query_rag.py"]
 
-# Tham số mặc định khi không truyền câu hỏi
-CMD ["Xin chào, bạn có thể tư vấn sản phẩm thể thao nào tốt?"]
+# Khởi chạy Tomcat
+CMD ["catalina.sh", "run"]
