@@ -1,25 +1,57 @@
 
 package com.mycompany.sportshopweb.util;
 
-import jakarta.mail.Authenticator;
-import jakarta.mail.Message;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
+import java.time.Duration;
 
 public class EmailService {
 
-    private static final String SMTP_HOST = "smtp-relay.brevo.com";
-    private static final String SMTP_PORT = "587";
+    private static final String API_URL =
+            "https://api.brevo.com/v3/smtp/email";
+
+    private static final HttpClient HTTP_CLIENT =
+            HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(15))
+                    .build();
 
     private static String getEnv(String name) {
         String value = System.getenv(name);
         return value == null ? "" : value.trim();
+    }
+
+    // Escape chuỗi để đưa vào JSON an toàn
+    private static String jsonEscape(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        for (char c : value.toCharArray()) {
+            switch (c) {
+                case '"' -> result.append("\\\"");
+                case '\\' -> result.append("\\\\");
+                case '\b' -> result.append("\\b");
+                case '\f' -> result.append("\\f");
+                case '\n' -> result.append("\\n");
+                case '\r' -> result.append("\\r");
+                case '\t' -> result.append("\\t");
+                default -> {
+                    if (c < 0x20) {
+                        result.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        result.append(c);
+                    }
+                }
+            }
+        }
+
+        return result.toString();
     }
 
     public static void sendEmailSync(
@@ -28,62 +60,76 @@ public class EmailService {
             String body
     ) throws Exception {
 
-        String username = getEnv("BREVO_SMTP_LOGIN");
-        String smtpKey = getEnv("BREVO_SMTP_KEY");
+        String apiKey = getEnv("BREVO_API_KEY");
         String senderEmail = getEnv("BREVO_SENDER_EMAIL");
         String senderName = getEnv("BREVO_SENDER_NAME");
 
-        if (username.isEmpty()
-                || smtpKey.isEmpty()
+        if (apiKey.isEmpty()
                 || senderEmail.isEmpty()) {
             throw new IllegalStateException(
-                "Missing Brevo SMTP environment variables"
+                    "Missing Brevo API environment variables"
             );
         }
 
-        Properties props = new Properties();
-        props.put("mail.smtp.host", SMTP_HOST);
-        props.put("mail.smtp.port", SMTP_PORT);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.starttls.required", "true");
-        props.put("mail.smtp.connectiontimeout", "15000");
-        props.put("mail.smtp.timeout", "15000");
-        props.put("mail.smtp.writetimeout", "15000");
+        if (to == null || to.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Recipient email must not be empty"
+            );
+        }
 
-        Session session = Session.getInstance(
-            props,
-            new Authenticator() {
-                @Override
-                protected PasswordAuthentication
-                        getPasswordAuthentication() {
-                    return new PasswordAuthentication(
-                        username, smtpKey
-                    );
+        String safeSenderName =
+                senderName.isEmpty() ? "SportShop" : senderName;
+
+        String json = """
+                {
+                  "sender": {
+                    "name": "%s",
+                    "email": "%s"
+                  },
+                  "to": [
+                    {
+                      "email": "%s"
+                    }
+                  ],
+                  "subject": "%s",
+                  "htmlContent": "%s"
                 }
-            }
+                """.formatted(
+                    jsonEscape(safeSenderName),
+                    jsonEscape(senderEmail),
+                    jsonEscape(to),
+                    jsonEscape(subject),
+                    jsonEscape(body)
+                );
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL))
+                .timeout(Duration.ofSeconds(30))
+                .header("accept", "application/json")
+                .header("api-key", apiKey)
+                .header("content-type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        json, StandardCharsets.UTF_8))
+                .build();
+
+        HttpResponse<String> response = HTTP_CLIENT.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(
+                        StandardCharsets.UTF_8)
         );
 
-        MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(
-            senderEmail,
-            senderName.isEmpty() ? "SportShop" : senderName,
-            StandardCharsets.UTF_8.name()
-        ));
-        message.setRecipients(
-            Message.RecipientType.TO,
-            InternetAddress.parse(to)
-        );
-        message.setSubject(subject, StandardCharsets.UTF_8.name());
-        message.setText(
-            body,
-            StandardCharsets.UTF_8.name(),
-            "html"
-        );
+        int status = response.statusCode();
 
-        Transport.send(message);
+        if (status < 200 || status >= 300) {
+            throw new IOException(
+                    "Brevo API error HTTP " + status
+                    + ": " + response.body()
+            );
+        }
+
         System.out.println(
-            "[EmailService] SMTP gửi email thành công tới: " + to
+                "[EmailService] Brevo API gửi email thành công tới: "
+                + to + " | HTTP " + status
         );
     }
 
@@ -97,55 +143,72 @@ public class EmailService {
                 sendEmailSync(to, subject, body);
             } catch (Exception e) {
                 System.err.println(
-                    "[EmailService] Không gửi được email tới "
-                    + to + ": " + e.getMessage()
+                        "[EmailService] Không gửi được email tới "
+                        + to + ": " + e.getMessage()
                 );
                 e.printStackTrace();
             }
         });
 
         thread.setName("sportshop-email-sender");
+        thread.setDaemon(false);
         thread.start();
     }
+
     public static void sendOtpEmail(
-        String to,
-        String otp,
-        String purpose
-) {
-    String subject = "SportShop - Ma xac thuc OTP";
+            String to,
+            String otp,
+            String purpose
+    ) {
+        String subject = "SportShop - Ma xac thuc OTP";
 
-    String body = """
-        <html>
-        <body>
-            <h2>SportShop - Xac thuc tai khoan</h2>
-            <p>Ma OTP cua ban la:</p>
-            <h1 style="color:blue;">%s</h1>
-            <p>Muc dich: %s</p>
-            <p>Vui long khong chia se ma OTP nay voi nguoi khac.</p>
-        </body>
-        </html>
-        """.formatted(otp, purpose);
+        String body = """
+                <html>
+                <body>
+                    <h2>SportShop - Xac thuc tai khoan</h2>
+                    <p>Ma OTP cua ban la:</p>
+                    <h1 style="color:blue;">%s</h1>
+                    <p>Muc dich: %s</p>
+                    <p>Vui long khong chia se ma OTP nay voi nguoi khac.</p>
+                </body>
+                </html>
+                """.formatted(
+                    jsonEscape(otp),
+                    jsonEscape(purpose)
+                );
 
-    sendEmailAsync(to, subject, body);
-}
-    public static void sendWelcomeEmail(String to, String name) {
-    String subject = "Chao mung ban den voi SportShop!";
+        sendEmailAsync(to, subject, body);
+    }
 
-    String safeName = name == null || name.isBlank()
-            ? "ban"
-            : name;
+    public static void sendWelcomeEmail(
+            String to,
+            String name
+    ) {
+        String subject = "Chao mung ban den voi SportShop!";
 
-    String body = """
-        <html>
-        <body>
-            <h2>Chao mung den voi SportShop!</h2>
-            <p>Xin chao %s,</p>
-            <p>Tai khoan cua ban da duoc xac minh thanh cong.</p>
-            <p>Cam on ban da tham gia SportShop!</p>
-        </body>
-        </html>
-        """.formatted(safeName);
+        String safeName = name == null || name.isBlank()
+                ? "ban"
+                : name;
 
-    sendEmailAsync(to, subject, body);
-}
+        String body = """
+                <html>
+                <body>
+                    <h2>Chao mung den voi SportShop!</h2>
+                    <p>Xin chao %s,</p>
+                    <p>Tai khoan cua ban da duoc xac minh thanh cong.</p>
+                    <p>Cam on ban da tham gia SportShop!</p>
+                </body>
+                </html>
+                """.formatted(escapeHtml(safeName));
+
+        sendEmailAsync(to, subject, body);
+    }
+
+    private static String escapeHtml(String value) {
+        return value.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
 }
