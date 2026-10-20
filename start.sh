@@ -1,16 +1,15 @@
-#!/bin/bash
 
+#!/bin/bash
 set -e
 
-# Start FastAPI chatbot on internal port 8000
-uvicorn app:app --host 0.0.0.0 --port 8000 &
+cd /app/python-rag
+uvicorn app:app --host 127.0.0.1 --port 8000 &
 PYTHON_PID=$!
 
-# Start Java web application
+cd /usr/local/tomcat
 catalina.sh run &
 TOMCAT_PID=$!
 
-# Stop both processes if either exits
 trap 'kill "$PYTHON_PID" "$TOMCAT_PID" 2>/dev/null || true' TERM INT
 
 wait -n "$PYTHON_PID" "$TOMCAT_PID"
