@@ -1,4 +1,3 @@
-$content = @'
 #!/bin/bash
 set -e
 
@@ -13,10 +12,3 @@ TOMCAT_PID=$!
 trap 'kill "$PYTHON_PID" "$TOMCAT_PID" 2>/dev/null || true' TERM INT
 
 wait -n "$PYTHON_PID" "$TOMCAT_PID"
-'@
-
-[System.IO.File]::WriteAllText(
-    (Join-Path (Get-Location) "start.sh"),
-    $content.Replace("`r`n", "`n").Replace("`r", "`n"),
-    [System.Text.UTF8Encoding]::new($false)
-)

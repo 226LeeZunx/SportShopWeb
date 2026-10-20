@@ -33,7 +33,8 @@ COPY --from=build /build/target/SportShopWeb-1.0-SNAPSHOT.war \
     /usr/local/tomcat/webapps/ROOT.war
 
 COPY start.sh /start.sh
-RUN chmod +x /start.sh
+RUN sed -i 's/\r$//' /start.sh
+CMD ["/bin/bash", "/start.sh"]
 
 EXPOSE 10000
 
