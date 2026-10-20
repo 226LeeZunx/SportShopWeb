@@ -38,4 +38,3 @@ CMD ["/bin/bash", "/start.sh"]
 
 EXPOSE 10000
 
-CMD ["/start.sh"]
