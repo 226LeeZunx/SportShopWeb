@@ -107,4 +107,45 @@ public class EmailService {
         thread.setName("sportshop-email-sender");
         thread.start();
     }
+    public static void sendOtpEmail(
+        String to,
+        String otp,
+        String purpose
+) {
+    String subject = "SportShop - Ma xac thuc OTP";
+
+    String body = """
+        <html>
+        <body>
+            <h2>SportShop - Xac thuc tai khoan</h2>
+            <p>Ma OTP cua ban la:</p>
+            <h1 style="color:blue;">%s</h1>
+            <p>Muc dich: %s</p>
+            <p>Vui long khong chia se ma OTP nay voi nguoi khac.</p>
+        </body>
+        </html>
+        """.formatted(otp, purpose);
+
+    sendEmailAsync(to, subject, body);
+}
+    public static void sendWelcomeEmail(String to, String name) {
+    String subject = "Chao mung ban den voi SportShop!";
+
+    String safeName = name == null || name.isBlank()
+            ? "ban"
+            : name;
+
+    String body = """
+        <html>
+        <body>
+            <h2>Chao mung den voi SportShop!</h2>
+            <p>Xin chao %s,</p>
+            <p>Tai khoan cua ban da duoc xac minh thanh cong.</p>
+            <p>Cam on ban da tham gia SportShop!</p>
+        </body>
+        </html>
+        """.formatted(safeName);
+
+    sendEmailAsync(to, subject, body);
+}
 }
