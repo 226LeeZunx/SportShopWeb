@@ -21,7 +21,7 @@ WORKDIR /app
 COPY . .
 
 # Install Python dependencies, including FastAPI and Uvicorn
-RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r python-rag/requirements.txt
 
 # Configure Tomcat for Render
 RUN sed -i 's/port="8080"/port="10000"/' \
