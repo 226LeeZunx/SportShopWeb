@@ -121,27 +121,49 @@
             <h2 class="home-section-title">Shop by Category</h2>
             <p class="home-section-subtitle">Gear up for greatness with high-performance sportswear and equipment</p>
         </div>
-        <!-- Nút điều hướng Slide -->
-        <c:if test="${not empty categoryList and categoryList.size() > 6}">
+        <!-- Nút điều hướng chuyển trang Category (Java Servlet & JSP thuần 100%) -->
+        <c:if test="${not empty totalCatPages and totalCatPages > 1}">
             <div class="category-slider-controls">
-                <button type="button" class="cat-nav-btn cat-prev" id="catPrevBtn" disabled aria-label="Previous">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <span class="cat-page-indicator" id="catPageIndicator">1 / 1</span>
-                <button type="button" class="cat-nav-btn cat-next" id="catNextBtn" aria-label="Next">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+                <c:choose>
+                    <c:when test="${currentCatPage > 1}">
+                        <a href="${pageContext.request.contextPath}/home?catPage=${currentCatPage - 1}#categories" 
+                           class="cat-nav-btn" aria-label="Previous">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="cat-nav-btn disabled" aria-disabled="true">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    </c:otherwise>
+                </c:choose>
+
+                <span class="cat-page-indicator">${currentCatPage} / ${totalCatPages}</span>
+
+                <c:choose>
+                    <c:when test="${currentCatPage < totalCatPages}">
+                        <a href="${pageContext.request.contextPath}/home?catPage=${currentCatPage + 1}#categories" 
+                           class="cat-nav-btn" aria-label="Next">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="cat-nav-btn disabled" aria-disabled="true">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </c:if>
     </div>
 
-    <c:if test="${empty categoryList}">
+    <c:if test="${empty displayedCategories}">
         <div class="empty-catalog"><p>No categories found.</p></div>
     </c:if>
 
     <div class="category-slider-wrapper">
         <ul class="category-grid" id="categoryGrid">
-            <c:forEach var="cat" items="${categoryList}">
+            <c:forEach var="cat" items="${displayedCategories}">
                 <li class="category-card">
                     <a href="${pageContext.request.contextPath}/HomeServlet?cat=${cat.categoryId}#products" class="category-card-link">
                         <div class="category-thumb">

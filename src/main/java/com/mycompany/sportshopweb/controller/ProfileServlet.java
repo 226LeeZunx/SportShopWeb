@@ -44,6 +44,10 @@ public class ProfileServlet extends HttpServlet {
             session.setAttribute("customer", customer);
         }
 
+        // Lấy tab yêu cầu: "info" (mặc định) hoặc "password"
+        String tab = request.getParameter("tab");
+        request.setAttribute("activeTab", "password".equalsIgnoreCase(tab) ? "password" : "info");
+
         // Đã đăng nhập -> hiển thị trang profile.jsp
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }
