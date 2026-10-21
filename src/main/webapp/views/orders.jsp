@@ -36,9 +36,9 @@
             </p>
         </div>
 
-        <c:if test="${not empty orders}">
+        <c:if test="${not empty allOrdersCount && allOrdersCount > 0}">
             <div class="orders-count">
-                <c:out value="${orders.size()}" /> orders
+                <c:out value="${allOrdersCount}" /> orders
             </div>
         </c:if>
     </section>
@@ -62,7 +62,7 @@
     <c:choose>
 
        
-        <c:when test="${empty orders}">
+        <c:when test="${empty allOrdersCount || allOrdersCount == 0}">
             <section class="orders-empty">
                 <div class="orders-empty-icon">
                     <i class="fa-solid fa-box-open"></i>
@@ -88,29 +88,25 @@
 
             
             <div class="order-tabs">
-                <button type="button"
-                        class="order-tab active"
-                        data-filter="ALL">
+                <a href="${pageContext.request.contextPath}/orders?status=ALL"
+                   class="order-tab ${empty selectedStatus || selectedStatus == 'ALL' ? 'active' : ''}">
                     Tất cả
-                </button>
+                </a>
 
-                <button type="button"
-                        class="order-tab"
-                        data-filter="COMPLETED">
-                    Đã thanh toán
-                </button>
-
-                <button type="button"
-                        class="order-tab"
-                        data-filter="CONFIRMED">
+                <a href="${pageContext.request.contextPath}/orders?status=CONFIRMED"
+                   class="order-tab ${selectedStatus == 'CONFIRMED' ? 'active' : ''}">
                     Chưa thanh toán
-                </button>
+                </a>
 
-                <button type="button"
-                        class="order-tab"
-                        data-filter="CANCELLED">
+                <a href="${pageContext.request.contextPath}/orders?status=COMPLETED"
+                   class="order-tab ${selectedStatus == 'COMPLETED' ? 'active' : ''}">
+                    Đã thanh toán
+                </a>
+
+                <a href="${pageContext.request.contextPath}/orders?status=CANCELLED"
+                   class="order-tab ${selectedStatus == 'CANCELLED' ? 'active' : ''}">
                     Đã hủy
-                </button>
+                </a>
             </div>
 
             <!-- Order list -->
@@ -319,11 +315,11 @@
             </section>
 
             <!-- No matching orders for selected tab -->
-            <div id="filteredEmpty"
-                 class="filtered-empty"
-                 style="display: none;">
-                Không có đơn hàng trong mục này.
-            </div>
+            <c:if test="${empty orders}">
+                <div id="filteredEmpty" class="filtered-empty">
+                    Không có đơn hàng trong mục này.
+                </div>
+            </c:if>
 
         </c:otherwise>
 
@@ -332,8 +328,6 @@
 </main>
 
 <jsp:include page="/views/common/footer.jsp" />
-
-<script src="${pageContext.request.contextPath}/assets/js/orders.js"></script>
 
 </body>
 </html>

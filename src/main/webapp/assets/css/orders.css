@@ -361,6 +361,8 @@
 }
 
 .order-tab {
+    display: inline-block;
+    text-decoration: none;
     padding: 10px 18px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -586,6 +588,8 @@
 }
 
 .order-tab {
+    display: inline-block;
+    text-decoration: none;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     background: #ffffff;
