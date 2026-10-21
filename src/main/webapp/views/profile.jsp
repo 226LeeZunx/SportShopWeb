@@ -85,12 +85,12 @@
                         <!-- Danh sách menu con trong tài khoản -->
                         <ul class="profile-nav-list">
                             <li class="profile-nav-item ${empty activeTab || activeTab == 'info' ? 'active' : ''}" id="tab-info-btn">
-                                <a href="${pageContext.request.contextPath}/ProfileServlet?tab=info">
+                                <a href="javascript:void(0)" onclick="switchTab('info')">
                                     <i class="fa-solid fa-id-card"></i> Personal Info
                                 </a>
                             </li>
                             <li class="profile-nav-item ${activeTab == 'password' ? 'active' : ''}" id="tab-password-btn">
-                                <a href="${pageContext.request.contextPath}/ProfileServlet?tab=password">
+                                <a href="javascript:void(0)" onclick="switchTab('password')">
                                     <i class="fa-solid fa-key"></i> Change Password
                                 </a>
                             </li>
@@ -259,6 +259,9 @@
 
         <!-- 3. Nhúng Footer dùng chung -->
         <jsp:include page="/views/common/footer.jsp" />
+
+        <!-- 4. Script chuyển tab mượt mà -->
+        <script src="${pageContext.request.contextPath}/assets/js/profile.js"></script>
 
     </body>
 </html>

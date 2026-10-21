@@ -40,35 +40,12 @@ public class OrderServlet extends HttpServlet {
         int customerId = customer.getCustomerId();
 
         try {
-            // 2. Lấy toàn bộ lịch sử đơn hàng của khách hàng
-            List<Order> allOrders = orderDAO.findByCustomerId(customerId);
+            // 2. Lấy lịch sử đơn hàng của khách hàng
+            List<Order> orders = orderDAO.findByCustomerId(customerId);
 
-            // 3. Đọc tham số bộ lọc trạng thái (?status=ALL, CONFIRMED, COMPLETED,
-            // CANCELLED)
-            String status = request.getParameter("status");
-            if (status == null || status.trim().isEmpty()) {
-                status = "ALL";
-            } else {
-                status = status.trim().toUpperCase();
-            }
+            request.setAttribute("orders", orders);
 
-            List<Order> displayOrders;
-            if ("ALL".equals(status)) {
-                displayOrders = allOrders;
-            } else {
-                displayOrders = new ArrayList<>();
-                for (Order o : allOrders) {
-                    if (o.getOrderStatus() != null && o.getOrderStatus().name().equalsIgnoreCase(status)) {
-                        displayOrders.add(o);
-                    }
-                }
-            }
-
-            request.setAttribute("orders", displayOrders);
-            request.setAttribute("allOrdersCount", allOrders.size());
-            request.setAttribute("selectedStatus", status);
-
-            // 4. Chuyển thông báo thành công/lỗi từ session sang request
+            // 3. Chuyển thông báo thành công/lỗi từ session sang request
             Object success = session.getAttribute("orderSuccess");
             Object error = session.getAttribute("orderError");
 
@@ -81,8 +58,9 @@ public class OrderServlet extends HttpServlet {
                 request.setAttribute("error", error);
                 session.removeAttribute("orderError");
             }
+            
 
-            // 5. Hiển thị orders.jsp
+            // 4. Hiển thị orders.jsp
             request.getRequestDispatcher("/views/orders.jsp")
                     .forward(request, response);
 
@@ -92,4 +70,5 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+ 
 }
