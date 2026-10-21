@@ -5,7 +5,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # --- Giai đoạn 2: Chạy ứng dụng trên Tomcat ---
-FROM tomcat:10.1-jdk17-chocolatey
+FROM tomcat:10.1-jdk21
 
 # Cài đặt Python 3 và venv
 RUN apt-get update && apt-get install -y \
