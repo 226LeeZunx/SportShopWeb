@@ -1,40 +1,37 @@
-
-# Stage 1: Build Java WAR
-FROM maven:3.9-eclipse-temurin-17 AS build
-
-WORKDIR /build
-COPY pom.xml .
-COPY src ./src
-
+# --- Giai đoạn 1: Build file WAR bằng Maven ---
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run Java + Python
-FROM tomcat:11.0-jdk17-temurin
+# --- Giai đoạn 2: Chạy ứng dụng trên Tomcat ---
+FROM tomcat:10.1-jdk17-chocolatey
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends python3 python3-pip \
+# Cài đặt Python 3 và venv
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Copy Python application
-COPY . .
-
-# Install Python dependencies, including FastAPI and Uvicorn
-RUN pip3 install --no-cache-dir --break-system-packages -r python-rag/requirements.txt
-
-# Configure Tomcat for Render
-RUN sed -i 's/port="8080"/port="10000"/' \
-    /usr/local/tomcat/conf/server.xml
-
+# Dọn dẹp ứng dụng mặc định của Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-COPY --from=build /build/target/SportShopWeb-1.0-SNAPSHOT.war \
-    /usr/local/tomcat/webapps/ROOT.war
+# Copy file WAR đã build vào thư mục webapps và đổi tên thành ROOT.war
+COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-COPY start.sh /start.sh
-RUN sed -i 's/\r$//' /start.sh
-CMD ["/bin/bash", "/start.sh"]
+# Copy thư mục python-rag vào đúng vị trí Tomcat
+COPY --from=build /app/python-rag /usr/local/tomcat/python-rag
 
-EXPOSE 10000
+# Khởi tạo môi trường ảo Python và cài đặt các thư viện trong requirements.txt
+WORKDIR /usr/local/tomcat/python-rag
+RUN python3 -m venv .venv
+RUN .venv/bin/pip install --no-cache-dir -r requirements.txt
 
+# --- QUAN TRỌNG: Vô hiệu hóa cổng shutdown 8005 của Tomcat để tránh xung đột health check với Render ---
+RUN sed -i 's/port="8005" shutdown="SHUTDOWN"/port="-1" shutdown="SHUTDOWN"/' /usr/local/tomcat/conf/server.xml
+
+# Đặt lại thư mục làm việc về Tomcat và chạy ứng dụng
+WORKDIR /usr/local/tomcat
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
