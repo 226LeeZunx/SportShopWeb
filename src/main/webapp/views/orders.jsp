@@ -287,7 +287,7 @@
 <c:if test="${status eq 'CONFIRMED'}">
 
     <a class="order-detail-btn"
-       href="${pageContext.request.contextPath}/payment?orderId=${order.orderId}">
+       href="${pageContext.request.contextPath}/vnpay-create?orderId=${order.orderId}">
         Thanh toán ngay
         <i class="fa-solid fa-credit-card"></i>
     </a>
